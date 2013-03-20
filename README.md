@@ -37,11 +37,11 @@ Mechanics
 
   Lasers consume ammo at a rate of 10 bullets per second while Ammo recharges at a rate of 20 bullets per second.
   - no lasers = +20 bps
-  - 1 laser = +10 bps
-  - 2 laser = 0 bps
-  - 3 laser = -10 bps
-  - 4 laser = -20 bps
-  - 5 laser = -30 bps
+  - 1 laser = -10 bps
+  - 2 laser = -20 bps
+  - 3 laser = -30 bps
+  - 4 laser = -40 bps
+  - 5 laser = -50 bps
   
   Each bullet deals 1 damage to the enemy, maximum hp an enemy may have is 999 hp.
   - basic = 1 hp
