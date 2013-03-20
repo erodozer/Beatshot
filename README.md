@@ -4,7 +4,7 @@ Beatshot
   Beatshot is an 8-bit stylized Vertical Shooter/Bullet Curtain game that makes use of the Beatmania Controller as its main way of playing.
   
 Stylistic Guidelines
-====================
+--------------------
   - Assets may not contain more than 4 colors (Transparency is not considered a separate color, we are using PNGs)
   - Colors are restricted to the NES Technical capabilities
   - Assets sizes are
@@ -16,7 +16,7 @@ Stylistic Guidelines
     - Character Portraits 64x64
 
 Controls
-========
+--------
 
   The player's ship may only move along one axis.  Since Beatshot is a vertical shooter that means the player will move along the x-axis instead of the y-axis.
   
@@ -33,7 +33,7 @@ Controls
   Since controls are also visible on screen, mobile devices such as the Android or iPhone should be able to play by pressing the on-screen controls.
 
 Mechanics
-=========
+---------
 
   Lasers consume ammo at a rate of 10 bullets per second while Ammo recharges at a rate of 20 bullets per second.
   - no lasers = +20 bps
@@ -54,12 +54,12 @@ Mechanics
   Movement speed of the player is 128 pixels per second, crossing from one side to the other should take almost 2 seconds
   
 Scripted Dialog
-===============
+---------------
   Dialog will be displayed at the bottom of the screen where the controls are normally located.  Dialog can consist of the actor's name, a portrait, and will display 3 32 character lines at a time.  During scripted dialog sequences the background will continue to scroll, but the music will be silent by deafault.  A specific music track can be set for the dialog and will stop afterwards.
   Scripted dialog may only appear at the beginning of the level, before the mid-boss, before the level-boss, and after the level-boss.
   
 Licensing
-=========
+---------
 Copyright 2013 Nicholas Hydock
 
   Licensed under the Apache License, Version 2.0 (the "License");
