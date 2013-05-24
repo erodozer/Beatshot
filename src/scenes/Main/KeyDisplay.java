@@ -1,85 +1,92 @@
 package scenes.Main;
 
-import org.lwjgl.opengl.Display;
-
 import logic.Consts;
 import logic.Consts.Lasers;
 import logic.Engine;
 import logic.Consts.DataDir;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.shipvgdc.sugdk.graphics.SpriteSheet;
 
 public class KeyDisplay extends Group {
 
-	SpriteSheet KeyTex;
+	Texture KeyTex;
 	Texture WheelTex;
 	
-	ImageButton[] keys;
+	Sprite[] keys;
+	Sprite disc;
+	Sprite frame;
 	
 	public static void loadAssets()
 	{
 		Engine.assets.load(DataDir.Ui + "frame.png", Texture.class);
+		Engine.assets.load(DataDir.Ui + "keys.png", Texture.class);
+		Engine.assets.load(DataDir.Ui + "disc.png", Texture.class);
 	}
 	
 	public KeyDisplay()
 	{
 		super();
 		
-		Image frame = new Image(Engine.assets.get(DataDir.Ui + "frame.png", Texture.class));
+		frame = new Sprite(Engine.assets.get(DataDir.Ui + "frame.png", Texture.class));
 		frame.setSize(240, 75);
-		this.addActor(frame);
 		
-		keys = new ImageButton[Consts.Lasers.values().length];
-		KeyTex = new SpriteSheet(new Texture(DataDir.Ui + "keys.png"), 4, 1);
-		Drawable[] states = {(new Image(KeyTex.getFrame(0))).getDrawable(),
-		                     (new Image(KeyTex.getFrame(1))).getDrawable(),
-		                     (new Image(KeyTex.getFrame(2))).getDrawable(),
-		                     (new Image(KeyTex.getFrame(3))).getDrawable()};
+		keys = new Sprite[Consts.Lasers.values().length];
+		KeyTex = Engine.assets.get(DataDir.Ui + "keys.png", Texture.class);
 
-		for (int i = 0, x = 100, y = 8; i < keys.length; i++, x += KeyTex.getFrameWidth())
+		for (int i = 0, x = 88, y = 12; i < keys.length; i++, x += KeyTex.getWidth() >> 2)
 		{
-			ImageButton key;
+			Sprite key = new Sprite(KeyTex);
+			key.setScale(.25f, 1.0f);
 			//odd should be black
 			if ((i & 0x0001) == 0x0001) 
 			{
-				key = new ImageButton(states[2], states[3], states[3]);
-				key.setPosition(x, y + KeyTex.getFrameHeight()*.33f);
+				key.setU(.5f); key.setU2(.75f);
+				key.setPosition(x-key.getRegionWidth(), y + 12);
 			}
 			//even are white (that is since we're counting from 0)
 			else 
 			{
-				key = new ImageButton(states[0], states[1], states[1]);
-				key.setPosition(x, y);
+				key.setU(0f); key.setU2(.25f);
+				key.setPosition(x-key.getRegionWidth(), y);
 			}
-			key.setTouchable(Touchable.disabled);
 			keys[i] = key;
-			this.addActor(key);
 		}
+		disc = new Sprite(Engine.assets.get(DataDir.Ui + "disc.png", Texture.class));
+		disc.setU(0);
+		disc.setU2(1/3f);
+		disc.setScale(1/3f, 1.0f);
+		disc.setPosition(20-disc.getRegionWidth(), 14);
 		
-		this.addListener(new KeyListener(keys));
+		this.addListener(new KeyListener(keys, disc));
+	}
+	
+	public void draw(SpriteBatch batch, float alpha)
+	{
+		frame.draw(batch);
+		for (Sprite k : keys)
+		{
+			k.draw(batch);
+		}
+		disc.draw(batch);
 	}
 	
 	//input listener that swaps the key's images when a key is pressed
 	private static class KeyListener extends InputListener
 	{
-		ImageButton[] keys;
+		Sprite[] keys;
+		Sprite disc;
 		
-		public KeyListener(ImageButton[] keys)
+		public KeyListener(Sprite[] keys, Sprite disc)
 		{
 			this.keys = keys;
+			this.disc = disc;
 		}
 
 		@Override
@@ -89,11 +96,30 @@ public class KeyDisplay extends Group {
 			Lasers laser = Lasers.valueOf(keycode);
 			if (laser != null)
 			{
-				ImageButton image = this.keys[laser.ordinal()];
-				image.setChecked(true);
+				int i = laser.ordinal();
+				Sprite image = this.keys[i];
+				if ((i & 0x0001) == 0x0001) 
+				{
+					image.setU(.75f); image.setU2(1.0f);
+				}
+				else
+				{
+					image.setU(.25f); image.setU2(.5f);	
+				}
 				System.out.println(laser + " pressed");
 				return true;
 			}
+			if (keycode == Keys.LEFT)
+			{
+				disc.setU(1/3f);
+				disc.setU2(2/3f);
+			}
+			if (keycode == Keys.RIGHT)
+			{
+				disc.setU(2/3f);
+				disc.setU2(1f);
+			}
+			
 			return false;
 		}
 		
@@ -103,9 +129,15 @@ public class KeyDisplay extends Group {
 			Lasers laser = Lasers.valueOf(keycode);
 			if (laser != null)
 			{
-				ImageButton image = this.keys[laser.ordinal()];
-				image.setChecked(false);
+				Sprite image = this.keys[laser.ordinal()];
+				image.setU(.5f);
+				image.setU2(.75f);
 				return true;
+			}
+			if (keycode == Keys.LEFT || keycode == Keys.RIGHT)
+			{
+				disc.setU(0f);
+				disc.setU2(1/3f);
 			}
 			return false;
 		}

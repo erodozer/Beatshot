@@ -42,7 +42,8 @@ public class Consts {
 		Sprites("data/images/sprites/"),
 		Ui("data/images/ui/"),
 		Enemies("data/enemies/"),
-		Levels("data/levels/");
+		Levels("data/levels/"), 
+		Fonts("data/fonts/");
 		
 		public final String path;
 		

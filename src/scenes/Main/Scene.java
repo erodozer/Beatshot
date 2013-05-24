@@ -94,7 +94,7 @@ public class Scene implements Screen {
 	
 	public void create()
 	{
-		statBars = new HPABars();
+		statBars = new StatBars();
 		statBars.setPosition(0, 74);
 		
 		KeyDisplay keydisp = new KeyDisplay();
@@ -119,7 +119,7 @@ public class Scene implements Screen {
 	public void load()
 	{
 		KeyDisplay.loadAssets();
-		HPABars.loadAssets();
+		StatBars.loadAssets();
 		Engine.assets.load(DataDir.Levels + "field001.png", Texture.class);
 		
 		ready = false;

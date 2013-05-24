@@ -16,7 +16,7 @@ import logic.Consts.DataDir;
 import logic.Engine;
 import logic.Player;
 
-public class HPABars extends Sprite implements Observer<PlayerNotification>{
+public class StatBars extends Sprite implements Observer<PlayerNotification>{
 	
 	private static Texture frameTex;
 	private static SpriteSheet tabsTex;
@@ -36,7 +36,7 @@ public class HPABars extends Sprite implements Observer<PlayerNotification>{
 	private Bar hpBar;
 	private Bar ammoBar;
 	
-	public HPABars()
+	public StatBars()
 	{
 		super();
 		frameTex = Engine.assets.get(DataDir.Ui + "barframe.png", Texture.class);
@@ -111,7 +111,7 @@ public class HPABars extends Sprite implements Observer<PlayerNotification>{
 		
 		public void draw(SpriteBatch batch, float alpha)
 		{
-			batch.draw(typetab, this.getX(), this.getY()+220);
+			batch.draw(typetab, this.getX(), this.getY()+222);
 			batch.draw(frame, this.getX(), this.getY(), frame.getRegionWidth(), 224);
 			batch.draw(decotab, this.getX(), this.getY()+224-decotab.getRegionHeight());
 			batch.draw(back, this.getX() + 6, this.getY() + 5, 12, BARHEIGHT);
