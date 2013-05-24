@@ -29,6 +29,7 @@ public class Scene implements Screen {
 	TweenManager tm;
 	private Sprite field;
 	private Sprite statBars;
+	private Sprite scoreField;
 	
 	public Scene()
 	{
@@ -70,6 +71,7 @@ public class Scene implements Screen {
 			sb.begin();
 			field.draw(sb);
 			statBars.draw(sb);
+			scoreField.draw(sb);
 			sb.end();
 			ui.draw();
 		}
@@ -103,6 +105,8 @@ public class Scene implements Screen {
 		Texture t = Engine.assets.get(DataDir.Levels + "field001.png", Texture.class);
 		t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		field = new Sprite(t);
+		scoreField = new ScoreField();
+		scoreField.setPosition(50, 295);
 		
 		Timeline.createSequence()
 			.push(Tween.set(field, Tweens.UV).target(0.0f, 1.0f, 1.0f, 2.0f))
@@ -120,6 +124,7 @@ public class Scene implements Screen {
 	{
 		KeyDisplay.loadAssets();
 		StatBars.loadAssets();
+		ScoreField.loadAssets();
 		Engine.assets.load(DataDir.Levels + "field001.png", Texture.class);
 		
 		ready = false;
