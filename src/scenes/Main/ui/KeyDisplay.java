@@ -1,10 +1,11 @@
-package scenes.Main;
+package scenes.Main.ui;
 
 import logic.Consts;
 import logic.Consts.Lasers;
 import logic.Engine;
 import logic.Consts.DataDir;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -143,8 +144,21 @@ public class KeyDisplay extends Group {
 			}
 			if (keycode == Keys.LEFT || keycode == Keys.RIGHT)
 			{
-				disc.setU(0f);
-				disc.setU2(1/3f);
+				if (Gdx.input.isKeyPressed(Keys.LEFT))
+				{
+					disc.setU(1/3f);
+					disc.setU2(2/3f);
+				}
+				else if (Gdx.input.isKeyPressed(Keys.RIGHT))
+				{
+					disc.setU(2/3f);
+					disc.setU2(1f);
+				}
+				else
+				{
+					disc.setU(0f);
+					disc.setU2(1/3f);
+				}
 			}
 			return false;
 		}

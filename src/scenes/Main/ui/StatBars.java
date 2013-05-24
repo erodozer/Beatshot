@@ -1,4 +1,6 @@
-package scenes.Main;
+package scenes.Main.ui;
+
+import scenes.Main.PlayerNotification;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;

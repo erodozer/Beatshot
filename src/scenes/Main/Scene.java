@@ -5,6 +5,11 @@ import logic.Consts.DataDir;
 
 import org.lwjgl.opengl.Display;
 
+import scenes.Main.ui.FieldDisplay;
+import scenes.Main.ui.KeyDisplay;
+import scenes.Main.ui.ScoreField;
+import scenes.Main.ui.StatBars;
+
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
@@ -26,10 +31,10 @@ public class Scene implements Screen {
 	OrthographicCamera camera;
 	private boolean ready;
 	
-	TweenManager tm;
-	private Sprite field;
 	private Sprite statBars;
 	private Sprite scoreField;
+	private FieldDisplay field;
+	private KeyDisplay keydisp;
 	
 	public Scene()
 	{
@@ -37,7 +42,6 @@ public class Scene implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false);
 		ui.setCamera(camera);
-		tm = new TweenManager();
 	}
 	
 	@Override
@@ -65,15 +69,15 @@ public class Scene implements Screen {
 				ready = true;
 			}
 			camera.update();
-			tm.update(delta);
-			ui.act(delta);
+			field.act(delta);
 			SpriteBatch sb = ui.getSpriteBatch();
+			
 			sb.begin();
 			field.draw(sb);
 			statBars.draw(sb);
 			scoreField.draw(sb);
+			keydisp.draw(sb, 1.0f);
 			sb.end();
-			ui.draw();
 		}
 		
 	}
@@ -81,6 +85,7 @@ public class Scene implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		ui.setViewport(240, 320, false);
+		ui.draw();
 	}
 
 	@Override
@@ -99,21 +104,15 @@ public class Scene implements Screen {
 		statBars = new StatBars();
 		statBars.setPosition(0, 74);
 		
-		KeyDisplay keydisp = new KeyDisplay();
-		ui.addActor(keydisp);
+		keydisp = new KeyDisplay();
 		ui.addListener(keydisp.inputListener);
 		
-		Texture t = Engine.assets.get(DataDir.Levels + "field001.png", Texture.class);
-		t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-		field = new Sprite(t);
 		scoreField = new ScoreField();
 		scoreField.setPosition(50, 295);
 		
-		Timeline.createSequence()
-			.push(Tween.set(field, Tweens.UV).target(0.0f, 1.0f, 1.0f, 2.0f))
-			.push(Tween.to(field, Tweens.UV, 5.0f).target(0.0f, 1.0f, 0.0f, 1.0f).ease(TweenEquations.easeNone))
-			.repeat(-1, 0f)
-		.start(tm);
+		field = new FieldDisplay();
+		field.setPosition(50, 75);
+		ui.addListener(field.inputListener);
 		
 		Gdx.input.setInputProcessor(ui);
 	}
@@ -126,7 +125,7 @@ public class Scene implements Screen {
 		KeyDisplay.loadAssets();
 		StatBars.loadAssets();
 		ScoreField.loadAssets();
-		Engine.assets.load(DataDir.Levels + "field001.png", Texture.class);
+		FieldDisplay.loadAssets();
 		
 		ready = false;
 	}

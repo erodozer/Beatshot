@@ -1,4 +1,4 @@
-package scenes.Main;
+package scenes.Main.ui;
 
 import logic.Consts.DataDir;
 import logic.Engine;
@@ -58,6 +58,6 @@ public class ScoreField extends Sprite {
 	{
 		back.draw(batch);
 		tab.draw(batch);
-		scoreFont.draw(batch, score, this.getX(), scoreFont.getAscent());
+		//scoreFont.draw(batch, score, this.getX(), scoreFont.getAscent());
 	}
 }
