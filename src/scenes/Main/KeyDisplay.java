@@ -23,6 +23,8 @@ public class KeyDisplay extends Group {
 	Sprite disc;
 	Sprite frame;
 	
+	public KeyListener inputListener;
+	
 	public static void loadAssets()
 	{
 		Engine.assets.load(DataDir.Ui + "frame.png", Texture.class);
@@ -64,7 +66,7 @@ public class KeyDisplay extends Group {
 		disc.setScale(1/3f, 1.0f);
 		disc.setPosition(20-disc.getRegionWidth(), 14);
 		
-		this.addListener(new KeyListener(keys, disc));
+		inputListener = new KeyListener(keys, disc);
 	}
 	
 	public void draw(SpriteBatch batch, float alpha)
@@ -80,8 +82,8 @@ public class KeyDisplay extends Group {
 	//input listener that swaps the key's images when a key is pressed
 	private static class KeyListener extends InputListener
 	{
-		Sprite[] keys;
-		Sprite disc;
+		private Sprite[] keys;
+		private Sprite disc;
 		
 		public KeyListener(Sprite[] keys, Sprite disc)
 		{
@@ -92,7 +94,6 @@ public class KeyDisplay extends Group {
 		@Override
 		public boolean keyDown(InputEvent event, int keycode)
 		{
-			System.out.println(keycode);
 			Lasers laser = Lasers.valueOf(keycode);
 			if (laser != null)
 			{
@@ -106,7 +107,6 @@ public class KeyDisplay extends Group {
 				{
 					image.setU(.25f); image.setU2(.5f);	
 				}
-				System.out.println(laser + " pressed");
 				return true;
 			}
 			if (keycode == Keys.LEFT)
@@ -129,9 +129,16 @@ public class KeyDisplay extends Group {
 			Lasers laser = Lasers.valueOf(keycode);
 			if (laser != null)
 			{
-				Sprite image = this.keys[laser.ordinal()];
-				image.setU(.5f);
-				image.setU2(.75f);
+				int i = laser.ordinal();
+				Sprite image = this.keys[i];
+				if ((i & 0x0001) == 0x0001) 
+				{
+					image.setU(.5f); image.setU2(.75f);
+				}
+				else
+				{
+					image.setU(0f); image.setU2(.25f);	
+				}
 				return true;
 			}
 			if (keycode == Keys.LEFT || keycode == Keys.RIGHT)

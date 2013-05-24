@@ -101,6 +101,7 @@ public class Scene implements Screen {
 		
 		KeyDisplay keydisp = new KeyDisplay();
 		ui.addActor(keydisp);
+		ui.addListener(keydisp.inputListener);
 		
 		Texture t = Engine.assets.get(DataDir.Levels + "field001.png", Texture.class);
 		t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
