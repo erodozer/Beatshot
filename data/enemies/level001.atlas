@@ -1,0 +1,19 @@
+<atlas
+	texture="enemyatlas.png">
+
+	<enemy 
+		name="Beatrix"
+		x="0"
+		y="0"
+		width="17"
+		height="24" 
+		hp="10" />
+	<enemy 
+		name="Bass"
+		x="17"
+		y="0"
+		width="17"
+		height="24" 
+		hp="30" />		
+</atlas>
+	
