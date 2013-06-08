@@ -1,9 +1,8 @@
 package scenes.Main.ui;
 
-import logic.Consts;
-import logic.Consts.Lasers;
 import logic.Engine;
 import logic.Consts.DataDir;
+import logic.Consts.Lasers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -40,7 +39,7 @@ public class KeyDisplay extends Group {
 		frame = new Sprite(Engine.assets.get(DataDir.Ui + "frame.png", Texture.class));
 		frame.setSize(240, 75);
 		
-		keys = new Sprite[Consts.Lasers.values().length];
+		keys = new Sprite[Lasers.values().length];
 		KeyTex = Engine.assets.get(DataDir.Ui + "keys.png", Texture.class);
 
 		for (int i = 0, x = 88, y = 12; i < keys.length; i++, x += KeyTex.getWidth() >> 2)

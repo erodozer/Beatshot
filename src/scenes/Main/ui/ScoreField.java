@@ -1,7 +1,7 @@
 package scenes.Main.ui;
 
-import logic.Consts.DataDir;
 import logic.Engine;
+import logic.Consts.DataDir;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;

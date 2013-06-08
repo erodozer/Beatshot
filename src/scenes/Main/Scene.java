@@ -1,47 +1,46 @@
 package scenes.Main;
 
 import logic.Engine;
-import logic.Consts.DataDir;
+import logic.level.Level;
 
-import org.lwjgl.opengl.Display;
-
-import scenes.Main.ui.FieldDisplay;
 import scenes.Main.ui.KeyDisplay;
 import scenes.Main.ui.ScoreField;
 import scenes.Main.ui.StatBars;
 
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquations;
-import aurelienribon.tweenengine.TweenManager;
+import EntitySystems.InputSystem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GLCommon;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.shipvgdc.sugdk.tween.Tweens;
 
 public class Scene implements Screen {
 
-	Stage ui;
 	OrthographicCamera camera;
 	private boolean ready;
 	
 	private Sprite statBars;
 	private Sprite scoreField;
-	private FieldDisplay field;
+	//private FieldDisplay field;
 	private KeyDisplay keydisp;
+	
+	private Level level;
+	
+	Music bgm;
+	
+	private SpriteBatch batch;
 	
 	public Scene()
 	{
-		ui = new Stage();
-		camera = new OrthographicCamera();
+		camera = new OrthographicCamera(240, 320);
 		camera.setToOrtho(false);
-		ui.setCamera(camera);
+		batch = new SpriteBatch();
 	}
 	
 	@Override
@@ -53,12 +52,15 @@ public class Scene implements Screen {
 	public void hide() {
 		unload();
 	}
-
+	
 	@Override
 	public void pause() {}
 
 	@Override
 	public void render(float delta) {
+		
+		GLCommon gl = Gdx.gl;
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		
 		//wait for assets to load
 		if (Engine.assets.update())
@@ -68,30 +70,30 @@ public class Scene implements Screen {
 				create();
 				ready = true;
 			}
+
 			camera.update();
-			field.act(delta);
-			SpriteBatch sb = ui.getSpriteBatch();
+			level.advance(delta);
 			
-			sb.begin();
-			field.draw(sb);
-			statBars.draw(sb);
-			scoreField.draw(sb);
-			keydisp.draw(sb, 1.0f);
-			sb.end();
+			
+			level.draw(batch);
+			
+			batch.setProjectionMatrix(camera.combined);
+			batch.begin();
+			statBars.draw(batch);
+			scoreField.draw(batch);
+			keydisp.draw(batch, 1.0f);
+			batch.end();
 		}
-		
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		ui.setViewport(240, 320, false);
-		ui.draw();
+		camera.setToOrtho(false, 240, 320);
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -101,20 +103,21 @@ public class Scene implements Screen {
 	
 	public void create()
 	{
+		level.start();
+		
 		statBars = new StatBars();
 		statBars.setPosition(0, 74);
 		
 		keydisp = new KeyDisplay();
-		ui.addListener(keydisp.inputListener);
 		
 		scoreField = new ScoreField();
 		scoreField.setPosition(50, 295);
 		
-		field = new FieldDisplay();
-		field.setPosition(50, 75);
-		ui.addListener(field.inputListener);
+		bgm = Engine.assets.get(level.data.bgm, Music.class);
+		bgm.setLooping(true);
+		bgm.play();
 		
-		Gdx.input.setInputProcessor(ui);
+		Gdx.input.setInputProcessor(level.world.getSystem(InputSystem.class));
 	}
 	
 	/**
@@ -125,8 +128,8 @@ public class Scene implements Screen {
 		KeyDisplay.loadAssets();
 		StatBars.loadAssets();
 		ScoreField.loadAssets();
-		FieldDisplay.loadAssets();
-		
+		level = new Level(Engine.level);
+		level.loadAssets();
 		ready = false;
 	}
 	
@@ -135,7 +138,5 @@ public class Scene implements Screen {
 	 */
 	public void unload()
 	{
-		ui.clear();
 	}
-
 }

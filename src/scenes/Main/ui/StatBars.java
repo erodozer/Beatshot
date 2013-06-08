@@ -14,9 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.shipvgdc.sugdk.graphics.SpriteSheet;
 import com.shipvgdc.sugdk.util.Observer;
 
-import logic.Consts.DataDir;
 import logic.Engine;
 import logic.Player;
+import logic.Consts.DataDir;
 
 public class StatBars extends Sprite implements Observer<PlayerNotification>{
 	
