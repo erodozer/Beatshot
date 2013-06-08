@@ -1,82 +1,69 @@
 package logic;
 
+import logic.Bullet.BulletEmitter;
+import logic.Consts.DataDir;
+import logic.Consts.Lasers;
+
 import scenes.Main.PlayerNotification;
 
+import EntitySystems.Components.*;
+
+import com.artemis.Entity;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Array;
+import com.shipvgdc.sugdk.graphics.SpriteSheet;
 import com.shipvgdc.sugdk.util.Observable;
 
+/**
+ * 
+ * @author nhydock
+ *
+ */
 public class Player extends Observable<PlayerNotification> {
 
 	public static final int MAXHP = 100;
 	public static final int MAXAMMO = 100;
-	public static final int LOWAMMOPOINT = 40;
-	public static final int LOWHPPOINT = 30;
 	
-	private static final float DRAINRATE = 1.0f;
-	private static final float CHARGERATE = 20.0f;
+	private static SpriteSheet sprite;
+	private static PolygonShape shape;
 	
-	int firingLasers;
-	boolean[] lasers;
-	
-	float ammo;
-	float hp;
-	
-	boolean ammoLow;
-	boolean hpLow;
-	
-	private static Player instance;
-	
-	public static Player getPlayer()
+	static
 	{
-		if (instance == null)
-			instance = new Player();
-		return instance;
+		shape = new PolygonShape();
+		shape.setAsBox(1.0f, 1.0f);
+		
+		sprite = new SpriteSheet(Gdx.files.internal(DataDir.Images + "player.png"), 4, 1);
 	}
-	
-	private Player()
-	{
-		lasers = new boolean[Consts.Lasers.values().length];
-		firingLasers = 0;
-	}
-	
-	public void fire(int laser)
-	{
-		if (!lasers[laser])
+
+	/**
+	 * Formats an entity into a player
+	 * @param e - entity to convert
+	 * @return a formatted player entity
+	 */
+	public static Entity createEntity(Entity e) {
+		e.addComponent(new Health(MAXHP));
+		
+		e.addComponent(new Position(0, 0));
+		e.addComponent(new Velocity(0, 0));
+		
+		e.addComponent(new Bound(shape));
+		
+		e.addComponent(new Renderable(sprite.getFrame(0)));
+		e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true));
+		
+		e.addComponent(new EntitySystems.GroupComponents.Player());
+		e.addComponent(new InputHandler());
+		
+		for (int i = 0; i < Lasers.values().length; i++)
 		{
-			lasers[laser] = true;
-			firingLasers++;
-		}
-	}
-	
-	public void update(float delta)
-	{
-		if (firingLasers > 0)
-		{
-			ammo = (float)Math.max(0, ammo-DRAINRATE*firingLasers*delta);
-		}
-		else
-		{
-			ammo = (float)Math.min(MAXAMMO, ammo+DRAINRATE*delta);
+			Entity laser = e.getWorld().createEntity();
+			laser = BulletEmitter.createEmitter(laser, 10, .1f, e);
+			laser.addToWorld();
 		}
 		
-		if (ammo < LOWAMMOPOINT && !ammoLow)
-		{
-			ammoLow = true;
-			this.notify(PlayerNotification.AmmoLow, true);
-		}
-		else if (ammo > LOWAMMOPOINT)
-		{
-			ammoLow = false;
-			this.notify(PlayerNotification.AmmoLow, false);
-		}
-		if (hp < LOWHPPOINT && !hpLow)
-		{
-			hpLow = true;
-			this.notify(PlayerNotification.HPLow, true);
-		}
-		else if (hp > LOWHPPOINT)
-		{
-			hpLow = false;
-			this.notify(PlayerNotification.HPLow, false);
-		}
+		return e;
 	}
+
 }
