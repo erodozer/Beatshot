@@ -19,11 +19,11 @@ import com.badlogic.gdx.graphics.GLCommon;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Scene implements Screen {
 
-	OrthographicCamera camera;
 	private boolean ready;
 	
 	private Sprite statBars;
@@ -37,11 +37,12 @@ public class Scene implements Screen {
 	
 	private SpriteBatch batch;
 	
+	Matrix4 normalProjection;
+
 	public Scene()
 	{
-		camera = new OrthographicCamera(240, 320);
-		camera.setToOrtho(false);
 		batch = new SpriteBatch();
+		normalProjection = new Matrix4().setToOrtho2D(0, 0, 240, 320);
 	}
 	
 	@Override
@@ -71,17 +72,15 @@ public class Scene implements Screen {
 				create();
 				ready = true;
 			}
-
-			camera.update();
 			level.advance(delta);
 			
 			
 			level.draw(batch);
 			
-			batch.setProjectionMatrix(camera.combined);
+			batch.setProjectionMatrix(normalProjection);
 			batch.begin();
-			statBars.draw(batch);
 			scoreField.draw(batch);
+			statBars.draw(batch);
 			keydisp.draw(batch, 1.0f);
 			batch.end();
 		}
@@ -89,7 +88,7 @@ public class Scene implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		camera.setToOrtho(false, 240, 320);
+		
 	}
 
 	@Override
