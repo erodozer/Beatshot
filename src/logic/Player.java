@@ -42,7 +42,6 @@ public class Player extends Observable<PlayerNotification> {
 		
 		sprite = new SpriteSheet(Gdx.files.internal(DataDir.Images + "player.png"), 4, 1);
 		shadow_sprite = new Texture(Gdx.files.internal(DataDir.Images + "player_shadow.png"));
-		
 	}
 
 	/**
@@ -53,20 +52,20 @@ public class Player extends Observable<PlayerNotification> {
 	public static Entity createEntity(Entity e) {
 		World w = e.getWorld();
 		
-		e.addComponent(new Health(MAXHP));
-		e.addComponent(new Ammo(MAXAMMO));
+		e.addComponent(new Health(MAXHP), Health.CType);
+		e.addComponent(new Ammo(MAXAMMO), Ammo.CType);
 		
-		e.addComponent(new Position(0, 0, 0, 5));
-		e.addComponent(new Velocity(0, 0));
+		e.addComponent(new Position(0, 0, -sprite.getFrameWidth()/2f, 5), Position.CType);
+		e.addComponent(new Velocity(0, 0), Velocity.CType);
 		
-		e.addComponent(new Bound(shape));
+		e.addComponent(new Bound(shape), Bound.CType);
 		
-		e.addComponent(new Renderable(sprite.getFrame(0)));
-		e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true));
-		e.addComponent(new EntitySystems.Components.Group.Player());
-		e.addComponent(new InputHandler(new int[]{Input.Keys.LEFT, Input.Keys.RIGHT}));
+		e.addComponent(new Renderable(sprite.getFrame(0)), Renderable.CType);
+		e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true), Animation.CType);
+		e.addComponent(new EntitySystems.Components.Group.Player(), EntitySystems.Components.Group.Player.CType);
+		e.addComponent(new InputHandler(new int[]{Input.Keys.LEFT, Input.Keys.RIGHT}), InputHandler.CType);
 		
-		float x = 0;
+		float x = -5;
 		for (int i = 0; i < Lasers.values().length; i++, x += 5f)
 		{
 			Entity laser = e.getWorld().createEntity();
@@ -74,15 +73,15 @@ public class Player extends Observable<PlayerNotification> {
 			Position p = (Position) laser.getComponent(Position.CType);
 			p.offset.x = x;
 			p.offset.y = sprite.getFrameHeight();
-			laser.addComponent(new InputHandler(Lasers.values()[i].keys));
-			laser.addComponent(new EntitySystems.Components.Group.Player());
+			laser.addComponent(new InputHandler(Lasers.values()[i].keys), InputHandler.CType);
+			laser.addComponent(new EntitySystems.Components.Group.Player(), EntitySystems.Components.Group.Player.CType);
 			laser.addToWorld();
 		}
 		
 		Entity shadow = e.getWorld().createEntity();
-		shadow.addComponent(new Position(0,0,0,-2));
-		shadow.addComponent(new Anchor(e));
-		shadow.addComponent(new Renderable(new Sprite(shadow_sprite)));
+		shadow.addComponent(new Position(0,0,0,-2), Position.CType);
+		shadow.addComponent(new Anchor(e), Anchor.CType);
+		shadow.addComponent(new Renderable(new Sprite(shadow_sprite)), Renderable.CType);
 		e.getWorld().getManager(TagManager.class).register("PlayerShadow", shadow);
 		shadow.addToWorld();
 		

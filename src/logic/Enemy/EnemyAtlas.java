@@ -8,6 +8,7 @@ import logic.Consts.DataDir;
 
 import EntitySystems.Components.Bound;
 import EntitySystems.Components.Health;
+import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
 
 import com.artemis.Entity;
@@ -90,9 +91,10 @@ public class EnemyAtlas{
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(s.getWidth(), s.getHeight());
 		
-		e.addComponent(new Renderable(s));
-		e.addComponent(new Health(enemy.maxhp));
-		e.addComponent(new Bound(shape));
+		e.addComponent(new Renderable(s), Renderable.CType);
+		e.addComponent(new Health(enemy.maxhp), Health.CType);
+		e.addComponent(new Bound(shape), Bound.CType);
+		e.addComponent(new Position(), Position.CType);
 		
 		return e;
 	}
@@ -105,6 +107,7 @@ public class EnemyAtlas{
 		String name;
 		int maxhp;
 		TextureRegion region;
+		EnemyAtlas atlas;
 		
 		/**
 		 * @param dataSrc - an xml element

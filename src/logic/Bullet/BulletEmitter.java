@@ -8,12 +8,16 @@ import EntitySystems.Components.Group.Enemy;
 import EntitySystems.Components.Group.Player;
 
 import com.artemis.Entity;
-import com.artemis.managers.GroupManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.shipvgdc.sugdk.graphics.SpriteSheet;
 
+/**
+ * Factory for creating bullet emitters for entities
+ * @author nhydock
+ *
+ */
 public class BulletEmitter {
 
 	private static SpriteSheet bulletSprites;
@@ -26,20 +30,20 @@ public class BulletEmitter {
 	/**
 	 * Creates a new emitter for the world
 	 * @param e
-	 * @param bulletLimit
-	 * @param lifeSpan
+	 * @param bulletLimit - number of bullets that can be present from the emitter at one time
+	 * @param spawnRate - rate per second at which bullets will spawn from the emitter
 	 * @param parent
-	 * @return
+	 * @return Entity converted to emitter
 	 */
-	public static Entity createEmitter(Entity e, int bulletLimit, float lifeSpan, Entity parent)
+	public static Entity createEmitter(Entity e, int bulletLimit, float spawnRate, Entity parent)
 	{
-		e.addComponent(new Position(0, 0));		//position of the entity
-		e.addComponent(new Velocity(0, 200f));	//speed at which the bullets fire
-		e.addComponent(new Angle(0));			//angle at which the bullets fire
-		e.addComponent(new Time(0.1f));		//bullet fire rate
-		e.addComponent(new Limiter(0, 10)); 	//number of bullets that can be emitted
-		e.addComponent(new Emitter(parent));	//identify as an emitter
-		e.addComponent(new Anchor(parent));		//links the position of the emitter with the parent
+		e.addComponent(new Position(0, 0), Position.CType);		//position of the entity
+		e.addComponent(new Velocity(0, 200f), Velocity.CType);	//speed at which the bullets fire
+		e.addComponent(new Angle(0), Angle.CType);				//angle at which the bullets fire
+		e.addComponent(new Time(spawnRate), Time.CType);		//bullet fire rate
+		e.addComponent(new Limiter(0, 10), Limiter.CType); 		//number of bullets that can be emitted
+		e.addComponent(new Emitter(parent), Emitter.CType);		//identify as an emitter
+		e.addComponent(new Anchor(parent), Anchor.CType);		//links the position of the emitter with the parent
 		
 		return e;
 	}
