@@ -2,25 +2,44 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 
-<level
-  background="field001.png"
-  bgm="stage001.mp3"
-  scroll="5.0"
-  atlas="level001.atlas">
-    <path
-       d="m 0.5,526.6479 22.091574,12.75457 25.47161,14.70604 42.040295,24.27198 30.088821,17.37179"
-       block="false"
-       enemies="Beatrix, Beatrix, Beatrix, Beatrix, Beatrix" />
-    <path
-       d="m 123.35714,503.79075 24.54373,-14.17032 22.79304,-13.15957 21.10302,-12.18383 19.80517,-11.43453"
-       block="false" 
-       enemies="Bass, Bass, Beatrix, Bass, Bass" />
-    <path
-       d="m 19.071429,333.79075 20,0 20.714286,0 19.285714,0 26.428571,0 22.14286,0 24.28571,0 25,0 25.71429,0"
-       block="false" 
-       enemies="Beatrix, Beatrix, Bass, Beatrix, Beatrix" />
-    <path
-       d="m 110.5,397.36218 0,-167.14286" 
-       boss="true"
-       enemies="Beatrix, Bass" />
+<level 
+	bgm="stage001.mp3" >
+	<spawn
+		atlas="level001.atlas">
+		<path
+		   d="m 0.5,526.6479 22.091574,12.75457 25.47161,14.70604 42.040295,24.27198 30.088821,17.37179"
+		   block="false"
+		   enemies="Beatrix, Beatrix, Beatrix, Beatrix, Beatrix" />
+		<path
+		   d="m 123.35714,503.79075 24.54373,-14.17032 22.79304,-13.15957 21.10302,-12.18383 19.80517,-11.43453"
+		   block="false" 
+		   enemies="Bass, Bass, Beatrix, Bass, Bass" />
+		<path
+		   d="m 19.071429,333.79075 20,0 20.714286,0 19.285714,0 26.428571,0 22.14286,0 24.28571,0 25,0 25.71429,0"
+		   block="false" 
+		   enemies="Beatrix, Beatrix, Bass, Beatrix, Beatrix" />
+		<path
+		   d="m 110.5,397.36218 0,-167.14286" 
+		   boss="true"
+		   enemies="Beatrix, Bass" />
+	</spawn>
+	
+	<field>
+		<layer
+			image="level001.layer000.png"
+			scroll="0" />
+		<static
+			image="level001.obj001.png"
+			rot="45" 
+			x="-.15"
+			y=".35"/>
+		<static
+			image="level001.obj001.png"
+			rot="-65" 
+			x=".85"
+			y=".75"/>			
+		<layer
+			image="level001.layer001.png"
+			scroll="0" />
+	</field>
 </level >

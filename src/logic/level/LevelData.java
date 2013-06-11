@@ -2,6 +2,8 @@ package logic.level;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import logic.Consts.DataDir;
 import logic.Enemy.EnemyAtlas;
@@ -17,14 +19,23 @@ import com.shipvgdc.sugdk.util.pathfinding.SvgPathParser;
 
 public class LevelData
 {
-	Array<Array<String>> groupNames;
-	Array<Array<Vector2>> spawns;
+	/**
+	 * All the spawn sets
+	 */
+	public Array<SpawnSet> enemyData;
 	
+	/**
+	 * Level file name
+	 */
 	public String name;
+	/**
+	 * Name of the background music
+	 */
 	public String bgm;
-	public String background;
+	
 	private Element levelFile;
-	public EnemyAtlas atlas;
+
+	public Background background;
 	
 	public LevelData(String name)
 	{
@@ -45,41 +56,143 @@ public class LevelData
 	 */
 	private void loadEnemies()
 	{
-		HashMap<Element, Path> spawnPath = SvgPathParser.getPathsMap(levelFile);
+		//spawns = new Array<Array<Vector2>>();
 		
-		groupNames = new Array<Array<String>>();
-		spawns = new Array<Array<Vector2>>();
+		Array<Element> spawns = levelFile.getChildrenByName("spawn");
+		enemyData = new Array<SpawnSet>();
 		
-		for (Element e : spawnPath.keySet())
+		for (int i = 0; i < spawns.size; i++)
 		{
-			String[] names = e.getAttribute("enemies").split("[, ]+");
-			Array<String> group = new Array<String>(names);
-			Array<Vector2> points = new Array<Vector2>(names.length);
-			for (int i = 0; i < group.size; i++)
+			Element element = spawns.get(i);
+			EnemyAtlas atlas = new EnemyAtlas(element.getAttribute("atlas"));
+			
+			HashMap<Element, Path> spawnPath = SvgPathParser.getPathsMap(element);
+			
+			for (Element e : spawnPath.keySet())
 			{
-				Step pos = spawnPath.get(e).getStep(i);
-				Vector2 v = new Vector2(pos.x, pos.y);
-				points.add(v);
+				SpawnSet spawnSet = new SpawnSet(atlas);
+				String[] names = e.getAttribute("enemies").split("[, ]+");
+				for (int j = 0; j < names.length; j++)
+				{
+					Spawn spawn = new Spawn();
+					
+					Step pos = spawnPath.get(e).getStep(j);
+					spawn.pos = new Vector2(pos.x, pos.y);
+					spawn.name = names[i];
+					spawnSet.spawns.add(spawn);
+				}
+				enemyData.add(spawnSet);
 			}
-			groupNames.add(group);
-			spawns.add(points);
 		}
 	}
 	
 	private void loadProperties()
 	{
 		bgm = DataDir.BGM + levelFile.getAttribute("bgm", "silence.mp3");
-		background = DataDir.Levels + levelFile.getAttribute("background", "field001.png");
 		
-		//allow inline atlas defining
-		Element atlasData;
-		if ((atlasData = levelFile.getChildByName("atlas")) != null)
+		Array<Element> layerElements = levelFile.getChildrenByName("layer");
+		
+		background = new Background(levelFile.getChildByName("field"));
+	}
+	
+	public static class Spawn
+	{
+		Vector2 pos;
+		String name;
+	}
+	
+	public static class SpawnSet
+	{
+		EnemyAtlas atlas;
+		Array<Spawn> spawns;
+		
+		public SpawnSet(EnemyAtlas atlas)
 		{
-			atlas = new EnemyAtlas(atlasData);
+			this.atlas = atlas;
+			spawns = new Array<Spawn>();
 		}
-		else
+	}
+	
+	public static class Background
+	{
+		/**
+		 * Background stack
+		 */
+		private Array<LayerData> layers;
+		private Array<StaticData> immovables;
+		
+		public Array<FieldData> stack;
+		
+		public Background(Element e)
 		{
-			atlas = new EnemyAtlas(levelFile.getAttribute("atlas"));
+			layers = new Array<LayerData>();
+			immovables = new Array<StaticData>();
+			stack = new Array<FieldData>();
+			for (int i = 0; i < e.getChildCount(); i++)
+			{
+				Element child = e.getChild(i);
+				if (child.getName().equals("layer"))
+				{
+					LayerData d = new LayerData(child);
+					layers.add(d);
+					stack.add(d);
+				}
+				else if (child.getName().equals("static"))
+				{
+					StaticData d = new StaticData(child);
+					immovables.add(d);
+					stack.add(d);
+				}
+			}
+		}
+		
+		public static class FieldData
+		{
+			String image;
+		}
+		
+		public static class LayerData extends FieldData
+		{
+			float rate;		//vertical scroll rate
+			
+			public LayerData(Element e)
+			{
+				image = DataDir.Levels + e.getAttribute("image");
+				rate = Float.parseFloat(e.getAttribute("scroll", "0"));
+			}
+		}
+		
+		/**
+		 * Objects in the scene that stick in one place.
+		 * They may spin
+		 * @author nhydock
+		 *
+		 */
+		public static class StaticData extends FieldData
+		{
+			float dps;  //degrees per second rotation speed
+			float x;	//x position on the screen
+			float y;    //y position on the screen
+			
+			public StaticData(Element e)
+			{
+				image = DataDir.Levels + e.getAttribute("image");
+				dps = Float.parseFloat(e.getAttribute("rot", "0"));
+				
+				x = Float.parseFloat(e.getAttribute("x", "0"));
+				y = Float.parseFloat(e.getAttribute("y", "0"));
+				
+				//allow using percentages for position on screen
+				if (Math.abs(x) < 1f)
+				{
+					x *= 190;
+				}
+				if (Math.abs(y) < 1f)
+				{
+					y*= 220;
+				}
+				
+			}
 		}
 	}
 }

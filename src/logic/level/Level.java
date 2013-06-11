@@ -3,11 +3,19 @@ package logic.level;
 import logic.Engine;
 import logic.Player;
 import logic.Consts.DataDir;
+import logic.level.LevelData.Background.FieldData;
+import logic.level.LevelData.Background.LayerData;
+import logic.level.LevelData.Background.StaticData;
+import logic.level.LevelData.Spawn;
+import logic.level.LevelData.SpawnSet;
 
 import EntitySystems.*;
+import EntitySystems.Components.Angle;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
+import EntitySystems.Components.Rotation;
 import EntitySystems.Components.Scrollable;
+import EntitySystems.Components.Velocity;
 
 import aurelienribon.tweenengine.TweenManager;
 
@@ -15,6 +23,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
@@ -32,7 +41,10 @@ public class Level{
 	
 	//game load data files
 	public LevelData data;
-	
+	ImmutableBag<Entity> activeEnemies;
+		
+	float[] fieldOfView = {0, 0, 190, 220};
+
 	/**
 	 * Container of all the entities for this level
 	 */
@@ -45,22 +57,7 @@ public class Level{
 	public Level(String id)
 	{
 		data = new LevelData(id);
-		
-		world = new World();
-		
-		world.setManager(new TagManager());
-		world.setManager(new GroupManager());
-		
-		world.setSystem(new AnimationSystem());
-		world.setSystem(new BulletLifeSystem());
-		world.setSystem(new CollisionEntitySystem());
-		world.setSystem(new MovementSystem());
-		
-		world.setSystem(new InputSystem());
-		
-		world.setSystem(new RenderSystem(), true);
-		
-		world.initialize();
+		this.world = Engine.world;
 	}
 	
 	public void advance(float delta)
@@ -75,6 +72,7 @@ public class Level{
 	public void draw(SpriteBatch batch)
 	{
 		world.getSystem(RenderSystem.class).draw(batch);
+		
 	}
 
 	/**
@@ -83,43 +81,74 @@ public class Level{
 	public void start()
 	{
 		// place the enemies in the world
-		for (int i = 0; i < data.groupNames.size; i++)
+		for (int i = 0; i < data.enemyData.size; i++)
 		{
-			Array<String> group = data.groupNames.get(i);
-			for (int j = 0; j < group.size; j++)
+			SpawnSet s = data.enemyData.get(i);
+			for (int j = 0; j < s.spawns.size; j++)
 			{
-				String name = group.get(j);
-				Vector2 pos = data.spawns.get(i).get(j);
+				Spawn enemy = s.spawns.get(j);
 				
 				Entity e = this.world.createEntity();
-				e = data.atlas.createEnemy(name, e);
-				e.addComponent(new Position(pos.x, pos.y));
+				e = s.atlas.createEnemy(enemy.name, e);
+				Position p = e.getComponent(Position.class);
+				p.location.x = enemy.pos.x;
+				p.location.y = enemy.pos.y;
 				this.world.addEntity(e);
 			}
 		}
 		
+		
+		//create the background
 		Entity p = this.world.createEntity();
 		p = Player.createEntity(p);
-		this.world.getManager(TagManager.class).register(EntitySystems.GroupComponents.Player.TYPE, p);
+		this.world.getManager(TagManager.class).register(EntitySystems.Components.Group.Player.TYPE, p);
 		this.world.addEntity(p);
 		
-		Entity field = this.world.createEntity();
-		field.addComponent(new Position());
+		//create layered background
+		for (int i = 0; i < data.background.stack.size; i++)
+		{
+			
+			Entity layer = this.world.createEntity();
+			
+			FieldData f = data.background.stack.get(i);
+			Texture t = Engine.assets.get(f.image, Texture.class);
+			Sprite s = new Sprite(t);
+			
+			if (f instanceof LayerData)
+			{
+				LayerData d = (LayerData)data.background.stack.get(i);
+				t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+				s.setSize(190f, 220f);
+				layer.addComponent(new Position());
+					
+				layer.addComponent(new Scrollable(0, d.rate, Math.max(190f/(float)t.getWidth(), 1.0f), Math.max(220f/(float)t.getHeight(), 1.0f)));
+			}
+			else if (f instanceof StaticData)
+			{
+				StaticData d = (StaticData)data.background.stack.get(i);
+				layer.addComponent(new Position(d.x, d.y));
+				layer.addComponent(new Angle(0));
+				layer.addComponent(new Rotation(d.dps));
+			}
+			
+			layer.addComponent(new Renderable(s));
+			
+			this.world.getManager(GroupManager.class).add(layer, "Field");
+			this.world.addEntity(layer);
+		}
 		
-		Texture t = Engine.assets.get(data.background, Texture.class);
-		t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-		field.addComponent(new Renderable(new Sprite(t)));
-		
-		field.addComponent(new Scrollable(0f, -.15f, 1.0f, 1.0f));
-		this.world.getManager(TagManager.class).register("Field", field);
-		this.world.addEntity(field);
+		this.world.initialize();
 	}
 
 	/**
 	 * Loads the assets necessary for the level to be displayed
 	 */
 	public void loadAssets() {
-		Engine.assets.load(data.background, Texture.class);
+		for (int i = 0; i < data.background.stack.size; i++)
+		{
+			FieldData f = data.background.stack.get(i);
+			Engine.assets.load(f.image, Texture.class);
+		}
 		Engine.assets.load(data.bgm, Music.class);
 	}
 }
