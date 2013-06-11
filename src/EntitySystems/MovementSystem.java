@@ -35,18 +35,19 @@ public class MovementSystem extends EntityProcessingSystem {
 	@Override
 	protected void process(Entity e) {
 		Position p = posmap.get(e);
-		Path path = pathmap.getSafe(e);
 		Time t = timemap.getSafe(e);
+		
 		Velocity v = velmap.getSafe(e);
+		Path path = pathmap.getSafe(e);
+		Anchor anchor = ancmap.getSafe(e);
 		
 		//if entity is anchored
-		Anchor anchor = ancmap.getSafe(e);
 		if (anchor != null)
 		{
 			Position p1 = posmap.get(e);
 			Position p2 = posmap.get(anchor.link);
 			
-			p1.location.set(p2.location);
+			p1.location.set(p2.location.x+p2.offset.x, p2.location.y+p2.offset.y);
 		}
 		//entity has a path
 		else if (path != null)
