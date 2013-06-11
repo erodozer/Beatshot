@@ -2,6 +2,7 @@ package EntitySystems.Components;
 
 import com.artemis.Component;
 import com.artemis.ComponentType;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -12,12 +13,21 @@ import com.badlogic.gdx.math.Vector2;
 public class Scrollable extends Component {
 	public static ComponentType CType = ComponentType.getTypeFor(Scrollable.class);
 	
-
+	private TextureRegion region = null;
+	
 	private final Vector2 rate;
 	private final Vector2 repeat;
 	
+	private float s1, s2, t1, t2;
+	
 	public float u1, u2, v1, v2;
 	
+	/**
+	 * @param x - horizontal scroll rate
+	 * @param y - vertical scroll rate
+	 * @param repeatX - number of times the texture repeats horizontally
+	 * @param repeatY - number of times the texture repeats vertically
+	 */
 	public Scrollable(final float x, final float y, final float repeatX, final float repeatY)
 	{
 		rate = new Vector2(x, y);
@@ -29,18 +39,40 @@ public class Scrollable extends Component {
 		this.v2 = repeatY;
 	}
 	
+	public Scrollable(final float x, final float y, final float repeatX, final float repeatY, TextureRegion r) {
+		this(x, y, repeatX, repeatY);
+		this.region = r;
+	}
+
 	public void update(float delta)
 	{
 		
-		if (u1 > repeat.x) u1 -= repeat.x;
-		else if (u1 < -repeat.x) u1 += repeat.x;
-		else u1 += rate.x*delta;
+		if (s1 > repeat.x) s1 -= repeat.x;
+		else if (s1 < -repeat.x) s1 += repeat.x;
+		else s1 += rate.x*delta;
 		
-		if (v1 > repeat.y) v1 -= repeat.y;
-		else if (v1 < -repeat.y) v1 += repeat.y;
-		else v1 += rate.y*delta;
+		if (t1 > repeat.y) t1 -= repeat.y;
+		else if (t1 < -repeat.y) t1 += repeat.y;
+		else t1 += rate.y*delta;
 		
-		u2 = u1+repeat.x;	
-		v2 = v1+repeat.y;
+		s2 = s1+repeat.x;	
+		t2 = t1+repeat.y;
+		
+		if (region != null)
+		{
+			float w = region.getU2()-region.getU();
+			float h = region.getV2()-region.getV();
+			u1 = region.getU() + s1*w;
+			u2 = region.getU() + s2*w;
+			v1 = region.getV() + t1*h;
+			v2 = region.getV() + t2*h;
+		}
+		else
+		{
+			u1 = s1;
+			u2 = s2;
+			v1 = t1;
+			v2 = t2;
+		}
 	}
 }
