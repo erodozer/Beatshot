@@ -1,20 +1,15 @@
 package EntitySystems;
 
-import logic.Bullet.BulletEmitter;
-
-import EntitySystems.Components.Bound;
-import EntitySystems.Components.Path;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Time;
-import EntitySystems.Components.Velocity;
-import EntitySystems.GroupComponents.Emitter;
+import logic.Engine;
+import EntitySystems.Components.*;
+import EntitySystems.Components.Group.Enemy;
+import EntitySystems.Components.Group.Player;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 public class MovementSystem extends EntityProcessingSystem {
@@ -23,31 +18,35 @@ public class MovementSystem extends EntityProcessingSystem {
 		/**
 		 * Select out all entities with positions
 		 */
-		super(Aspect.getAspectForAll(Position.class));
+		super(Aspect.getAspectForAll(Position.class).exclude(Enemy.class).one(Velocity.class, Path.class, Anchor.class, Angle.class, Rotation.class));
 	}
 
 	@Mapper ComponentMapper<Position> posmap;
+	@Mapper ComponentMapper<Angle> angmap;
 	@Mapper ComponentMapper<Path> pathmap;
 	@Mapper ComponentMapper<Time> timemap;
 	@Mapper ComponentMapper<Velocity> velmap;
-	@Mapper ComponentMapper<Emitter> emitmap;
+	@Mapper ComponentMapper<Rotation> rotmap;
+	@Mapper ComponentMapper<Anchor> ancmap;
+	
+	@Mapper ComponentMapper<Player> playerMap;
+	
 	
 	@Override
 	protected void process(Entity e) {
 		Position p = posmap.get(e);
-		Path path = pathmap.get(e);
-		Time t = timemap.get(e);
-		Velocity v = velmap.get(e);
+		Path path = pathmap.getSafe(e);
+		Time t = timemap.getSafe(e);
+		Velocity v = velmap.getSafe(e);
 		
-		//if entity is an emitter
-		Emitter emit = emitmap.get(e);
-		if (emit != null)
+		//if entity is anchored
+		Anchor anchor = ancmap.getSafe(e);
+		if (anchor != null)
 		{
 			Position p1 = posmap.get(e);
-			Position p2 = posmap.get(emit.parent);
+			Position p2 = posmap.get(anchor.link);
 			
-			p1.location.x = p2.location.x;
-			p1.location.y = p2.location.y;
+			p1.location.set(p2.location);
 		}
 		//entity has a path
 		else if (path != null)
@@ -59,14 +58,23 @@ public class MovementSystem extends EntityProcessingSystem {
 			}
 			t.curr += world.delta;
 			Vector2 vec = path.path.getContinuousLocation(t.curr/path.duration);
-			p.location.x = vec.x;
-			p.location.y = vec.y;
+			p.location.set(vec);
 		}
 		//entity has velocity
 		else if (v != null)
 		{
-			p.location.x += v.x * world.delta;
-			p.location.y += v.y * world.delta;
+			p.location.add(v.x * world.delta, v.y * world.delta);
+		}
+		
+		Angle a = angmap.getSafe(e);
+		//rotate the angle
+		if (a != null)
+		{
+			Rotation r = rotmap.getSafe(e);
+			if (r != null)
+			{
+				a.degrees += r.rate * world.delta;
+			}
 		}
 	}
 

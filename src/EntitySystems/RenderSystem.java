@@ -1,16 +1,18 @@
 package EntitySystems;
 
-import EntitySystems.Components.Animation;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Renderable;
-import EntitySystems.Components.Scrollable;
+import EntitySystems.Components.*;
+import EntitySystems.Components.Group.*;
+
 
 import com.artemis.Aspect;
+import com.artemis.Component;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,18 +25,21 @@ import com.badlogic.gdx.math.Vector2;
 public class RenderSystem extends EntitySystem {
 
 	public RenderSystem() {
-		super(Aspect.getAspectForAll(Position.class, Renderable.class));
+		super(Aspect.getAspectForAll(Renderable.class));
 	}
 
 	@Mapper ComponentMapper<Position> pmap;
-	@Mapper ComponentMapper<Renderable> rmap;
+	@Mapper ComponentMapper<Angle> amap;
 	@Mapper ComponentMapper<Scrollable> smap;
-	@Mapper ComponentMapper<Animation> amap;
+	@Mapper ComponentMapper<Renderable> rmap;
+	
+	@Mapper ComponentMapper<Player> playermap;
+	@Mapper ComponentMapper<Enemy> enemymap;
 
 	//system has its own drawing components
 	OrthographicCamera camera;
 	
-	float[] fieldOfView = {0, 0, 240, 320};
+	float[] fieldOfView = {0, 0, 190, 220};
 
 	@Override
 	protected void initialize()
@@ -54,11 +59,16 @@ public class RenderSystem extends EntitySystem {
 		{
 			Entity e = entities.get(i);
 			Renderable r = rmap.get(e);
+			
+			Angle a = amap.getSafe(e);
+			if (a != null)
+				r.sprite.setRotation(a.degrees);
 			Position p = pmap.get(e);
-			r.sprite.setPosition(p.location.x+p.offset.x, p.location.y+p.offset.y);
+			if (p != null)
+				r.sprite.setPosition(p.location.x+p.offset.x, p.location.y+p.offset.y);
 			
 			//scroll sprite's texture if renderable has scrollable as well
-			Scrollable s = smap.get(e);
+			Scrollable s = smap.getSafe(e);
 			if (s != null)
 			{
 				s.update(world.delta);
@@ -80,6 +90,7 @@ public class RenderSystem extends EntitySystem {
 		//temp variable name holders
 		Renderable r;
 		Entity e;
+		ImmutableBag<Entity> bag;
 		
 		//we group the different parts to maximize efficiency
 		
@@ -87,18 +98,26 @@ public class RenderSystem extends EntitySystem {
 		batch.setProjectionMatrix(camera.combined);
 		//get and render the field
 		batch.begin();
-		e = this.world.getManager(TagManager.class).getEntity("Field");
-		r = rmap.get(e);
-		r.sprite.draw(batch);
+		bag = this.world.getManager(GroupManager.class).getEntities("Field");
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			r = rmap.get(e);
+			r.sprite.draw(batch);
+		}
 		batch.end();
 		
 		//render the player
 		batch.begin();
+		e = this.world.getManager(TagManager.class).getEntity("PlayerShadow");
+		r = rmap.get(e);
+		r.sprite.draw(batch);
 		e = this.world.getManager(TagManager.class).getEntity("Player");
 		r = rmap.get(e);
 		r.sprite.draw(batch);
 		batch.end();
 
+		bag = this.world.getManager(GroupManager.class).getEntities("Bullet");
 		batch.begin();
 		//render enemy bullets
 		batch.end();
@@ -109,6 +128,20 @@ public class RenderSystem extends EntitySystem {
 		
 		batch.begin();
 		//render player bullets
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			Player p = playermap.getSafe(e);
+			if (p != null)
+			{
+				r = e.getComponent(Renderable.class);
+				r.sprite.draw(batch);
+			}
+		}
+		batch.end();
+		
+		batch.begin();
+		//Display banners;
 		batch.end();
 	}
 	

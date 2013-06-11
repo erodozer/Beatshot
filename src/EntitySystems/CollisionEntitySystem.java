@@ -3,9 +3,9 @@ package EntitySystems;
 import EntitySystems.Components.Bound;
 import EntitySystems.Components.Health;
 import EntitySystems.Components.Position;
-import EntitySystems.GroupComponents.Bullet;
-import EntitySystems.GroupComponents.Player;
-import EntitySystems.GroupComponents.Enemy;
+import EntitySystems.Components.Group.Bullet;
+import EntitySystems.Components.Group.Enemy;
+import EntitySystems.Components.Group.Player;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -23,15 +23,14 @@ import com.badlogic.gdx.math.Vector2;
 public class CollisionEntitySystem extends EntityProcessingSystem {
 
 	public CollisionEntitySystem() {
-		super(Aspect.getAspectForAll(Bound.class, Bullet.class));
+		super(Aspect.getAspectForAll(Position.class, Bound.class, Bullet.class).one(Player.class, Enemy.class));
 	}
 
 	@Mapper ComponentMapper<Bound> physics;
+	@Mapper ComponentMapper<Position> posm;
 	
 	@Mapper ComponentMapper<Enemy> em;
 	@Mapper ComponentMapper<Player> pm;
-	@Mapper ComponentMapper<Position> posm;
-	
 	@Mapper ComponentMapper<Health> hm;
 	
     private ImmutableBag<Entity> playerEntities;
@@ -51,8 +50,8 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 
 	@Override
 	protected void process(Entity e) {
-		Player player = pm.get(e);
-		Enemy enemy = em.get(e);
+		Player player = pm.getSafe(e);
+		Enemy enemy = em.getSafe(e);
 		Position pos = posm.get(e);
 		
 		Bound bullet = physics.get(e);
