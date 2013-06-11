@@ -1,5 +1,6 @@
 package EntitySystems;
 
+import logic.Engine;
 import EntitySystems.Components.*;
 import EntitySystems.Components.Group.*;
 
@@ -90,6 +91,10 @@ public class RenderSystem extends EntitySystem {
 		//temp variable name holders
 		Renderable r;
 		Entity e;
+		
+		GroupManager gm = this.world.getManager(GroupManager.class);
+		TagManager tm = this.world.getManager(TagManager.class);
+		
 		ImmutableBag<Entity> bag;
 		
 		//we group the different parts to maximize efficiency
@@ -109,15 +114,15 @@ public class RenderSystem extends EntitySystem {
 		
 		//render the player
 		batch.begin();
-		e = this.world.getManager(TagManager.class).getEntity("PlayerShadow");
+		e = tm.getEntity("PlayerShadow");
 		r = rmap.get(e);
 		r.sprite.draw(batch);
-		e = this.world.getManager(TagManager.class).getEntity("Player");
+		e = tm.getEntity("Player");
 		r = rmap.get(e);
 		r.sprite.draw(batch);
 		batch.end();
 
-		bag = this.world.getManager(GroupManager.class).getEntities("Bullet");
+		bag = gm.getEntities("Bullet");
 		batch.begin();
 		//render enemy bullets
 		batch.end();
@@ -134,7 +139,7 @@ public class RenderSystem extends EntitySystem {
 			Player p = playermap.getSafe(e);
 			if (p != null)
 			{
-				r = e.getComponent(Renderable.class);
+				r = (Renderable)e.getComponent(Renderable.CType);
 				r.sprite.draw(batch);
 			}
 		}
@@ -142,6 +147,65 @@ public class RenderSystem extends EntitySystem {
 		
 		batch.begin();
 		//Display banners;
+		Ammo a = (Ammo)Engine.player.getComponent(Ammo.CType);
+		Health h = (Health)Engine.player.getComponent(Health.CType);
+		bag = gm.getEntities("Banner");
+		ImmutableBag<Entity> bannerBag;
+		Bag<Entity> bannerBag2;
+		
+		if (h.isLow())
+		{
+			bannerBag = gm.getEntities("BannerA");
+			bannerBag2 = (Bag<Entity>)gm.getEntities("BannerB");
+		}
+		else if (a.isLow())
+		{
+			bannerBag = gm.getEntities("BannerB");
+			bannerBag2 = (Bag<Entity>)gm.getEntities("BannerA");
+		}
+		else
+		{
+			bannerBag = gm.getEntities("BannerC");
+			bannerBag2 = new Bag<Entity>();
+			bannerBag2.addAll(gm.getEntities("BannerA"));
+			bannerBag2.addAll(gm.getEntities("BannerB"));
+		}
+		
+		for (int i = bag.size()-1; i >= 0; i--)
+		{
+			e = bag.get(i);
+			Position p = pmap.getSafe(e);
+			r = rmap.get(e);
+			
+			if (bannerBag.contains(e))
+			{
+				//right side banner
+				if (p.offset.x < 0)
+				{
+					p.location.x = Math.max(190, p.location.x - 32 * world.delta);
+				}
+				else
+				{
+					p.location.x = Math.min(0, p.location.x + 32 * world.delta);
+				}
+			}
+			else if (bannerBag2.contains(e))
+			{
+				//right side banner
+				if (p.offset.x < 0)
+				{
+					p.location.x = Math.min(190-p.offset.x, p.location.x + 32 * world.delta);
+				}
+				else
+				{
+					p.location.x = Math.max(-12, p.location.x - 32 * world.delta);
+				}
+			}
+			
+			r.sprite.draw(batch);
+		}
+		
+		
 		batch.end();
 	}
 	

@@ -29,8 +29,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.shipvgdc.sugdk.graphics.SpriteSheet;
 
 public class Level{
 	
@@ -80,6 +82,9 @@ public class Level{
 	 */
 	public void start()
 	{
+		GroupManager gm = this.world.getManager(GroupManager.class);
+		TagManager tm = this.world.getManager(TagManager.class);
+		
 		// place the enemies in the world
 		for (int i = 0; i < data.enemyData.size; i++)
 		{
@@ -99,10 +104,6 @@ public class Level{
 		
 		
 		//create the background
-		Entity p = this.world.createEntity();
-		p = Player.createEntity(p);
-		this.world.getManager(TagManager.class).register(EntitySystems.Components.Group.Player.TYPE, p);
-		this.world.addEntity(p);
 		
 		//create layered background
 		for (int i = 0; i < data.background.stack.size; i++)
@@ -133,8 +134,47 @@ public class Level{
 			
 			layer.addComponent(new Renderable(s));
 			
-			this.world.getManager(GroupManager.class).add(layer, "Field");
+			gm.add(layer, "Field");
 			this.world.addEntity(layer);
+		}
+		
+		//load banners
+		Texture t = Engine.assets.get(DataDir.Ui+"banners.png", Texture.class);
+		t.setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
+		SpriteSheet bannerTex = new SpriteSheet(t, 1, 3);
+		for (int i = 0; i < 3; i++)
+		{
+			Entity e = this.world.createEntity();
+			TextureRegion r = bannerTex.getFrame(i);
+			Sprite s = new Sprite(r);
+			s.setSize(220, 12);
+			s.setRotation(90);
+			s.setOrigin(0, 0);
+			
+			e.addComponent(new Position(0, 0, 12, 0));
+			e.addComponent(new Scrollable(.35f, 0f, 220f/bannerTex.getFrameWidth(), 1f, r));
+			e.addComponent(new Renderable(s));
+			
+			gm.add(e, "Banner");
+			gm.add(e, "Banner"+(char)(i+65));
+			
+			e.addToWorld();
+			
+			e = this.world.createEntity();
+			s = new Sprite(r);
+			
+			s.setSize(220, 12);
+			s.setRotation(-90);
+			s.setOrigin(0, 0);
+			s.flip(false, true);
+			
+			e.addComponent(new Position(190, 0, -12, 220));
+			e.addComponent(new Scrollable(-.35f, 0f, 220f/bannerTex.getFrameWidth(), 1f, r));
+			e.addComponent(new Renderable(s));
+			
+			gm.add(e, "Banner");
+			gm.add(e, "Banner"+(char)(i+65));
+			e.addToWorld();
 		}
 		
 		this.world.initialize();
@@ -150,5 +190,6 @@ public class Level{
 			Engine.assets.load(f.image, Texture.class);
 		}
 		Engine.assets.load(data.bgm, Music.class);
+		Engine.assets.load(DataDir.Ui + "banners.png", Texture.class);
 	}
 }
