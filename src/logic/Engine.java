@@ -47,6 +47,8 @@ public class Engine {
 		world.setSystem(new RenderSystem(), true);
 		
 		player = Player.createEntity(world.createEntity());
+		world.getManager(TagManager.class).register(EntitySystems.Components.Group.Player.TYPE, player);
+		
 		player.addToWorld();
 	}
 	
