@@ -1,6 +1,7 @@
 package EntitySystems.Components;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -9,6 +10,8 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class Scrollable extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Scrollable.class);
+	
 
 	private final Vector2 rate;
 	private final Vector2 repeat;

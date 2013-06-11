@@ -1,6 +1,7 @@
 package EntitySystems.Components;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 
 /**
  * Allows an entity to move in a direction at a constant rate
@@ -8,6 +9,8 @@ import com.artemis.Component;
  *
  */
 public class Velocity extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Velocity.class);
+	
 	public float x;
 	public float y;
 	
@@ -15,5 +18,9 @@ public class Velocity extends Component {
 	{
 		this.x = x;
 		this.y = y;
+	}
+
+	public Velocity() {
+		this(0, 0);
 	}
 }

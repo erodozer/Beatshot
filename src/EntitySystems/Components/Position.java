@@ -1,12 +1,15 @@
 package EntitySystems.Components;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 import com.badlogic.gdx.math.Vector2;
 
 /**
  * 
  */
 public class Position extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Position.class);
+	
 	public Vector2 location;;
 	public Vector2 offset;
 	

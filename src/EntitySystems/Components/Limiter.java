@@ -1,6 +1,7 @@
 package EntitySystems.Components;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 
 /**
  * Allows a number limit to be set on something, and to keep it's current value
@@ -8,6 +9,8 @@ import com.artemis.Component;
  *
  */
 public class Limiter extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Limiter.class);
+	
 	public float current;
 	public final float max;
 	public final float min;

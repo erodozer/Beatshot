@@ -1,6 +1,7 @@
 package EntitySystems.Components;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 
 /**
  * A countdown timer component
@@ -8,6 +9,8 @@ import com.artemis.Component;
  *
  */
 public class Time extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Time.class);
+	
 	/**
 	 * Amount of time left
 	 */

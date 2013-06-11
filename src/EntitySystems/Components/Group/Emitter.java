@@ -1,15 +1,25 @@
-package EntitySystems.GroupComponents;
+package EntitySystems.Components.Group;
+
+import EntitySystems.Components.Ammo;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 import com.artemis.Entity;
 
 public class Emitter extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Emitter.class);
+	
 	public final String TYPE = "Emitter";
 	
 	/**
-	 * Entity link for position tracking
+	 * Entity link for bullet typing
 	 */
 	public Entity parent;
+
+	/**
+	 * Says if the emitter should be firing
+	 */
+	public boolean active;
 	
 	/**
 	 * Create an emitter

@@ -3,6 +3,7 @@ package EntitySystems.Components;
 import java.util.List;
 
 import com.artemis.Component;
+import com.artemis.ComponentType;
 import com.artemis.Entity;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Bound extends Component {
+	public static ComponentType CType = ComponentType.getTypeFor(Bound.class);
 	
 	public Shape shape;
 	
