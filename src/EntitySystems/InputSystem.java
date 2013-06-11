@@ -28,7 +28,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 	public static final int LOWHPPOINT = 30;
 	
 	private static final float DRAINRATE = 1.0f;
-	private static final float CHARGERATE = 20.0f;
+	private static final float CHARGERATE = 30.0f;
 
 	boolean[] shoot;
 	int firing;
@@ -51,7 +51,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 	@Override
 	protected void process(Entity e) {
 		Velocity vel = vm.get(e);
-		Emitter emit = em.get(e);
+		Emitter emit = em.getSafe(e);
 		
 		if (emit == null)
 		{
@@ -100,12 +100,12 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 		}
 		
 		Position p = pm.get(e);
-		if (p.location.x <= 0)
+		if (p.location.x < 0)
 		{
 			left = false;
 			p.location.x = 0;
 		}
-		if (p.location.x >= 176)
+		if (p.location.x > 176)
 		{
 			right = false;
 			p.location.x = 176;
