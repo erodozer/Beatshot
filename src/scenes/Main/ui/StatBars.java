@@ -77,11 +77,11 @@ public class StatBars extends Sprite{
 	public void draw(SpriteBatch batch, float alpha)
 	{
 		Health h = Engine.player.getComponent(Health.class);
-		ammoBar.setFill(h.hp/(float)h.maxhp);
+		ammoBar.setFill(h.getPercent());
 		hpBar.draw(batch, alpha);
 		
 		Ammo a = Engine.player.getComponent(Ammo.class);
-		ammoBar.setFill(a.ammo/(float)a.maxammo);
+		ammoBar.setFill(a.getPercent());
 		ammoBar.draw(batch, alpha);
 	}
 	
