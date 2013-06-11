@@ -2,6 +2,9 @@ package scenes.Main.ui;
 
 import scenes.Main.PlayerNotification;
 
+import EntitySystems.Components.Ammo;
+import EntitySystems.Components.Health;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -18,7 +21,7 @@ import logic.Engine;
 import logic.Player;
 import logic.Consts.DataDir;
 
-public class StatBars extends Sprite implements Observer<PlayerNotification>{
+public class StatBars extends Sprite{
 	
 	private static Texture frameTex;
 	private static SpriteSheet tabsTex;
@@ -73,7 +76,12 @@ public class StatBars extends Sprite implements Observer<PlayerNotification>{
 	
 	public void draw(SpriteBatch batch, float alpha)
 	{
+		Health h = Engine.player.getComponent(Health.class);
+		ammoBar.setFill(h.hp/(float)h.maxhp);
 		hpBar.draw(batch, alpha);
+		
+		Ammo a = Engine.player.getComponent(Ammo.class);
+		ammoBar.setFill(a.ammo/(float)a.maxammo);
 		ammoBar.draw(batch, alpha);
 	}
 	
@@ -117,28 +125,12 @@ public class StatBars extends Sprite implements Observer<PlayerNotification>{
 			batch.draw(frame, this.getX(), this.getY(), frame.getRegionWidth(), 224);
 			batch.draw(decotab, this.getX(), this.getY()+224-decotab.getRegionHeight());
 			batch.draw(back, this.getX() + 6, this.getY() + 5, 12, BARHEIGHT);
-			bar.setV2(REPEAT*fill);
-			batch.draw(bar, this.getX() + 6, this.getY() + 5, 12, BARHEIGHT*fill);
+			bar.setV2((int)(REPEAT*fill));
+			batch.draw(bar, this.getX() + 6, this.getY() + 5, 12, (float)((int)(REPEAT*fill) << 1));
 		}
 		public void setFill(float amount)
 		{
 			fill = amount;
-		}
-	}
-
-	@Override
-	public void update(PlayerNotification type, Object... values) {
-		if (type == PlayerNotification.HPChange)
-		{
-			int hp = (int)values[0];
-			float fill = hp / (float)Player.MAXHP;
-			hpBar.setFill(fill);
-		}
-		else if (type == PlayerNotification.AmmoChange)
-		{
-			int ammo = (int)values[0];
-			float fill = ammo / (float)Player.MAXAMMO;
-			ammoBar.setFill(fill);
 		}
 	}
 }
