@@ -5,12 +5,11 @@ import logic.Consts.DataDir;
 import logic.Consts.Lasers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 
@@ -80,7 +79,7 @@ public class KeyDisplay extends Group {
 	}
 	
 	//input listener that swaps the key's images when a key is pressed
-	private static class KeyListener extends InputListener
+	private static class KeyListener implements InputProcessor
 	{
 		private Sprite[] keys;
 		private Sprite disc;
@@ -92,7 +91,7 @@ public class KeyDisplay extends Group {
 		}
 
 		@Override
-		public boolean keyDown(InputEvent event, int keycode)
+		public boolean keyDown(int keycode)
 		{
 			Lasers laser = Lasers.valueOf(keycode);
 			if (laser != null)
@@ -107,14 +106,13 @@ public class KeyDisplay extends Group {
 				{
 					image.setU(.25f); image.setU2(.5f);	
 				}
-				return true;
 			}
-			if (keycode == Keys.LEFT)
+			if (keycode == Input.Keys.LEFT)
 			{
 				disc.setU(1/3f);
 				disc.setU2(2/3f);
 			}
-			if (keycode == Keys.RIGHT)
+			if (keycode == Input.Keys.RIGHT)
 			{
 				disc.setU(2/3f);
 				disc.setU2(1f);
@@ -124,7 +122,7 @@ public class KeyDisplay extends Group {
 		}
 		
 		@Override
-		public boolean keyUp(InputEvent event, int keycode)
+		public boolean keyUp(int keycode)
 		{
 			Lasers laser = Lasers.valueOf(keycode);
 			if (laser != null)
@@ -139,26 +137,59 @@ public class KeyDisplay extends Group {
 				{
 					image.setU(0f); image.setU2(.25f);	
 				}
-				return true;
 			}
-			if (keycode == Keys.LEFT || keycode == Keys.RIGHT)
+			
+			if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
 			{
-				if (Gdx.input.isKeyPressed(Keys.LEFT))
-				{
-					disc.setU(1/3f);
-					disc.setU2(2/3f);
-				}
-				else if (Gdx.input.isKeyPressed(Keys.RIGHT))
-				{
-					disc.setU(2/3f);
-					disc.setU2(1f);
-				}
-				else
-				{
-					disc.setU(0f);
-					disc.setU2(1/3f);
-				}
+				disc.setU(1/3f);
+				disc.setU2(2/3f);
 			}
+			else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+			{
+				disc.setU(2/3f);
+				disc.setU2(1f);
+			}
+			else
+			{
+				disc.setU(0f);
+				disc.setU2(1/3f);
+			}
+			return false;
+		}
+
+		@Override
+		public boolean keyTyped(char arg0) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean mouseMoved(int arg0, int arg1) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean scrolled(int arg0) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean touchDragged(int arg0, int arg1, int arg2) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
+			// TODO Auto-generated method stub
 			return false;
 		}
 		

@@ -10,6 +10,7 @@ import scenes.Main.ui.StatBars;
 import EntitySystems.InputSystem;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
@@ -117,7 +118,11 @@ public class Scene implements Screen {
 		bgm.setLooping(true);
 		bgm.play();
 		
-		Gdx.input.setInputProcessor(level.world.getSystem(InputSystem.class));
+		InputMultiplexer in = new InputMultiplexer();
+		in.addProcessor(keydisp.inputListener);
+		in.addProcessor(level.world.getSystem(InputSystem.class));
+		
+		Gdx.input.setInputProcessor(in);
 	}
 	
 	/**
