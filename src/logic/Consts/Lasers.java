@@ -4,25 +4,30 @@ import com.badlogic.gdx.Input.Keys;
 
 public enum Lasers
 {
-	Laser1(Keys.A),
-	Laser2(Keys.S),
-	Laser3(Keys.SPACE),
-	Laser4(Keys.D),
-	Laser5(Keys.F);
+	ONE(Keys.A, Keys.BUTTON_L1), 
+	TWO(Keys.S, Keys.BUTTON_B), 
+	THREE(Keys.SPACE, Keys.BUTTON_A), 
+	FOUR(Keys.D, Keys.BUTTON_C), 
+	FIVE(Keys.F, Keys.BUTTON_R1);
 	
-	public final int key;
+	public final int[] keys;
 	
-	private Lasers(final int key)
+	private Lasers(int... keys)
 	{
-		this.key = key;
+		this.keys = keys;
 	}
 	
 	public static Lasers valueOf(int key)
 	{
 		for (Lasers l : Lasers.values())
 		{
-			if (l.key == key)
-				return l;
+			for (int k : l.keys)
+			{
+				if (k == key)
+				{
+					return l;
+				}
+			}
 		}
 		return null;
 	}
