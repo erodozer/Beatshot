@@ -1,3 +1,5 @@
+import logic.Engine;
+
 import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -8,6 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.shipvgdc.sugdk.tween.TweenableActor;
 import com.shipvgdc.sugdk.tween.TweenableSprite;
 
+/**
+ * Main application runner for the game
+ * @author nhydock
+ *
+ */
 public class runner extends Game {
 	
 	static
