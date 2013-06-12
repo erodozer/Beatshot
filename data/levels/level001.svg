@@ -39,7 +39,10 @@
 			x=".85"
 			y=".75"/>			
 		<layer
-			image="level001.layer001.png"
-			scroll="0" />
+			image="level001.layer002.png"
+			scroll="-.1" />
+		<layer
+			image="level001.layer003.png"
+			scroll="-.2" />
 	</field>
 </level >
