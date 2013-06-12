@@ -178,6 +178,9 @@ public class Level{
 		this.world.initialize();
 		
 		Engine.score = 0f;
+		
+		Position p = (Position)Engine.player.getComponent(Position.CType);
+		p.location.x = FOV[2]/2.0f;
 	}
 
 	/**
