@@ -2,20 +2,18 @@ package logic.level;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import logic.Consts.DataDir;
 import logic.Enemy.EnemyAtlas;
+import util.Path;
+import util.Step;
+import util.SvgPathParser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
-import com.shipvgdc.sugdk.util.pathfinding.Path;
-import com.shipvgdc.sugdk.util.pathfinding.Step;
-import com.shipvgdc.sugdk.util.pathfinding.SvgPathParser;
 
 public class LevelData
 {

@@ -1,7 +1,6 @@
 package logic.level;
 
 import logic.Engine;
-import logic.Player;
 import logic.Consts.DataDir;
 import logic.level.LevelData.Background.FieldData;
 import logic.level.LevelData.Background.LayerData;
@@ -15,9 +14,6 @@ import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
 import EntitySystems.Components.Rotation;
 import EntitySystems.Components.Scrollable;
-import EntitySystems.Components.Velocity;
-
-import aurelienribon.tweenengine.TweenManager;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -30,9 +26,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.shipvgdc.sugdk.graphics.SpriteSheet;
+import util.SpriteSheet;
 
 public class Level{
 	
@@ -62,6 +56,10 @@ public class Level{
 		this.world = Engine.world;
 	}
 	
+	/**
+	 * Updates game logic
+	 * @param delta
+	 */
 	public void advance(float delta)
 	{
 		world.setDelta(delta);

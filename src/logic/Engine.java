@@ -4,7 +4,6 @@ import EntitySystems.AnimationSystem;
 import EntitySystems.BulletLifeSystem;
 import EntitySystems.CollisionEntitySystem;
 import EntitySystems.EmitterSystem;
-import EntitySystems.EnemyMovementSystem;
 import EntitySystems.InputSystem;
 import EntitySystems.MovementSystem;
 import EntitySystems.RenderSystem;

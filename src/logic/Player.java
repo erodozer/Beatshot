@@ -4,8 +4,6 @@ import logic.Bullet.BulletEmitter;
 import logic.Consts.DataDir;
 import logic.Consts.Lasers;
 
-import scenes.Main.PlayerNotification;
-
 import EntitySystems.Components.*;
 
 import com.artemis.Entity;
@@ -17,15 +15,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.shipvgdc.sugdk.graphics.SpriteSheet;
-import com.shipvgdc.sugdk.util.Observable;
+import util.SpriteSheet;
 
 /**
  * 
  * @author nhydock
  *
  */
-public class Player extends Observable<PlayerNotification> {
+public class Player {
 
 	public static final int MAXHP = 100;
 	public static final int MAXAMMO = 100;

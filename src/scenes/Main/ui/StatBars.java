@@ -1,24 +1,17 @@
 package scenes.Main.ui;
 
-import scenes.Main.PlayerNotification;
-
 import EntitySystems.Components.Ammo;
 import EntitySystems.Components.Health;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.shipvgdc.sugdk.graphics.SpriteSheet;
-import com.shipvgdc.sugdk.util.Observer;
+import util.SpriteSheet;
 
 import logic.Engine;
-import logic.Player;
 import logic.Consts.DataDir;
 
 public class StatBars extends Sprite{
@@ -99,7 +92,6 @@ public class StatBars extends Sprite{
 		TextureRegion decotab;
 		
 		float fill;
-		int type;
 		
 		static final int BARHEIGHT = 210;
 		static final int REPEAT = 105;
