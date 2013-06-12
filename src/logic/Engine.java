@@ -20,7 +20,7 @@ public class Engine {
 
 	public static AssetManager assets;
 	public static String level;
-	public static int score;
+	public static float score;
 	
 	public static World world;
 	public static Entity player;

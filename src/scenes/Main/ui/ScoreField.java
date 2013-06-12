@@ -55,7 +55,7 @@ public class ScoreField extends Sprite {
 		back.draw(batch);
 		tab.draw(batch);
 		scoreFont.setColor(Color.WHITE);
-		scoreFont.drawMultiLine(batch, String.format(format, Engine.score), 
+		scoreFont.drawMultiLine(batch, String.format(format, (int)Engine.score), 
 				back.getX()+10, back.getY() + 20, 0, HAlignment.LEFT);
 	}
 }

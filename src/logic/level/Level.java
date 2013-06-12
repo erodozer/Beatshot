@@ -45,7 +45,7 @@ public class Level{
 	public LevelData data;
 	ImmutableBag<Entity> activeEnemies;
 		
-	float[] fieldOfView = {0, 0, 190, 220};
+	public static final float[] FOV = {0, 0, 190, 220};
 
 	/**
 	 * Container of all the entities for this level
@@ -66,6 +66,7 @@ public class Level{
 	{
 		world.setDelta(delta);
 		world.process();
+		Engine.score += 10f*delta;
 	}
 	
 	/**
@@ -95,15 +96,12 @@ public class Level{
 				
 				Entity e = this.world.createEntity();
 				e = s.atlas.createEnemy(enemy.name, e);
-				Position p = e.getComponent(Position.class);
+				Position p = (Position)e.getComponent(Position.CType);
 				p.location.x = enemy.pos.x;
 				p.location.y = enemy.pos.y;
 				this.world.addEntity(e);
 			}
 		}
-		
-		
-		//create the background
 		
 		//create layered background
 		for (int i = 0; i < data.background.stack.size; i++)
@@ -119,20 +117,20 @@ public class Level{
 			{
 				LayerData d = (LayerData)data.background.stack.get(i);
 				t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-				s.setSize(190f, 220f);
-				layer.addComponent(new Position());
+				s.setSize(FOV[2], FOV[3]);
+				layer.addComponent(new Position(), Position.CType);
 					
-				layer.addComponent(new Scrollable(0, d.rate, Math.max(190f/(float)t.getWidth(), 1.0f), Math.max(220f/(float)t.getHeight(), 1.0f)));
+				layer.addComponent(new Scrollable(0, d.rate, Math.max(FOV[2]/(float)t.getWidth(), 1.0f), Math.max(FOV[3]/(float)t.getHeight(), 1.0f)), Scrollable.CType);
 			}
 			else if (f instanceof StaticData)
 			{
 				StaticData d = (StaticData)data.background.stack.get(i);
-				layer.addComponent(new Position(d.x, d.y));
-				layer.addComponent(new Angle(0));
-				layer.addComponent(new Rotation(d.dps));
+				layer.addComponent(new Position(d.x, d.y), Position.CType);
+				layer.addComponent(new Angle(0), Angle.CType);
+				layer.addComponent(new Rotation(d.dps), Rotation.CType);
 			}
 			
-			layer.addComponent(new Renderable(s));
+			layer.addComponent(new Renderable(s), Renderable.CType);
 			
 			gm.add(layer, "Field");
 			this.world.addEntity(layer);
@@ -147,12 +145,12 @@ public class Level{
 			Entity e = this.world.createEntity();
 			TextureRegion r = bannerTex.getFrame(i);
 			Sprite s = new Sprite(r);
-			s.setSize(220, 12);
+			s.setSize(FOV[3], 12);
 			s.setRotation(90);
 			s.setOrigin(0, 0);
 			
 			e.addComponent(new Position(0, 0, 12, 0));
-			e.addComponent(new Scrollable(.35f, 0f, 220f/bannerTex.getFrameWidth(), 1f, r));
+			e.addComponent(new Scrollable(.35f, 0f, FOV[3]/bannerTex.getFrameWidth(), 1f, r));
 			e.addComponent(new Renderable(s));
 			
 			gm.add(e, "Banner");
@@ -163,12 +161,12 @@ public class Level{
 			e = this.world.createEntity();
 			s = new Sprite(r);
 			
-			s.setSize(220, 12);
+			s.setSize(FOV[3], 12);
 			s.setRotation(-90);
 			s.setOrigin(0, 0);
 			s.flip(false, true);
 			
-			e.addComponent(new Position(190, 0, -12, 220));
+			e.addComponent(new Position(FOV[2], 0, -12, FOV[3]));
 			e.addComponent(new Scrollable(-.35f, 0f, 220f/bannerTex.getFrameWidth(), 1f, r));
 			e.addComponent(new Renderable(s));
 			
@@ -178,6 +176,8 @@ public class Level{
 		}
 		
 		this.world.initialize();
+		
+		Engine.score = 0f;
 	}
 
 	/**
