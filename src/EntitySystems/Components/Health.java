@@ -6,14 +6,14 @@ import com.artemis.ComponentType;
 public class Health extends Component {
 	public static ComponentType CType = ComponentType.getTypeFor(Health.class);
 	
-	public int hp;
-	public final int maxhp;
+	public float hp;
+	public final float maxhp;
 	
 	//have value caching for percent calculation
 	private float perc;
-	private int tempHp;
+	private float tempHp;
 	
-	public Health(int maxhp)
+	public Health(float maxhp)
 	{
 		this.hp = this.maxhp = maxhp;
 		this.tempHp = this.hp;

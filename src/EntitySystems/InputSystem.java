@@ -4,6 +4,7 @@ import logic.Consts.Lasers;
 
 import EntitySystems.Components.Ammo;
 import EntitySystems.Components.Bound;
+import EntitySystems.Components.Health;
 import EntitySystems.Components.InputHandler;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Time;
@@ -29,6 +30,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 	
 	private static final float DRAINRATE = 1.0f;
 	private static final float CHARGERATE = 30.0f;
+	private static final float HPCHARGERATE = 5.0f;
 
 	boolean[] shoot;
 	int firing;
@@ -38,6 +40,8 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
     @Mapper ComponentMapper<Position> pm;
     @Mapper ComponentMapper<Velocity> vm;
     @Mapper ComponentMapper<Ammo> am;
+    @Mapper ComponentMapper<Health> hm;
+    
     @Mapper ComponentMapper<Emitter> em;
     @Mapper ComponentMapper<InputHandler> im;
     @Mapper ComponentMapper<Time> tm;
@@ -77,6 +81,9 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 					a.recharge = false;
 				}
 			}
+			
+			Health h = hm.get(e);
+			h.hp = Math.min(h.hp+(HPCHARGERATE*world.delta), h.maxhp);
 		}
 		else
 		{
