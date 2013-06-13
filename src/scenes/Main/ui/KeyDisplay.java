@@ -2,7 +2,7 @@ package scenes.Main.ui;
 
 import logic.Engine;
 import logic.Consts.DataDir;
-import logic.Consts.Lasers;
+import logic.Consts.PlayerInput;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -38,7 +38,7 @@ public class KeyDisplay extends Group {
 		frame = new Sprite(Engine.assets.get(DataDir.Ui + "frame.png", Texture.class));
 		frame.setSize(240, 75);
 		
-		keys = new Sprite[Lasers.values().length];
+		keys = new Sprite[PlayerInput.Lasers];
 		KeyTex = Engine.assets.get(DataDir.Ui + "keys.png", Texture.class);
 
 		for (int i = 0, x = 88, y = 12; i < keys.length; i++, x += KeyTex.getWidth() >> 2)
@@ -93,10 +93,20 @@ public class KeyDisplay extends Group {
 		@Override
 		public boolean keyDown(int keycode)
 		{
-			Lasers laser = Lasers.valueOf(keycode);
-			if (laser != null)
+			PlayerInput input = PlayerInput.valueOf(keycode);
+			if (input == PlayerInput.LEFT)
 			{
-				int i = laser.ordinal();
+				disc.setU(1/3f);
+				disc.setU2(2/3f);
+			}
+			else if (input == PlayerInput.RIGHT)
+			{
+				disc.setU(2/3f);
+				disc.setU2(1f);
+			}
+			else if (input != null)
+			{
+				int i = input.ordinal();
 				Sprite image = this.keys[i];
 				if ((i & 0x0001) == 0x0001) 
 				{
@@ -107,16 +117,6 @@ public class KeyDisplay extends Group {
 					image.setU(.25f); image.setU2(.5f);	
 				}
 			}
-			if (keycode == Input.Keys.LEFT)
-			{
-				disc.setU(1/3f);
-				disc.setU2(2/3f);
-			}
-			if (keycode == Input.Keys.RIGHT)
-			{
-				disc.setU(2/3f);
-				disc.setU2(1f);
-			}
 			
 			return false;
 		}
@@ -124,10 +124,13 @@ public class KeyDisplay extends Group {
 		@Override
 		public boolean keyUp(int keycode)
 		{
-			Lasers laser = Lasers.valueOf(keycode);
-			if (laser != null)
+			PlayerInput input = PlayerInput.valueOf(keycode);
+			if (input.valueOf(keycode) == null)
+				return false;
+			
+			if (input.ordinal() < input.Lasers)
 			{
-				int i = laser.ordinal();
+				int i = input.ordinal();
 				Sprite image = this.keys[i];
 				if ((i & 0x0001) == 0x0001) 
 				{
@@ -139,17 +142,26 @@ public class KeyDisplay extends Group {
 				}
 			}
 			
-			if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+			boolean set = false;
+			for (int i = 0; i < PlayerInput.LEFT.keys.length && !set; i++)
 			{
-				disc.setU(1/3f);
-				disc.setU2(2/3f);
+				if (Gdx.input.isKeyPressed(PlayerInput.LEFT.keys[i]))
+				{
+					disc.setU(1/3f);
+					disc.setU2(2/3f);
+					set = true;
+				}
 			}
-			else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+			for (int i = 0; i < PlayerInput.RIGHT.keys.length && !set; i++)
 			{
-				disc.setU(2/3f);
-				disc.setU2(1f);
+				if (Gdx.input.isKeyPressed(PlayerInput.RIGHT.keys[i]))
+				{
+					disc.setU(2/3f);
+					disc.setU2(1f);
+					set = true;
+				}
 			}
-			else
+			if (!set)
 			{
 				disc.setU(0f);
 				disc.setU2(1/3f);

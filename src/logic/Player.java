@@ -2,7 +2,7 @@ package logic;
 
 import logic.Bullet.BulletEmitter;
 import logic.Consts.DataDir;
-import logic.Consts.Lasers;
+import logic.Consts.PlayerInput;
 
 import EntitySystems.Components.*;
 
@@ -63,14 +63,16 @@ public class Player {
 		e.addComponent(new InputHandler(new int[]{Input.Keys.LEFT, Input.Keys.RIGHT}), InputHandler.CType);
 		
 		float x = -5;
-		for (int i = 0; i < Lasers.values().length; i++, x += 5f)
+		for (int i = 0, angle = 50; i < PlayerInput.Lasers; i++, x += 5f, angle -= 25)
 		{
 			Entity laser = e.getWorld().createEntity();
 			laser = BulletEmitter.createEmitter(laser, 10, .1f, e);
 			Position p = (Position) laser.getComponent(Position.CType);
 			p.offset.x = x;
 			p.offset.y = sprite.getFrameHeight();
-			laser.addComponent(new InputHandler(Lasers.values()[i].keys), InputHandler.CType);
+			Velocity v = (Velocity) laser.getComponent(Velocity.CType);
+			v.setTo(angle, 180f);
+			laser.addComponent(new InputHandler(PlayerInput.values()[i].keys), InputHandler.CType);
 			laser.addComponent(new EntitySystems.Components.Group.Player(), EntitySystems.Components.Group.Player.CType);
 			laser.addToWorld();
 		}

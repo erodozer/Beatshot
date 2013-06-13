@@ -1,6 +1,6 @@
 package EntitySystems;
 
-import logic.Consts.Lasers;
+import logic.Consts.PlayerInput;
 
 import EntitySystems.Components.Ammo;
 import EntitySystems.Components.Bound;
@@ -49,7 +49,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 	public InputSystem() {
 		super(Aspect.getAspectForAll(InputHandler.class, Player.class));
 		
-		shoot = new boolean[Lasers.values().length];	
+		shoot = new boolean[PlayerInput.Lasers];	
 	}
 	
 	@Override
@@ -89,7 +89,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 		{
 			for (int i = 0; i < shoot.length; i++)
 			{
-				if (Lasers.values()[i].keys == im.get(e).keys)
+				if (PlayerInput.values()[i].keys == im.get(e).keys)
 				{
 					if (shoot[i])
 					{
@@ -121,25 +121,27 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 
 	@Override
 	public boolean keyDown(int key) {
-		if (key == Input.Keys.LEFT)
+		PlayerInput l = PlayerInput.valueOf(key);
+		if (l == null)
+			return false;
+		
+		if (l == PlayerInput.LEFT)
 		{
 			left = true;
-			return true;
-		}
-		else if (key == Input.Keys.RIGHT)
-		{
-			right = true;
-			return true;
 		}
 		
-		Lasers l = Lasers.valueOf(key);
-		if (Lasers.valueOf(key) != null)
+		if (l == PlayerInput.RIGHT)
+		{
+			right = true;
+		}
+		
+		//laser input
+		if (l.ordinal() < PlayerInput.Lasers)
 		{
 			shoot[l.ordinal()] = true;
 			firing++;
-			return true;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -150,54 +152,51 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 
 	@Override
 	public boolean keyUp(int key) {
-		if (key == Input.Keys.LEFT)
+		PlayerInput l = PlayerInput.valueOf(key);
+		if (l == null)
+			return false;
+		
+		if (l == PlayerInput.LEFT)
 		{
 			left = false;
-			return true;
-		}
-		else if (key == Input.Keys.RIGHT)
-		{
-			right = false;
-			return true;
 		}
 		
-		Lasers l = Lasers.valueOf(key);
-		if (Lasers.valueOf(key) != null)
+		if (l == PlayerInput.RIGHT)
+		{
+			right = false;
+		}
+		
+		//laser input
+		if (l.ordinal() < PlayerInput.Lasers)
 		{
 			shoot[l.ordinal()] = false;
 			firing--;
-			return true;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean mouseMoved(int arg0, int arg1) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int arg0) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
