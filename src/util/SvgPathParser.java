@@ -38,9 +38,13 @@ public class SvgPathParser {
 		Path p = new Path();
 		String[] points = pathPoints.split("[\r\n\t ,mMcC]+");
 		//we need to start 1 in advance because of how svg paths start with m or c, and they don't get parsed out
+		float x = 0;
+		float y = 0;
 		for (int i = 1; i < points.length; i += 2)
 		{
-			p.appendStep(Float.parseFloat(points[i]), Float.parseFloat(points[i+1]));
+			x += Float.parseFloat(points[i]);
+			y += Float.parseFloat(points[i+1]);
+			p.appendStep(x, y);
 		}
 		return p;
 	}
