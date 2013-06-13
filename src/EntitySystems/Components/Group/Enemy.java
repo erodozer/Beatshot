@@ -10,5 +10,7 @@ public class Enemy extends Component {
 	
 	
 	public static final String TYPE = "Enemy";
+
+	public boolean active;
 	
 }

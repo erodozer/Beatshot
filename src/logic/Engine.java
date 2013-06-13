@@ -29,42 +29,5 @@ public class Engine {
 		level = "level001";
 		assets = new AssetManager();
 		score = 0;
-		
-		world = new World();
-		
-		world.setManager(new TagManager());
-		world.setManager(new GroupManager());
-		
-		world.setSystem(new AnimationSystem());
-		world.setSystem(new BulletLifeSystem());
-		world.setSystem(new EmitterSystem());
-		world.setSystem(new CollisionEntitySystem());
-		world.setSystem(new MovementSystem());
-		
-		world.setSystem(new InputSystem());
-		
-		world.setSystem(new RenderSystem(), true);
-		
-		player = Player.createEntity(world.createEntity());
-		world.getManager(TagManager.class).register(EntitySystems.Components.Group.Player.TYPE, player);
-		
-		player.addToWorld();
-	}
-	
-	/**
-	 * Purges the world of all everything except the player
-	 */
-	public static void purge()
-	{
-		Entity player = world.getManager(TagManager.class).getEntity("Player");
-		
-		//delete everything
-		for (int i = 0; i < world.getEntityManager().getActiveEntityCount(); i++)
-		{
-			Entity e = world.getEntity(i);
-			world.deleteEntity(e);
-		}
-		//readd the player
-		world.addEntity(player);
 	}
 }

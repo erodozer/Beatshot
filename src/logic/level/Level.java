@@ -1,6 +1,8 @@
 package logic.level;
 
 import logic.Engine;
+import logic.Player;
+import logic.Bullet.BulletEmitter;
 import logic.Consts.DataDir;
 import logic.level.LevelData.Background.FieldData;
 import logic.level.LevelData.Background.LayerData;
@@ -14,6 +16,7 @@ import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
 import EntitySystems.Components.Rotation;
 import EntitySystems.Components.Scrollable;
+import EntitySystems.Components.Velocity;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -26,18 +29,26 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+
 import util.SpriteSheet;
 
 public class Level{
 	
-	//we set a constant maximum amount of sprites we draw to keep performance at its peak
-	//sprites includes both bullets and creatures, pretty much anything in the world
-	private static final int MAX_SPRITES = 128;
+	/**
+	 * Defines how we handle enemy spawning
+	 * In endurance mode, enemy spawns are randomly selected and just occur every 1000 meters
+	 * You also get points for how far you progress in endurance mode
+	 * 
+	 * In story mode, enemys spawn where they are laid out in the level and are capable of blocking progression until defeated
+	 * Score bonuses are recieved for beating a level quickly and for defeating all enemies
+	 */
+	private static boolean EnduranceMode = true;
+	
 	private int currentEnemyGroup;
 	
 	//game load data files
 	public LevelData data;
-	ImmutableBag<Entity> activeEnemies;
 		
 	public static final float[] FOV = {0, 0, 190, 220};
 
@@ -46,6 +57,15 @@ public class Level{
 	 */
 	public World world;
 	
+	private float distance;
+	private float totalDistance;
+	
+	private Array<Entity> activeEnemies;
+	private Array<Entity> oldEnemies;
+	
+	RenderSystem rs;
+	EnemySystem es;
+	
 	/**
 	 * Loads and constructs a level
 	 * @param id - name of the level
@@ -53,7 +73,31 @@ public class Level{
 	public Level(String id)
 	{
 		data = new LevelData(id);
-		this.world = Engine.world;
+		world = new World();
+		
+		world.setManager(new TagManager());
+		world.setManager(new GroupManager());
+		
+		world.setSystem(new AnimationSystem());
+		world.setSystem(new BulletLifeSystem());
+		world.setSystem(new EmitterSystem());
+		world.setSystem(new CollisionEntitySystem());
+		world.setSystem(new MovementSystem());
+		
+		world.setSystem(new InputSystem());
+		
+		rs = new RenderSystem();
+		es = new EnemySystem();
+		world.setSystem(rs, true);
+		world.setSystem(es, true);
+		
+		Entity player = Player.createEntity(world.createEntity());
+		world.getManager(TagManager.class).register(EntitySystems.Components.Group.Player.TYPE, player);
+		
+		player.addToWorld();
+		
+		Engine.world = world;
+		Engine.player = player;
 	}
 	
 	/**
@@ -64,7 +108,23 @@ public class Level{
 	{
 		world.setDelta(delta);
 		world.process();
-		Engine.score += 10f*delta;
+		
+		float travel = 10f*delta;
+		if (EnduranceMode)
+		{
+			distance += travel;
+			Engine.score += travel;
+			if (distance > 1000f)
+			{
+				totalDistance += distance;
+				distance -= 1000f;
+				oldEnemies = es.killEnemies(activeEnemies);
+				activeEnemies = es.spawnEnemies(data.enemyData.get((int)(Math.random()*data.enemyData.size)));
+			}
+		}
+		
+		es.processEntities(oldEnemies);
+		es.processEntities(activeEnemies);
 	}
 	
 	/**
@@ -73,7 +133,6 @@ public class Level{
 	public void draw(SpriteBatch batch)
 	{
 		world.getSystem(RenderSystem.class).draw(batch);
-		
 	}
 
 	/**
@@ -97,6 +156,9 @@ public class Level{
 				Position p = (Position)e.getComponent(Position.CType);
 				p.location.x = enemy.pos.x;
 				p.location.y = enemy.pos.y;
+				Entity emitter = this.world.createEntity();
+				emitter = BulletEmitter.createEmitter(emitter, 10, 1.0f, e);
+				
 				this.world.addEntity(e);
 			}
 		}
@@ -165,7 +227,7 @@ public class Level{
 			s.flip(false, true);
 			
 			e.addComponent(new Position(FOV[2], 0, -12, FOV[3]));
-			e.addComponent(new Scrollable(-.35f, 0f, 220f/bannerTex.getFrameWidth(), 1f, r));
+			e.addComponent(new Scrollable(-.35f, 0f, FOV[3]/bannerTex.getFrameWidth(), 1f, r));
 			e.addComponent(new Renderable(s));
 			
 			gm.add(e, "Banner");
@@ -173,12 +235,12 @@ public class Level{
 			e.addToWorld();
 		}
 		
+		Position p = (Position)Engine.player.getComponent(Position.CType);
+		p.location.x = FOV[2]/2.0f;
+		
 		this.world.initialize();
 		
 		Engine.score = 0f;
-		
-		Position p = (Position)Engine.player.getComponent(Position.CType);
-		p.location.x = FOV[2]/2.0f;
 	}
 
 	/**
