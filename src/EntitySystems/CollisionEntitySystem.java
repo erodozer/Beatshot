@@ -115,5 +115,6 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 		{
 			target.deleteFromWorld();
 		}
+		bullet.deleteFromWorld();
 	}
 }
