@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import logic.Bullet.BulletEmitter;
 import logic.Consts.DataDir;
 
 import EntitySystems.Components.Bound;
 import EntitySystems.Components.Health;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
+import EntitySystems.Components.Velocity;
+import EntitySystems.Components.Group.Enemy;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
@@ -95,6 +98,13 @@ public class EnemyAtlas{
 		e.addComponent(new Health(enemy.maxhp), Health.CType);
 		e.addComponent(new Bound(shape), Bound.CType);
 		e.addComponent(new Position(), Position.CType);
+		e.addComponent(new Velocity(), Velocity.CType);
+		e.addComponent(new Enemy(), Enemy.CType);
+		
+		Entity emitter = BulletEmitter.createEmitter(e.getWorld().createEntity(), 5, 1.0f, e);
+		Velocity v = (Velocity)emitter.getComponent(Velocity.CType);
+		v.y = (float)(Math.random()*80f) + 100f;
+		emitter.addToWorld();
 		
 		return e;
 	}
@@ -115,12 +125,12 @@ public class EnemyAtlas{
 		private EnemyData(Element dataSrc)
 		{
 			name = dataSrc.getAttribute("name");
-			region = new TextureRegion(atlasImage, 
-					Integer.parseInt(dataSrc.getAttribute("x", "0")),
-					Integer.parseInt(dataSrc.getAttribute("y", "0")),
-					Integer.parseInt(dataSrc.getAttribute("width", "1")),
-					Integer.parseInt(dataSrc.getAttribute("height", "1")));
-			maxhp = Integer.parseInt(dataSrc.getAttribute("hp", "10"));
+			region = new TextureRegion(atlasImage,
+					dataSrc.getIntAttribute("x", 0),
+					dataSrc.getIntAttribute("y", 0),
+					dataSrc.getIntAttribute("width", 1),
+					dataSrc.getIntAttribute("height", 1));
+			maxhp = dataSrc.getIntAttribute("hp", 10);
 		}
 	}
 }
