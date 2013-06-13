@@ -68,17 +68,8 @@ public class LevelData
 			
 			for (Element e : spawnPath.keySet())
 			{
-				SpawnSet spawnSet = new SpawnSet(atlas);
-				String[] names = e.getAttribute("enemies").split("[, ]+");
-				for (int j = 0; j < names.length; j++)
-				{
-					Spawn spawn = new Spawn();
-					
-					Step pos = spawnPath.get(e).getStep(j);
-					spawn.pos = new Vector2(pos.x, pos.y);
-					spawn.name = names[i];
-					spawnSet.spawns.add(spawn);
-				}
+				SpawnSet spawnSet = new SpawnSet(atlas, e, spawnPath.get(e));
+
 				enemyData.add(spawnSet);
 			}
 		}
@@ -95,19 +86,62 @@ public class LevelData
 	
 	public static class Spawn
 	{
-		Vector2 pos;
-		String name;
+		public Vector2 pos;
+		public String name;
 	}
 	
 	public static class SpawnSet
 	{
-		EnemyAtlas atlas;
-		Array<Spawn> spawns;
+		public EnemyAtlas atlas;
+		public Array<Spawn> spawns;
+		public float location;
 		
-		public SpawnSet(EnemyAtlas atlas)
+		public SpawnSet(EnemyAtlas atlas, Element e, Path points)
 		{
 			this.atlas = atlas;
 			spawns = new Array<Spawn>();
+			
+			String[] names = e.getAttribute("enemies").split("[, ]+");
+			for (int j = 0; j < names.length; j++)
+			{
+				Spawn spawn = new Spawn();
+				
+				Step pos = points.getStep(j);
+				spawn.pos = new Vector2(pos.x, pos.y);
+				spawn.name = names[j];
+				spawns.add(spawn);
+			}
+			
+			findLocation();
+		}
+		
+		/**
+		 * Readjusts the spawn data's location according to the spawn points
+		 * Only call this after all spawn data has been loaded
+		 */
+		private void findLocation()
+		{
+			
+			//Finds the lowest point of the spawns
+			float low = spawns.first().pos.y;
+			for (int i = 1; spawns.size; i++)
+			{
+				float y = spawns.get(i).pos.y;
+				if (y < low)
+				{
+					low = y;
+				}
+			}
+			
+			//set's the group's location to that low point
+			this.location = low;
+			
+			//adjust all spawns to be relative to that low point
+			for (int i = 0; spawns.size; i++)
+			{
+				spawns.get(i).pos.y -= low;
+			}
+			
 		}
 	}
 	
@@ -156,7 +190,7 @@ public class LevelData
 			public LayerData(Element e)
 			{
 				image = DataDir.Levels + e.getAttribute("image");
-				rate = Float.parseFloat(e.getAttribute("scroll", "0"));
+				rate = e.getFloatAttribute("scroll", 0);
 			}
 		}
 		
@@ -175,10 +209,10 @@ public class LevelData
 			public StaticData(Element e)
 			{
 				image = DataDir.Levels + e.getAttribute("image");
-				dps = Float.parseFloat(e.getAttribute("rot", "0"));
+				dps = e.getFloatAttribute("rot", 0f);
 				
-				x = Float.parseFloat(e.getAttribute("x", "0"));
-				y = Float.parseFloat(e.getAttribute("y", "0"));
+				x = e.getFloatAttribute("x", 0f);
+				y = e.getFloatAttribute("y", 0f);
 				
 				//allow using percentages for position on screen
 				if (Math.abs(x) < 1f)
