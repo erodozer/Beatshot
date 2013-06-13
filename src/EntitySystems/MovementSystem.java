@@ -41,32 +41,6 @@ public class MovementSystem extends EntityProcessingSystem {
 		Path path = pathmap.getSafe(e);
 		Anchor anchor = ancmap.getSafe(e);
 		
-		//if entity is anchored
-		if (anchor != null)
-		{
-			Position p1 = posmap.get(e);
-			Position p2 = posmap.get(anchor.link);
-			
-			p1.location.set(p2.location.x+p2.offset.x, p2.location.y+p2.offset.y);
-		}
-		//entity has a path
-		else if (path != null)
-		{
-			if (t.curr > path.duration)
-			{
-				e.deleteFromWorld();
-				return;
-			}
-			t.curr += world.delta;
-			Vector2 vec = path.path.getContinuousLocation(t.curr/path.duration);
-			p.location.set(vec);
-		}
-		//entity has velocity
-		else if (v != null)
-		{
-			p.location.add(v.x * world.delta, v.y * world.delta);
-		}
-		
 		Angle a = angmap.getSafe(e);
 		//rotate the angle
 		if (a != null)
@@ -76,6 +50,37 @@ public class MovementSystem extends EntityProcessingSystem {
 			{
 				a.degrees += r.rate * world.delta;
 			}
+		}
+		
+		//if entity is anchored
+		if (anchor != null)
+		{
+			Position p1 = posmap.get(e);
+			Position p2 = posmap.get(anchor.link);
+			
+			p1.location.x = p2.location.x+p2.offset.x;
+			p1.location.y = p2.location.y+p2.offset.y;
+			return;
+		}
+		
+		//entity has a path
+		if (path != null)
+		{
+			if (t.curr > path.duration)
+			{
+				e.deleteFromWorld();
+				return;
+			}
+			t.curr += world.delta;
+			Vector2 vec = path.path.getContinuousLocation(t.curr/path.duration);
+			p.location.x = vec.x;
+			p.location.y = vec.y;
+		}
+		//entity has velocity
+		if (v != null)
+		{
+			p.location.x += v.x * world.delta;
+			p.location.y += v.y * world.delta;
 		}
 	}
 
