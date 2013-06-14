@@ -56,10 +56,18 @@ public class MovementSystem extends EntityProcessingSystem {
 		if (anchor != null)
 		{
 			Position p1 = posmap.get(e);
-			Position p2 = posmap.get(anchor.link);
-			
-			p1.location.x = p2.location.x+p2.offset.x;
-			p1.location.y = p2.location.y+p2.offset.y;
+			Position p2 = posmap.getSafe(anchor.link);
+			//if the object is anchored to nother then it should be removed from the world
+			// ex. an enemy dies an its emitter still exists for a moment
+			if (p2 != null)
+			{
+				p1.location.x = p2.location.x+p2.offset.x;
+				p1.location.y = p2.location.y+p2.offset.y;
+			}
+			else
+			{
+				world.deleteEntity(e);
+			}
 			return;
 		}
 		
