@@ -1,9 +1,12 @@
 package EntitySystems;
 
-import logic.level.Level;
+import static logic.level.Level.FOV;
+import logic.Bullet.BulletEmitter;
 import logic.level.LevelData.Spawn;
 import logic.level.LevelData.SpawnSet;
+import EntitySystems.Components.Bound;
 import EntitySystems.Components.Position;
+import EntitySystems.Components.Renderable;
 import EntitySystems.Components.Velocity;
 import EntitySystems.Components.Group.Bullet;
 import EntitySystems.Components.Group.Enemy;
@@ -13,9 +16,11 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 
 public class EnemySystem extends EntityProcessingSystem {
@@ -46,12 +51,13 @@ public class EnemySystem extends EntityProcessingSystem {
 	protected void process(Entity e) {
 		Enemy enemy = em.get(e);
 		
+		Velocity v = (Velocity)e.getComponent(Velocity.CType);
+		Position p = (Position)e.getComponent(Position.CType);
+		
 		if (!enemy.active)
 		{
-			Velocity v = (Velocity)e.getComponent(Velocity.CType);
-			Position p = (Position)e.getComponent(Position.CType);
 			v.y = -10;
-			if (p.location.x < ((int)Level.FOV[2] >> 1))
+			if (p.location.x < ((int)FOV[2] >> 1))
 			{
 				v.x = -30;
 			}
@@ -60,14 +66,21 @@ public class EnemySystem extends EntityProcessingSystem {
 				v.x = 30;
 			}
 			
-			if (p.location.x < 0 || p.location.x > Level.FOV[2])
+			if (p.location.x < 0 || p.location.x > FOV[2])
 			{
 				world.deleteEntity(e);
 			}
 		}
 		else
 		{
-			
+			if (p.location.y > FOV[3]-30)
+			{
+				v.y = -40;
+			}
+			else
+			{
+				v.y = 0;
+			}
 		}
 	}
 
@@ -91,11 +104,19 @@ public class EnemySystem extends EntityProcessingSystem {
 			Spawn s = spawnSet.spawns.get(i);
 			Entity e = world.createEntity();
 			spawnSet.atlas.createEnemy(s.name, e);
-			
-			
+			Enemy enemy = (Enemy)e.getComponent(Enemy.CType);
+			enemy.active = true;
+			Position p = (Position)e.getComponent(Position.CType);
+			p.location.x = s.pos.x;
+			p.location.y = s.pos.y + 250f;
+			Sprite sprite = ((Renderable)e.getComponent(Renderable.CType)).sprite;
+			sprite.setPosition(p.location.x + p.offset.x, p.location.y + p.offset.y);
+			world.getManager(GroupManager.class).add(e, "Enemy");
+			e.addToWorld();
+			enemies.add(e);
 		}
 		
-		return null;
+		return enemies;
 	}
 	
 }

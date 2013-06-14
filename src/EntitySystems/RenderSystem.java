@@ -1,6 +1,7 @@
 package EntitySystems;
 
 import logic.Engine;
+import static logic.level.Level.FOV;
 import EntitySystems.Components.*;
 import EntitySystems.Components.Group.*;
 
@@ -17,6 +18,7 @@ import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -38,15 +40,14 @@ public class RenderSystem extends EntitySystem {
 	@Mapper ComponentMapper<Enemy> enemymap;
 
 	//system has its own drawing components
-	OrthographicCamera camera;
-	
-	float[] fieldOfView = {0, 0, 190, 220};
+	Matrix4 camera;
 
 	@Override
 	protected void initialize()
 	{
-		camera = new OrthographicCamera(240, 320);
-		camera.position.set(70, 85, 0);
+		camera = new Matrix4();
+		camera.setToOrtho2D(0, 0, 240, 320);
+		camera.translate(FOV[0], FOV[1], 0);
 	}
 	
 	@Override
@@ -80,7 +81,7 @@ public class RenderSystem extends EntitySystem {
 	
 	public boolean inView(Vector2 loc)
 	{
-		return loc.x >= fieldOfView[0] && loc.x <= fieldOfView[2] && loc.y >= fieldOfView[1] && loc.y <= fieldOfView[3];
+		return loc.x >= FOV[0] && loc.x <= FOV[2] && loc.y >= FOV[1] && loc.y <= FOV[3];
 	}
 
 	
@@ -99,8 +100,7 @@ public class RenderSystem extends EntitySystem {
 		
 		//we group the different parts to maximize efficiency
 		
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
+		batch.setProjectionMatrix(camera);
 		//get and render the field
 		batch.begin();
 		bag = this.world.getManager(GroupManager.class).getEntities("Field");
@@ -117,20 +117,38 @@ public class RenderSystem extends EntitySystem {
 		e = tm.getEntity("PlayerShadow");
 		r = rmap.get(e);
 		r.sprite.draw(batch);
-		e = tm.getEntity("Player");
+		e = Engine.player;
 		r = rmap.get(e);
 		r.sprite.draw(batch);
 		batch.end();
 
-		bag = gm.getEntities("Bullet");
+		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
 		batch.begin();
 		//render enemy bullets
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			Enemy p = enemymap.getSafe(e);
+			if (p != null)
+			{
+				r = (Renderable)e.getComponent(Renderable.CType);
+				r.sprite.draw(batch);
+			}
+		}
 		batch.end();
 		
+		bag = gm.getEntities(EntitySystems.Components.Group.Enemy.TYPE);
 		batch.begin();
 		//render enemies
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			r = (Renderable)e.getComponent(Renderable.CType);
+			r.sprite.draw(batch);
+		}
 		batch.end();
 		
+		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
 		batch.begin();
 		//render player bullets
 		for (int i = 0; i < bag.size(); i++)

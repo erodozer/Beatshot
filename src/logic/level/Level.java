@@ -22,8 +22,8 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
-import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -45,12 +45,17 @@ public class Level{
 	 */
 	private static boolean EnduranceMode = true;
 	
+	/**
+	 * How often spawns should occur in Endurance Mode
+	 */
+	private static float ENDURANCERATE = 100f;
+	
 	private int currentEnemyGroup;
 	
 	//game load data files
 	public LevelData data;
 		
-	public static final float[] FOV = {0, 0, 190, 220};
+	public static final float[] FOV = {50, 75, 190, 220};
 
 	/**
 	 * Container of all the entities for this level
@@ -65,6 +70,8 @@ public class Level{
 	
 	RenderSystem rs;
 	EnemySystem es;
+
+	private Sound warningBeep;
 	
 	/**
 	 * Loads and constructs a level
@@ -92,12 +99,15 @@ public class Level{
 		world.setSystem(es, true);
 		
 		Entity player = Player.createEntity(world.createEntity());
-		world.getManager(TagManager.class).register(EntitySystems.Components.Group.Player.TYPE, player);
+		world.getManager(TagManager.class).register("Player", player);
 		
 		player.addToWorld();
 		
 		Engine.world = world;
 		Engine.player = player;
+		
+		activeEnemies = new Array<Entity>();
+		oldEnemies = new Array<Entity>();
 	}
 	
 	/**
@@ -114,12 +124,13 @@ public class Level{
 		{
 			distance += travel;
 			Engine.score += travel;
-			if (distance > 1000f)
+			if (distance > ENDURANCERATE)
 			{
 				totalDistance += distance;
-				distance -= 1000f;
+				distance -= ENDURANCERATE;
 				oldEnemies = es.killEnemies(activeEnemies);
 				activeEnemies = es.spawnEnemies(data.enemyData.get((int)(Math.random()*data.enemyData.size)));
+				warningBeep.play();
 			}
 		}
 		
@@ -241,6 +252,8 @@ public class Level{
 		this.world.initialize();
 		
 		Engine.score = 0f;
+		
+		warningBeep = Engine.assets.get(DataDir.SFX + "warning.wav", Sound.class);
 	}
 
 	/**
@@ -254,5 +267,7 @@ public class Level{
 		}
 		Engine.assets.load(data.bgm, Music.class);
 		Engine.assets.load(DataDir.Ui + "banners.png", Texture.class);
+		
+		Engine.assets.load(DataDir.SFX + "warning.wav", Sound.class);
 	}
 }

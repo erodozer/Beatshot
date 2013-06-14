@@ -124,7 +124,7 @@ public class LevelData
 			
 			//Finds the lowest point of the spawns
 			float low = spawns.first().pos.y;
-			for (int i = 1; spawns.size; i++)
+			for (int i = 1; i < spawns.size; i++)
 			{
 				float y = spawns.get(i).pos.y;
 				if (y < low)
@@ -137,7 +137,7 @@ public class LevelData
 			this.location = low;
 			
 			//adjust all spawns to be relative to that low point
-			for (int i = 0; spawns.size; i++)
+			for (int i = 0; i < spawns.size; i++)
 			{
 				spawns.get(i).pos.y -= low;
 			}
