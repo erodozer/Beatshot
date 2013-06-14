@@ -89,19 +89,22 @@ public class EnemyAtlas{
 	public Entity createEnemy(String name, Entity e)
 	{
 		EnemyData enemy = enemyAtlas.get(name);
-
+		if (enemy == null)
+		{
+			return null;
+		}
+		
+		
 		Sprite s = textureAtlas.createSprite(name);
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(s.getWidth(), s.getHeight());
 		
 		e.addComponent(new Renderable(s), Renderable.CType);
 		e.addComponent(new Health(enemy.maxhp), Health.CType);
-		e.addComponent(new Bound(shape), Bound.CType);
+		e.addComponent(new Bound(s.getWidth(), s.getHeight()), Bound.CType);
 		e.addComponent(new Position(), Position.CType);
 		e.addComponent(new Velocity(), Velocity.CType);
 		e.addComponent(new Enemy(), Enemy.CType);
 		
-		Entity emitter = BulletEmitter.createEmitter(e.getWorld().createEntity(), 5, 1.0f, e);
+		Entity emitter = BulletEmitter.createEmitter(e.getWorld().createEntity(), 5, (float)(Math.random()*2.0f), e);
 		Velocity v = (Velocity)emitter.getComponent(Velocity.CType);
 		v.y = (float)(Math.random()*80f) + 100f;
 		emitter.addToWorld();

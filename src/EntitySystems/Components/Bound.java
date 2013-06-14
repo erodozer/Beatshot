@@ -1,28 +1,20 @@
 package EntitySystems.Components;
 
-import java.util.List;
-
 import com.artemis.Component;
 import com.artemis.ComponentType;
-import com.artemis.Entity;
-import com.artemis.utils.ImmutableBag;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Shape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
 
 public class Bound extends Component {
 	public static ComponentType CType = ComponentType.getTypeFor(Bound.class);
 	
-	public Shape shape;
+	private final float width;
+	private final float height;
+	public final float radius;
 	
-	public Bound(Shape s)
+	public Bound(float width, float height)
 	{
-		this.shape = s;
+		this.width = width;
+		this.height = height;
+		
+		this.radius = (float)Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 	}
 }

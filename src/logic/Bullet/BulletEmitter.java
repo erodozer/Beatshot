@@ -21,10 +21,12 @@ import util.SpriteSheet;
 public class BulletEmitter {
 
 	private static SpriteSheet bulletSprites;
+	private static SpriteSheet explosion;
 	
 	static
 	{
 		bulletSprites = new SpriteSheet(Gdx.files.internal(DataDir.Images + "bullets.png"), 2, 2);
+		explosion = new SpriteSheet(Gdx.files.internal(DataDir.Images + "bang.png"), 4, 1);
 	}
 	
 	/**
@@ -37,7 +39,7 @@ public class BulletEmitter {
 	 */
 	public static Entity createEmitter(Entity e, int bulletLimit, float spawnRate, Entity parent)
 	{
-		e.addComponent(new Position(0, 0), Position.CType);		//position of the entity
+		e.addComponent(new Position(), Position.CType);		//position of the entity
 		e.addComponent(new Velocity(0, 200f), Velocity.CType);	//speed at which the bullets fire
 		e.addComponent(new Angle(0), Angle.CType);				//angle at which the bullets fire
 		e.addComponent(new Time(spawnRate), Time.CType);		//bullet fire rate
@@ -52,7 +54,7 @@ public class BulletEmitter {
 	 * bullet data
 	 */
 	
-	private static PolygonShape shape;
+	private static final PolygonShape shape;
 	
 	static
 	{
@@ -77,7 +79,7 @@ public class BulletEmitter {
 		e.addComponent(new Angle(a.degrees), Angle.CType);
 		e.addComponent(new Time(5.0f), Time.CType);
 		e.addComponent(new Bullet(emitter), Bullet.CType);
-		e.addComponent(new Bound(shape), Bound.CType);
+		e.addComponent(new Bound(1.0f, 1.0f), Bound.CType);
 		
 		Sprite s;
 		if (emitter.getComponent(Player.class) != null)

@@ -30,13 +30,8 @@ public class Player {
 	private static SpriteSheet sprite;
 	private static Texture shadow_sprite;
 	
-	private static PolygonShape shape;
-	
 	static
 	{
-		shape = new PolygonShape();
-		shape.setAsBox(1.0f, 1.0f);
-		
 		sprite = new SpriteSheet(Gdx.files.internal(DataDir.Images + "player.png"), 4, 1);
 		shadow_sprite = new Texture(Gdx.files.internal(DataDir.Images + "player_shadow.png"));
 	}
@@ -55,7 +50,7 @@ public class Player {
 		e.addComponent(new Position(0, 0, -sprite.getFrameWidth()/2f, 5), Position.CType);
 		e.addComponent(new Velocity(0, 0), Velocity.CType);
 		
-		e.addComponent(new Bound(shape), Bound.CType);
+		e.addComponent(new Bound(10f, 10f), Bound.CType);
 		
 		e.addComponent(new Renderable(sprite.getFrame(0)), Renderable.CType);
 		e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true), Animation.CType);
