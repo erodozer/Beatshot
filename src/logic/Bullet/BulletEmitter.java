@@ -105,8 +105,10 @@ public class BulletEmitter {
 		Sprite s = new Sprite(explosion.getFrame(0));
 		r.sprite = s;
 		
-		Animation a = new Animation(explosion.getTexture(), 4, .2f, false);
+		Animation a = new Animation(explosion.getTexture(), explosion.frameCount, .08f, false);
 		e.addComponent(a, Animation.CType);
+		
+		e.changedInWorld();
 		
 		return e;
 	}
