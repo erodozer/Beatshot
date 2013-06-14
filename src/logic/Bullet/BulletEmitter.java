@@ -96,4 +96,18 @@ public class BulletEmitter {
 		e.addComponent(new Renderable(s), Renderable.CType);
 		return e;
 	}
+	
+	public static Entity explode(Entity e)
+	{
+		Renderable r = (Renderable)e.getComponent(Renderable.CType);
+		r.sprite = null;
+		
+		Sprite s = new Sprite(explosion.getFrame(0));
+		r.sprite = s;
+		
+		Animation a = new Animation(explosion.getTexture(), 4, .2f, false);
+		e.addComponent(a, Animation.CType);
+		
+		return e;
+	}
 }
