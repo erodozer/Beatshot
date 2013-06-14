@@ -38,11 +38,14 @@ public class Scene implements Screen {
 	private SpriteBatch batch;
 	
 	Matrix4 normalProjection;
+	
+	private static final float[] INTERNAL_RES = {240, 320};
+	private static final float ASPECTRATIO = INTERNAL_RES[1] / INTERNAL_RES[0];
 
 	public Scene()
 	{
 		batch = new SpriteBatch();
-		normalProjection = new Matrix4().setToOrtho2D(0, 0, 240, 320);
+		normalProjection = new Matrix4().setToOrtho2D(0, 0, INTERNAL_RES[0], INTERNAL_RES[1]);
 	}
 	
 	@Override
@@ -88,7 +91,18 @@ public class Scene implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
+		/*
+		normalProjection.setToOrtho2D(0f, 0f, width, height);
 		
+		int sW = (int)(width/INTERNAL_RES[0]);
+		int sH = (int)(height/INTERNAL_RES[1]);
+		
+		int scale = Math.min(sW, sH);
+		
+		normalProjection.scale(scale, scale, 1.0f);
+		
+		normalProjection.translate((width - scale*INTERNAL_RES[0]) / 2f, (height - scale*INTERNAL_RES[1]) / 2f, 0);
+		*/
 	}
 
 	@Override
