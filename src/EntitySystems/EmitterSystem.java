@@ -4,7 +4,9 @@ import logic.Engine;
 import logic.Bullet.BulletEmitter;
 import EntitySystems.Components.Ammo;
 import EntitySystems.Components.Limiter;
+import EntitySystems.Components.Position;
 import EntitySystems.Components.Time;
+import EntitySystems.Components.Velocity;
 import EntitySystems.Components.Group.Emitter;
 import EntitySystems.Components.Group.Enemy;
 import EntitySystems.Components.Group.Player;
@@ -26,7 +28,10 @@ public class EmitterSystem extends EntityProcessingSystem {
 	}
 
 	@Mapper ComponentMapper<Time> tmap;
+	@Mapper ComponentMapper<Position> pmap;
+	@Mapper ComponentMapper<Velocity> vmap;
 	@Mapper ComponentMapper<Emitter> emap;
+	@Mapper ComponentMapper<Enemy> enemies;
 	
 	//emitter handling
 	@Mapper ComponentMapper<Limiter> lmap;
@@ -46,12 +51,23 @@ public class EmitterSystem extends EntityProcessingSystem {
 				processExpired(e);
 			}
 		}
+		
+		Enemy enemy = enemies.getSafe(emit.parent);
+		if (enemy != null)
+		{
+			emit.active = enemy.active;
+			Position p = pmap.get(e);
+			Velocity v = vmap.get(e);
+			
+			float diff = pmap.get(Engine.player).location.x - p.location.x;
+			v.x = diff;
+		}
 	}
 
 	protected void processExpired(Entity e) {
-		if (playerMap.get(e) != null)
+		if (playerMap.getSafe(e) != null)
 		{
-			Ammo a = Engine.player.getComponent(Ammo.class);
+			Ammo a = (Ammo)Engine.player.getComponent(Ammo.CType);
 			if (a.ammo <= 0 || a.recharge)
 			{
 				return;
