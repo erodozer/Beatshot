@@ -1,6 +1,5 @@
 package EntitySystems;
 
-import logic.Consts.PlayerInput;
 
 import EntitySystems.Components.Ammo;
 import EntitySystems.Components.Bound;
@@ -23,6 +22,8 @@ import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
+import core.Consts.PlayerInput;
+
 public class InputSystem extends EntityProcessingSystem implements InputProcessor {
 
 	public static final int LOWAMMOPOINT = 40;
@@ -30,7 +31,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 	
 	private static final float DRAINRATE = 1.0f;
 	private static final float CHARGERATE = 30.0f;
-	private static final float HPCHARGERATE = 5.0f;
+	private static final float HPCHARGERATE = 1.0f;
 
 	boolean[] shoot;
 	int firing;
@@ -72,7 +73,7 @@ public class InputSystem extends EntityProcessingSystem implements InputProcesso
 				vel.x = 0;
 			}
 			
-			Ammo a = am.get(e);
+			Ammo a = am.getSafe(e);
 			if (firing == 0 || a.recharge)
 			{
 				a.ammo = Math.min(a.ammo+(CHARGERATE*world.delta), a.maxammo);
