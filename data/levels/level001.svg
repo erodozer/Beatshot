@@ -19,9 +19,13 @@
 		   block="false" 
 		   enemies="Beatrix, Beatrix, Bass, Beatrix, Beatrix" />
 		<path
-		   d="m 110.5,397.36218 0,-167.14286" 
+		   d="m 10,300 20,0 20,0 20,0 20,0 20,0 20,0 20,0 20,0 0,-25, -20,0, -20,0 -20,0 -20,0 -20,0 -20,0 -20,0 -20,0"
+		   block="false" 
+		   enemies="Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix, Beatrix" />
+		<path
+		   d="m 30,300 40,0 40,0" 
 		   boss="true"
-		   enemies="Beatrix, Bass" />
+		   enemies="Beatrix, Treble, Bass" />
 	</spawn>
 	
 	<field>
@@ -37,7 +41,7 @@
 			image="level001.obj001.png"
 			rot="-65" 
 			x=".85"
-			y=".75"/>			
+			y=".75"/>
 		<layer
 			image="level001.layer002.png"
 			scroll="-.15" />

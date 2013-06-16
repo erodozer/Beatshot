@@ -14,6 +14,13 @@
 		y="0"
 		width="17"
 		height="24" 
-		hp="30" />		
+		hp="30" />	
+	<enemy 
+		name="Treble"
+		x="34"
+		y="0"
+		width="21"
+		height="24" 
+		hp="180"/>		
 </atlas>
 	
