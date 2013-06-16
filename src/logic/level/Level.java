@@ -3,7 +3,6 @@ package logic.level;
 import logic.Engine;
 import logic.Player;
 import logic.Bullet.BulletEmitter;
-import logic.Consts.DataDir;
 import logic.level.LevelData.Background.FieldData;
 import logic.level.LevelData.Background.LayerData;
 import logic.level.LevelData.Background.StaticData;
@@ -12,6 +11,7 @@ import logic.level.LevelData.SpawnSet;
 
 import EntitySystems.*;
 import EntitySystems.Components.Angle;
+import EntitySystems.Components.Health;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
 import EntitySystems.Components.Rotation;
@@ -22,14 +22,18 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+
+import core.Consts.DataDir;
 
 import util.SpriteSheet;
 
@@ -72,6 +76,12 @@ public class Level{
 	EnemySystem es;
 
 	private Sound warningBeep;
+	
+	Entity gameOverBanner;
+
+	private Music nextBgm;	//preloaded bgm;
+	
+	private Array<FileHandle> bgmPaths;
 	
 	/**
 	 * Loads and constructs a level
@@ -116,6 +126,12 @@ public class Level{
 	 */
 	public void advance(float delta)
 	{
+		if (Engine.GameOver)
+		{
+			world.setDelta(0);
+			return;
+		}
+		
 		world.setDelta(delta);
 		world.process();
 		
@@ -130,16 +146,34 @@ public class Level{
 				distance -= ENDURANCERATE;
 				oldEnemies = es.killEnemies(activeEnemies);
 				activeEnemies = es.spawnEnemies(data.enemyData.get((int)(Math.random()*data.enemyData.size)));
-				warningBeep.play();
+				//warningBeep.play();
 			}
 		}
 		
 		es.processEntities(oldEnemies);
 		es.processEntities(activeEnemies);
+		
+		if (!Engine.bgm.isPlaying())
+		{
+			Engine.bgm.dispose();
+			Engine.bgm = nextBgm;
+			Engine.bgm.play();
+			
+			FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+			nextBgm = Gdx.audio.newMusic(n);
+			nextBgm.setLooping(false);
+		}
+		
+		if (Engine.player.getComponent(Health.class).hp <= 0)
+		{
+			Engine.GameOver = true;
+			Engine.bgm.stop();
+		}
 	}
 	
 	/**
 	 * Draws the render system
+	 * @param batch
 	 */
 	public void draw(SpriteBatch batch)
 	{
@@ -208,52 +242,76 @@ public class Level{
 		}
 		
 		//load banners
-		Texture t = Engine.assets.get(DataDir.Ui+"banners.png", Texture.class);
-		t.setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
-		SpriteSheet bannerTex = new SpriteSheet(t, 1, 3);
-		for (int i = 0; i < 3; i++)
 		{
-			Entity e = this.world.createEntity();
-			TextureRegion r = bannerTex.getFrame(i);
-			Sprite s = new Sprite(r);
-			s.setSize(FOV[3], 12);
-			s.setRotation(90);
-			s.setOrigin(0, 0);
-			
-			e.addComponent(new Position(0, 0, 12, 0));
-			e.addComponent(new Scrollable(.35f, 0f, FOV[3]/bannerTex.getFrameWidth(), 1f, r));
-			e.addComponent(new Renderable(s));
-			
-			gm.add(e, "Banner");
-			gm.add(e, "Banner"+(char)(i+65));
-			
-			e.addToWorld();
-			
-			e = this.world.createEntity();
-			s = new Sprite(r);
-			
-			s.setSize(FOV[3], 12);
-			s.setRotation(-90);
-			s.setOrigin(0, 0);
-			s.flip(false, true);
-			
-			e.addComponent(new Position(FOV[2], 0, -12, FOV[3]));
-			e.addComponent(new Scrollable(-.35f, 0f, FOV[3]/bannerTex.getFrameWidth(), 1f, r));
-			e.addComponent(new Renderable(s));
-			
-			gm.add(e, "Banner");
-			gm.add(e, "Banner"+(char)(i+65));
-			e.addToWorld();
+			Texture t = Engine.assets.get(DataDir.Ui+"banners.png", Texture.class);
+			t.setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
+			SpriteSheet bannerTex = new SpriteSheet(t, 1, 3);
+			for (int i = 0; i < 3; i++)
+			{
+				Entity e = this.world.createEntity();
+				TextureRegion r = bannerTex.getFrame(i);
+				Sprite s = new Sprite(r);
+				s.setSize(FOV[3], 12);
+				s.setRotation(90);
+				s.setOrigin(0, 0);
+				
+				e.addComponent(new Position(0, 0, 12, 0));
+				e.addComponent(new Scrollable(.35f, 0f, FOV[3]/bannerTex.getFrameWidth(), 1f, r));
+				e.addComponent(new Renderable(s));
+				
+				gm.add(e, "Banner");
+				gm.add(e, "Banner"+(char)(i+65));
+				
+				e.addToWorld();
+				
+				e = this.world.createEntity();
+				s = new Sprite(r);
+				
+				s.setSize(FOV[3], 12);
+				s.setRotation(-90);
+				s.setOrigin(0, 0);
+				s.flip(false, true);
+				
+				e.addComponent(new Position(FOV[2], 0, -12, FOV[3]));
+				e.addComponent(new Scrollable(-.35f, 0f, FOV[3]/bannerTex.getFrameWidth(), 1f, r));
+				e.addComponent(new Renderable(s));
+				
+				gm.add(e, "Banner");
+				gm.add(e, "Banner"+(char)(i+65));
+				e.addToWorld();
+			}
+		}
+		
+		//game over banner
+		{
+			gameOverBanner = world.createEntity();
+			Sprite s = new Sprite(Engine.assets.get(DataDir.Images+"gameover.png", Texture.class));
+			s.setPosition(0, 80);
+			gameOverBanner.addComponent(new Renderable(s));
+			tm.register("GameOver", gameOverBanner);
+			gameOverBanner.addToWorld();
 		}
 		
 		Position p = (Position)Engine.player.getComponent(Position.CType);
 		p.location.x = FOV[2]/2.0f;
 		
+		FileHandle b = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+		FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+		if (Engine.bgm != null)
+			Engine.bgm.dispose();
+		Engine.bgm = Gdx.audio.newMusic(b);
+		nextBgm = Gdx.audio.newMusic(n);
+		nextBgm.setLooping(false);
+		Engine.bgm.setLooping(false);
+		Engine.bgm.play();
+		
 		this.world.initialize();
 		
 		Engine.score = 0f;
+		Engine.GameOver = false;
 		
 		warningBeep = Engine.assets.get(DataDir.SFX + "warning.wav", Sound.class);
+		
 	}
 
 	/**
@@ -265,9 +323,24 @@ public class Level{
 			FieldData f = data.background.stack.get(i);
 			Engine.assets.load(f.image, Texture.class);
 		}
-		Engine.assets.load(data.bgm, Music.class);
+		//Engine.assets.load(data.bgm, Music.class);
 		Engine.assets.load(DataDir.Ui + "banners.png", Texture.class);
 		
 		Engine.assets.load(DataDir.SFX + "warning.wav", Sound.class);
+		Engine.assets.load(DataDir.Images + "gameover.png", Texture.class);
+		
+		bgmPaths = new Array<FileHandle>(Gdx.files.internal(DataDir.BGM).list());
+	}
+
+	public void unloadAssets() {
+		for (int i = 0; i < data.background.stack.size; i++)
+		{
+			FieldData f = data.background.stack.get(i);
+			Engine.assets.unload(f.image);
+		}
+		//Engine.assets.load(data.bgm, Music.class);
+		Engine.assets.unload(DataDir.Ui + "banners.png");
+		Engine.assets.unload(DataDir.SFX + "warning.wav");
+		Engine.assets.unload(DataDir.Images + "gameover.png");
 	}
 }

@@ -1,7 +1,6 @@
 package scenes.Main.ui;
 
 import logic.Engine;
-import logic.Consts.DataDir;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import core.Consts.DataDir;
 import util.SpriteSheet;
 
 public class ScoreField extends Sprite {

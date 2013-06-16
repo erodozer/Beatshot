@@ -14,6 +14,7 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.PlayerManager;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 
 public class Engine {
 
@@ -23,6 +24,9 @@ public class Engine {
 	
 	public static World world;
 	public static Entity player;
+	public static boolean GameOver;
+	
+	public static Music bgm;
 	
 	static
 	{

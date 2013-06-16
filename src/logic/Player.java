@@ -1,8 +1,6 @@
 package logic;
 
 import logic.Bullet.BulletEmitter;
-import logic.Consts.DataDir;
-import logic.Consts.PlayerInput;
 
 import EntitySystems.Components.*;
 
@@ -15,6 +13,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+
+import core.Consts.DataDir;
+import core.Consts.PlayerInput;
 import util.SpriteSheet;
 
 /**

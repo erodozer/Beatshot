@@ -1,8 +1,6 @@
 package scenes.Main.ui;
 
 import logic.Engine;
-import logic.Consts.DataDir;
-import logic.Consts.PlayerInput;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -12,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
+
+import core.Consts.DataDir;
+import core.Consts.PlayerInput;
 
 public class KeyDisplay extends Group {
 

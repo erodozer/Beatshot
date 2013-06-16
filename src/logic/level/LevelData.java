@@ -3,7 +3,6 @@ package logic.level;
 import java.io.IOException;
 import java.util.HashMap;
 
-import logic.Consts.DataDir;
 import logic.Enemy.EnemyAtlas;
 import util.Path;
 import util.Step;
@@ -14,6 +13,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+
+import core.Consts.DataDir;
 
 public class LevelData
 {
