@@ -9,10 +9,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import core.Consts.DataDir;
 import util.SpriteSheet;
 
 import logic.Engine;
-import logic.Consts.DataDir;
 
 public class StatBars extends Sprite{
 	
@@ -70,7 +71,7 @@ public class StatBars extends Sprite{
 	public void draw(SpriteBatch batch, float alpha)
 	{
 		Health h = Engine.player.getComponent(Health.class);
-		ammoBar.setFill(h.getPercent());
+		hpBar.setFill(h.getPercent());
 		hpBar.draw(batch, alpha);
 		
 		Ammo a = Engine.player.getComponent(Ammo.class);
@@ -122,7 +123,7 @@ public class StatBars extends Sprite{
 		}
 		public void setFill(float amount)
 		{
-			fill = amount;
+			fill = Math.min(1.0f, Math.max(0, amount));
 		}
 	}
 }
