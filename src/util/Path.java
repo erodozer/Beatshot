@@ -124,12 +124,17 @@ public class Path implements Serializable, Iterable<Step> {
 		float real = time*length;
 		l1 = (int)(real);
 		l2 = (int)Math.ceil(time*length);
+		//wrap around points
+		if (l2 >= steps.size())
+		{
+			l2 = 0;
+		}
 		float var = real-l1;
 		
 		Step s1 = steps.get(l1);
 		Step s2 = steps.get(l2);
 		float xDiff = (s2.x - s1.x) * var;
-		float yDiff = (s2.y - s2.y) * var;
+		float yDiff = (s2.y - s1.y) * var;
 		
 		loc = new Vector2(s1.x + xDiff, s1.y + yDiff);
 	

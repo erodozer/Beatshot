@@ -14,10 +14,13 @@
 		   d="m 123.35714,503.79075 24.54373,-14.17032 22.79304,-13.15957 21.10302,-12.18383 19.80517,-11.43453"
 		   block="false" 
 		   enemies="Bass, Bass, Beatrix, Bass, Bass" />
+		   moves="triangle, null, triangle, null, triangle" />
+		
 		<path
 		   d="m 19.071429,333.79075 20,0 20.714286,0 19.285714,0 26.428571,0 22.14286,0 24.28571,0 25,0 25.71429,0"
 		   block="false" 
-		   enemies="Beatrix, Beatrix, Bass, Beatrix, Beatrix" />
+		   enemies="Beatrix, Beatrix, Bass, Beatrix, Beatrix" 
+		   moves="triangle, null, triangle, null, triangle" />
 		<path
 		   d="m 10,300 20,0 20,0 20,0 20,0 20,0 20,0 20,0 20,0 0,-25, -20,0, -20,0 -20,0 -20,0 -20,0 -20,0 -20,0 -20,0"
 		   block="false" 

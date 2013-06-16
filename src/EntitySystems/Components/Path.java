@@ -15,5 +15,6 @@ public class Path extends Component {
 	 */
 	public Path(util.Path path, float duration) {
 		this.path = path;
+		this.duration = duration;
 	}
 }

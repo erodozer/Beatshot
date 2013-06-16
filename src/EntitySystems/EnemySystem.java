@@ -2,12 +2,15 @@ package EntitySystems;
 
 import static logic.level.Level.FOV;
 import logic.Bullet.BulletEmitter;
+import logic.level.LevelData;
 import logic.level.LevelData.Spawn;
 import logic.level.LevelData.SpawnSet;
 import EntitySystems.Components.Animation;
 import EntitySystems.Components.Bound;
+import EntitySystems.Components.Path;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
+import EntitySystems.Components.Time;
 import EntitySystems.Components.Velocity;
 import EntitySystems.Components.Group.Bullet;
 import EntitySystems.Components.Group.Enemy;
@@ -37,6 +40,8 @@ public class EnemySystem extends EntityProcessingSystem {
 	
 	@Mapper ComponentMapper<Velocity> vm;
 	@Mapper ComponentMapper<Position> pm;
+	@Mapper ComponentMapper<Path> pathm;
+	
 	
 	public void processEntities(Array<Entity> enemies)
 	{
@@ -73,6 +78,11 @@ public class EnemySystem extends EntityProcessingSystem {
 		
 		if (!enemy.active)
 		{
+			if (pathm.getSafe(e) != null)
+			{
+				e.removeComponent(Path.class);
+				e.changedInWorld();
+			}
 			v.y = -10;
 			if (p.location.x < ((int)FOV[2] >> 1))
 			{
@@ -97,6 +107,18 @@ public class EnemySystem extends EntityProcessingSystem {
 			else
 			{
 				v.y = 0;
+				if (pathm.getSafe(e) == null)
+				{
+					if (!enemy.movementPath.equals("null"))
+					{
+						System.out.println("yes");
+						Time t = new Time(1.5f);
+						t.loop = true;
+						e.addComponent(t);
+						e.addComponent(new Path(LevelData.enemyPaths.get(enemy.movementPath), 1.5f));
+						e.changedInWorld();
+					}
+				}
 			}
 			
 			Animation a = am.getSafe(e);
@@ -132,9 +154,12 @@ public class EnemySystem extends EntityProcessingSystem {
 			spawnSet.atlas.createEnemy(s.name, e);
 			Enemy enemy = (Enemy)e.getComponent(Enemy.CType);
 			enemy.active = true;
+			enemy.movementPath = s.path;
 			Position p = (Position)e.getComponent(Position.CType);
 			p.location.x = s.pos.x;
 			p.location.y = s.pos.y + 250f;
+			p.offset.x = s.offset.x;
+			p.offset.y = s.offset.y;
 			Sprite sprite = ((Renderable)e.getComponent(Renderable.CType)).sprite;
 			sprite.setPosition(p.location.x + p.offset.x, p.location.y + p.offset.y);
 			world.getManager(GroupManager.class).add(e, "Enemy");

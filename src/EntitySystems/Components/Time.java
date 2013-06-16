@@ -20,13 +20,18 @@ public class Time extends Component {
 	 */
 	public float start;
 	
+	public boolean loop;
+	
 	public Time(float lifeLength)
 	{
 		this.start = this.curr = lifeLength;
+		this.loop = false;
 	}
 	
 	public void update(float delta)
 	{
 		this.curr -= delta;
+		if (this.loop && this.curr <= 0)
+			this.curr = start;
 	}
 }

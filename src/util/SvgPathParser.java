@@ -115,6 +115,25 @@ public class SvgPathParser {
 	}
 	
 	/**
+	 * Gets a map of all parsed paths and the name by which they are associated
+	 * Useful if you want to get a specific path by its id multiple times
+	 * @param svg - element within the svg file to parse
+	 * @return a hashmap of paths keyed by their element
+	 */
+	public static HashMap<String, Path> getPathsNameMap(Element svg)
+	{
+		HashMap<String, Path> map = new HashMap<String, Path>();
+		
+		Array<Element> elements = svg.getChildrenByNameRecursively("path");
+		
+		for (Element e : elements)
+		{
+			map.put(e.getAttribute("id"), SvgPathParser.parsePath(e));
+		}
+		return map;
+	}
+	
+	/**
 	 * Get all parsed paths with a certain pattern within its id
 	 * @param svg - the svg file to search
 	 * @param regexId - pattern of a regular expression used to search ids

@@ -1,7 +1,9 @@
 package logic.level;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import logic.Enemy.EnemyAtlas;
 import util.Path;
@@ -18,6 +20,22 @@ import core.Consts.DataDir;
 
 public class LevelData
 {
+	public static HashMap<String, Path> enemyPaths;
+	
+	static
+	{
+		XmlReader xml = new XmlReader();
+		Element e;
+		try {
+			e = xml.parse(Gdx.files.internal(DataDir.Paths + "movement.svg"));
+			enemyPaths = SvgPathParser.getPathsNameMap(e);
+			enemyPaths.put("null", null);
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 	/**
 	 * All the spawn sets
 	 */
@@ -88,7 +106,9 @@ public class LevelData
 	public static class Spawn
 	{
 		public Vector2 pos;
+		public Vector2 offset;
 		public String name;
+		public String path;
 	}
 	
 	public static class SpawnSet
@@ -96,6 +116,7 @@ public class LevelData
 		public EnemyAtlas atlas;
 		public Array<Spawn> spawns;
 		public float location;
+		public float high;
 		
 		public SpawnSet(EnemyAtlas atlas, Element e, Path points)
 		{
@@ -103,6 +124,7 @@ public class LevelData
 			spawns = new Array<Spawn>();
 			
 			String[] names = e.getAttribute("enemies").split("[, ]+");
+			String[] patterns = e.getAttribute("moves", "null").split("[, ]+");
 			for (int j = 0; j < names.length; j++)
 			{
 				Spawn spawn = new Spawn();
@@ -110,6 +132,17 @@ public class LevelData
 				Step pos = points.getStep(j);
 				spawn.pos = new Vector2(pos.x, pos.y);
 				spawn.name = names[j];
+				spawn.offset = new Vector2(0, 0);
+				try
+				{
+					spawn.path = patterns[j];
+					System.out.println("path");
+				}
+				catch (IndexOutOfBoundsException exception)
+				{
+					System.out.println("no path");
+					spawn.path = "null";
+				}
 				spawns.add(spawn);
 			}
 			
@@ -124,23 +157,32 @@ public class LevelData
 		{
 			
 			//Finds the lowest point of the spawns
-			float low = spawns.first().pos.y;
+			this.location = spawns.first().pos.y;
 			for (int i = 1; i < spawns.size; i++)
 			{
 				float y = spawns.get(i).pos.y;
-				if (y < low)
+				if (y < this.location)
 				{
-					low = y;
+					this.location = y;
 				}
 			}
 			
-			//set's the group's location to that low point
-			this.location = low;
+			//finds the highest point of the spawns
+			high = spawns.first().pos.y;
+			for (int i = 1; i < spawns.size; i++)
+			{
+				float y = spawns.get(i).pos.y;
+				if (y > high)
+				{
+					high = y;
+				}
+			}
 			
 			//adjust all spawns to be relative to that low point
 			for (int i = 0; i < spawns.size; i++)
 			{
-				spawns.get(i).pos.y -= low;
+				spawns.get(i).pos.y -= this.location;
+				//spawns.get(i).offset.y = this.high ;
 			}
 			
 		}
