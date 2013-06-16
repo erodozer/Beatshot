@@ -79,10 +79,6 @@ public class Level{
 	
 	Entity gameOverBanner;
 
-	private Music nextBgm;	//preloaded bgm;
-	
-	private Array<FileHandle> bgmPaths;
-	
 	/**
 	 * Loads and constructs a level
 	 * @param id - name of the level
@@ -153,21 +149,9 @@ public class Level{
 		es.processEntities(oldEnemies);
 		es.processEntities(activeEnemies);
 		
-		if (!Engine.bgm.isPlaying())
-		{
-			Engine.bgm.dispose();
-			Engine.bgm = nextBgm;
-			Engine.bgm.play();
-			
-			FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
-			nextBgm = Gdx.audio.newMusic(n);
-			nextBgm.setLooping(false);
-		}
-		
 		if (Engine.player.getComponent(Health.class).hp <= 0)
 		{
 			Engine.GameOver = true;
-			Engine.bgm.stop();
 		}
 	}
 	
@@ -295,16 +279,6 @@ public class Level{
 		Position p = (Position)Engine.player.getComponent(Position.CType);
 		p.location.x = FOV[2]/2.0f;
 		
-		FileHandle b = bgmPaths.get((int)(Math.random()*bgmPaths.size));
-		FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
-		if (Engine.bgm != null)
-			Engine.bgm.dispose();
-		Engine.bgm = Gdx.audio.newMusic(b);
-		nextBgm = Gdx.audio.newMusic(n);
-		nextBgm.setLooping(false);
-		Engine.bgm.setLooping(false);
-		Engine.bgm.play();
-		
 		this.world.initialize();
 		
 		Engine.score = 0f;
@@ -328,8 +302,6 @@ public class Level{
 		
 		Engine.assets.load(DataDir.SFX + "warning.wav", Sound.class);
 		Engine.assets.load(DataDir.Images + "gameover.png", Texture.class);
-		
-		bgmPaths = new Array<FileHandle>(Gdx.files.internal(DataDir.BGM).list());
 	}
 
 	public void unloadAssets() {

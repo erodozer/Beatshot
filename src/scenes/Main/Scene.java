@@ -18,12 +18,15 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLCommon;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.Array;
 
 import core.Consts.DataDir;
 
@@ -51,6 +54,10 @@ public class Scene implements Screen {
 	private Sprite curtainRight;
 		
 	private InputMultiplexer input;
+	
+	private Music nextBgm;	//preloaded bgm;
+
+	private Array<FileHandle> bgmPaths;
 	
 	public Scene()
 	{
@@ -175,6 +182,17 @@ public class Scene implements Screen {
 			keydisp.draw(batch, 1.0f);
 			batch.end();
 		}
+		
+		if (Engine.bgm != null && !Engine.bgm.isPlaying())
+		{
+			Engine.bgm.dispose();
+			Engine.bgm = nextBgm;
+			Engine.bgm.play();
+			
+			FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+			nextBgm = Gdx.audio.newMusic(n);
+			nextBgm.setLooping(false);
+		}
 	}
 
 	@Override
@@ -232,6 +250,16 @@ public class Scene implements Screen {
 		input.addProcessor(new SystemKeys(this));
 		
 		uiReady = true;
+		
+		FileHandle b = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+		FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+		if (Engine.bgm != null)
+			Engine.bgm.dispose();
+		Engine.bgm = Gdx.audio.newMusic(b);
+		nextBgm = Gdx.audio.newMusic(n);
+		nextBgm.setLooping(false);
+		Engine.bgm.setLooping(false);
+		Engine.bgm.play();
 	}
 	
 	/**
@@ -244,6 +272,8 @@ public class Scene implements Screen {
 		ScoreField.loadAssets();
 		uiReady = false;
 		
+		bgmPaths = new Array<FileHandle>(Gdx.files.internal(DataDir.BGM).list());
+	
 		this.setLevel("level001");
 	}
 	
