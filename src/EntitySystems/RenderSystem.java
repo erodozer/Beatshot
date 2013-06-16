@@ -65,7 +65,7 @@ public class RenderSystem extends EntitySystem {
 			Angle a = amap.getSafe(e);
 			if (a != null)
 				r.sprite.setRotation(a.degrees);
-			Position p = pmap.get(e);
+			Position p = pmap.getSafe(e);
 			if (p != null)
 				r.sprite.setPosition(p.location.x+p.offset.x, p.location.y+p.offset.y);
 			
@@ -112,58 +112,8 @@ public class RenderSystem extends EntitySystem {
 		}
 		batch.end();
 		
-		//render the player
 		batch.begin();
-		e = tm.getEntity("PlayerShadow");
-		r = rmap.get(e);
-		r.sprite.draw(batch);
-		e = Engine.player;
-		r = rmap.get(e);
-		r.sprite.draw(batch);
-		batch.end();
-
-		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
-		batch.begin();
-		//render enemy bullets
-		for (int i = 0; i < bag.size(); i++)
-		{
-			e = bag.get(i);
-			Enemy p = enemymap.getSafe(e);
-			if (p != null)
-			{
-				r = (Renderable)e.getComponent(Renderable.CType);
-				r.sprite.draw(batch);
-			}
-		}
-		batch.end();
-		
-		bag = gm.getEntities(EntitySystems.Components.Group.Enemy.TYPE);
-		batch.begin();
-		//render enemies
-		for (int i = 0; i < bag.size(); i++)
-		{
-			e = bag.get(i);
-			r = (Renderable)e.getComponent(Renderable.CType);
-			r.sprite.draw(batch);
-		}
-		batch.end();
-		
-		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
-		batch.begin();
-		//render player bullets
-		for (int i = 0; i < bag.size(); i++)
-		{
-			e = bag.get(i);
-			Player p = playermap.getSafe(e);
-			if (p != null)
-			{
-				r = (Renderable)e.getComponent(Renderable.CType);
-				r.sprite.draw(batch);
-			}
-		}
-		batch.end();
-		
-		batch.begin();
+		//draw warning banners
 		//Display banners;
 		Ammo a = (Ammo)Engine.player.getComponent(Ammo.CType);
 		Health h = (Health)Engine.player.getComponent(Health.CType);
@@ -222,8 +172,66 @@ public class RenderSystem extends EntitySystem {
 			
 			r.sprite.draw(batch);
 		}
+		batch.end();
 		
+		//render the player
+		batch.begin();
+		e = tm.getEntity("PlayerShadow");
+		r = rmap.get(e);
+		r.sprite.draw(batch);
+		e = Engine.player;
+		r = rmap.get(e);
+		r.sprite.draw(batch);
+		batch.end();
+
+		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
+		batch.begin();
+		//render enemy bullets
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			Enemy p = enemymap.getSafe(e);
+			if (p != null)
+			{
+				r = (Renderable)e.getComponent(Renderable.CType);
+				r.sprite.draw(batch);
+			}
+		}
+		batch.end();
 		
+		bag = gm.getEntities(EntitySystems.Components.Group.Enemy.TYPE);
+		batch.begin();
+		//render enemies
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			r = (Renderable)e.getComponent(Renderable.CType);
+			r.sprite.draw(batch);
+		}
+		batch.end();
+		
+		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
+		batch.begin();
+		//render player bullets
+		for (int i = 0; i < bag.size(); i++)
+		{
+			e = bag.get(i);
+			Player p = playermap.getSafe(e);
+			if (p != null)
+			{
+				r = (Renderable)e.getComponent(Renderable.CType);
+				r.sprite.draw(batch);
+			}
+		}
+		batch.end();
+		
+		batch.begin();
+		//draw game over banner
+		if (Engine.GameOver)
+		{
+			r = (Renderable)tm.getEntity("GameOver").getComponent(Renderable.CType);
+			r.sprite.draw(batch);
+		}
 		batch.end();
 	}
 	
