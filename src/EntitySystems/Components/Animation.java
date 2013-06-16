@@ -70,8 +70,14 @@ public class Animation extends Component {
 	
 	public void update(float delta)
 	{
+		if (done)
+			return;
+		
 		prev += delta;
 		next -= delta;
+		
+		if (next <= 0)
+			advance();
 	}
 	
 	public void advance()
