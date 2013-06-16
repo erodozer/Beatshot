@@ -1,5 +1,6 @@
 package EntitySystems;
 
+import logic.Engine;
 import logic.Bullet.BulletEmitter;
 import EntitySystems.Components.Bound;
 import EntitySystems.Components.Health;
@@ -38,13 +39,11 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 	@Mapper ComponentMapper<Health> hm;
 	
 	
-    private ImmutableBag<Entity> playerEntities;
     private ImmutableBag<Entity> enemyEntities;
 
     @Override
     public void initialize()
     {
-    	playerEntities = world.getManager(GroupManager.class).getEntities("Player");
     	enemyEntities = world.getManager(GroupManager.class).getEntities("Enemy");
     }
 	
@@ -71,7 +70,7 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 			{
 				Entity collider = enemyEntities.get(i);
 				enemy = (Enemy)collider.getComponent(Enemy.CType);
-				if (!enemy.active)
+				if (!enemy.active || enemy.dead)
 					continue;
 				
 				Bound target = (Bound)collider.getComponent(Bound.CType);
@@ -89,19 +88,13 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 		}
 		else if (enemy != null)
 		{
-			for (int i = 0; i < playerEntities.size(); i++)
+			Entity collider = Engine.player;
+			Bound target = physics.get(collider);
+			Position bpos = posm.get(collider);
+			if (doesCollide(pos, bound, bpos, target))
 			{
-				Entity collider = playerEntities.get(i);
-				Bound target = physics.get(collider);
-				Position bpos = posm.get(collider);
-				if (target != null)
-				{
-					if (doesCollide(pos, bound, bpos, target))
-					{
-						handleCollision(e, collider);
-						return;
-					}
-				}
+				handleCollision(e, collider);
+				return;
 			}
 		}
 		
@@ -125,9 +118,6 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 		float dst = a.dst(b);
 		float radius = bullet.radius;
 		
-		System.out.println(radius + " : " + dst + " : " + target.radius);
-		System.out.println(dst-radius < target.radius);
-		
 		return dst-radius < target.radius;
 	}
 
@@ -142,8 +132,14 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 		
 		health.hp -= 10;
 		
-		if (health.hp < 0)
+		if (health.hp <= 0)
 		{
+			Enemy e = em.getSafe(target);
+			if (e != null)
+			{
+				e.dead = true;
+				Engine.score += 50;
+			}
 			BulletEmitter.explode(target);
 		}
 		bullet.deleteFromWorld();

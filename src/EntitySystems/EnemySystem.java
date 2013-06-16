@@ -4,6 +4,7 @@ import static logic.level.Level.FOV;
 import logic.Bullet.BulletEmitter;
 import logic.level.LevelData.Spawn;
 import logic.level.LevelData.SpawnSet;
+import EntitySystems.Components.Animation;
 import EntitySystems.Components.Bound;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
@@ -32,13 +33,29 @@ public class EnemySystem extends EntityProcessingSystem {
 	float distance;
 	
 	@Mapper ComponentMapper<Enemy> em;
+	@Mapper ComponentMapper<Animation> am;
+	
+	@Mapper ComponentMapper<Velocity> vm;
+	@Mapper ComponentMapper<Position> pm;
 	
 	public void processEntities(Array<Entity> enemies)
 	{
-		for (int i = 0; i < enemies.size; i++)
+		int i = 0;
+		
+		while (i < enemies.size)
 		{
 			Entity e = enemies.get(i);
 			process(e);
+			
+			if (e.isEnabled())
+			{
+				i++;
+			}
+			else
+			{
+				enemies.removeIndex(i);
+				e.deleteFromWorld();
+			}
 		}
 	}
 
@@ -51,8 +68,8 @@ public class EnemySystem extends EntityProcessingSystem {
 	protected void process(Entity e) {
 		Enemy enemy = em.get(e);
 		
-		Velocity v = (Velocity)e.getComponent(Velocity.CType);
-		Position p = (Position)e.getComponent(Position.CType);
+		Velocity v = vm.get(e);
+		Position p = pm.get(e);
 		
 		if (!enemy.active)
 		{
@@ -68,7 +85,7 @@ public class EnemySystem extends EntityProcessingSystem {
 			
 			if (p.location.x < 0 || p.location.x > FOV[2])
 			{
-				world.deleteEntity(e);
+				e.disable();
 			}
 		}
 		else
@@ -80,6 +97,15 @@ public class EnemySystem extends EntityProcessingSystem {
 			else
 			{
 				v.y = 0;
+			}
+			
+			Animation a = am.getSafe(e);
+			if (a != null)
+			{
+				if (a.done)
+				{
+					e.disable();
+				}
 			}
 		}
 	}
