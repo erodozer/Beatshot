@@ -1,16 +1,19 @@
 package logic.Bullet;
 
-import logic.Consts.DataDir;
 import EntitySystems.Components.*;
 import EntitySystems.Components.Group.Bullet;
 import EntitySystems.Components.Group.Emitter;
 import EntitySystems.Components.Group.Enemy;
 import EntitySystems.Components.Group.Player;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.annotations.Mapper;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+
+import core.Consts.DataDir;
 import util.SpriteSheet;
 
 /**
@@ -81,8 +84,10 @@ public class BulletEmitter {
 		e.addComponent(new Bullet(emitter), Bullet.CType);
 		e.addComponent(new Bound(1.0f, 1.0f), Bound.CType);
 		
+		Emitter emit = (Emitter)emitter.getComponent(Emitter.CType);
+		
 		Sprite s;
-		if (emitter.getComponent(Player.class) != null)
+		if (emit.parent.getComponent(Enemy.class) == null)
 		{
 			s = new Sprite(bulletSprites.getFrame(1, 0));
 			e.addComponent(new Player(), Player.CType);
