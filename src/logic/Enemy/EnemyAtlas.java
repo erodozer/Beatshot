@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import logic.Bullet.BulletEmitter;
-import logic.Consts.DataDir;
 
 import EntitySystems.Components.Bound;
 import EntitySystems.Components.Health;
 import EntitySystems.Components.Position;
 import EntitySystems.Components.Renderable;
 import EntitySystems.Components.Velocity;
+import EntitySystems.Components.Group.Emitter;
 import EntitySystems.Components.Group.Enemy;
 
 import com.artemis.Entity;
@@ -23,6 +23,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+
+import core.Consts.DataDir;
 
 /**
  * 
@@ -104,9 +106,9 @@ public class EnemyAtlas{
 		e.addComponent(new Velocity(), Velocity.CType);
 		e.addComponent(new Enemy(), Enemy.CType);
 		
-		Entity emitter = BulletEmitter.createEmitter(e.getWorld().createEntity(), 5, (float)(Math.random()*2.0f), e);
+		Entity emitter = BulletEmitter.createEmitter(e.getWorld().createEntity(), 5, (float)(Math.random()*2.0f)+.5f, e);
 		Velocity v = (Velocity)emitter.getComponent(Velocity.CType);
-		v.y = (float)(Math.random()*80f) + 100f;
+		v.y = -((float)(Math.random()*80f) + 100f);
 		emitter.addToWorld();
 		
 		return e;
