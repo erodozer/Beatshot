@@ -111,11 +111,18 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 		return false;
 	}
 
+	//reserved memory for doing collision math so we don't have to create new vectors every time
+	private static Vector2 bulletLoc = new Vector2();
+	private static Vector2 targetLoc = new Vector2();
+	
 	private boolean doesCollide(Position apos, Bound bullet, Position bpos, Bound target) {
-		Vector2 a = new Vector2(apos.location.x + apos.offset.x, apos.location.y + apos.offset.y);
-		Vector2 b = new Vector2(bpos.location.x + bpos.offset.x, bpos.location.y + bpos.offset.y);
+		bulletLoc.x = apos.location.x + apos.offset.x + bullet.center.x;
+		bulletLoc.y = apos.location.y + apos.offset.y + bullet.center.y;
 		
-		float dst = a.dst(b);
+		targetLoc.x = bpos.location.x + bpos.offset.x + target.center.x;
+		targetLoc.y = bpos.location.y + bpos.offset.y + target.center.y;
+		
+		float dst = Math.abs(bulletLoc.dst(targetLoc));
 		float radius = bullet.radius;
 		
 		return dst-radius < target.radius;

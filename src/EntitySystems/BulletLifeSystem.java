@@ -55,6 +55,6 @@ public class BulletLifeSystem extends EntityProcessingSystem {
 		l.current--;
 		
 		//remove from world when life has reached the end
-		world.deleteEntity(e);
+		e.deleteFromWorld();
 	}
 }
