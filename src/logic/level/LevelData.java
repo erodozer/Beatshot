@@ -115,14 +115,15 @@ public class LevelData
 	{
 		public EnemyAtlas atlas;
 		public Array<Spawn> spawns;
-		public float location;
-		public float high;
+		private float location;
+		private float high;
+		public final boolean warning;
 		
 		public SpawnSet(EnemyAtlas atlas, Element e, Path points)
 		{
 			this.atlas = atlas;
 			spawns = new Array<Spawn>();
-			
+			warning = e.getBooleanAttribute("warning", false);
 			String[] names = e.getAttribute("enemies").split("[, ]+");
 			String[] patterns = e.getAttribute("moves", "null").split("[, ]+");
 			for (int j = 0; j < names.length; j++)
@@ -136,11 +137,9 @@ public class LevelData
 				try
 				{
 					spawn.path = patterns[j];
-					System.out.println("path");
 				}
 				catch (IndexOutOfBoundsException exception)
 				{
-					System.out.println("no path");
 					spawn.path = "null";
 				}
 				spawns.add(spawn);

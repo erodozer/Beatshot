@@ -147,7 +147,8 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 				e.dead = true;
 				Engine.score += 50;
 			}
-			BulletEmitter.explode(target);
+			Entity explosion = BulletEmitter.explode(target);
+			world.getManager(GroupManager.class).add(explosion, "Dead");
 		}
 		bullet.deleteFromWorld();
 	}

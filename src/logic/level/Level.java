@@ -76,8 +76,10 @@ public class Level{
 	EnemySystem es;
 
 	private Sound warningBeep;
+
+	private float warning;
 	
-	Entity gameOverBanner;
+	private static final float WARNING_WAIT = 2.0f;
 
 	/**
 	 * Loads and constructs a level
@@ -128,6 +130,15 @@ public class Level{
 			return;
 		}
 		
+		if (warning >= 0f)
+		{
+			warning -= delta;
+		}
+		else
+		{
+			world.getSystem(RenderSystem.class).warning = false;
+		}
+		
 		world.setDelta(delta);
 		world.process();
 		
@@ -140,14 +151,15 @@ public class Level{
 			{
 				totalDistance += distance;
 				distance -= ENDURANCERATE;
-				oldEnemies = es.killEnemies(activeEnemies);
-				activeEnemies = es.spawnEnemies(data.enemyData.get((int)(Math.random()*data.enemyData.size)));
+				es.killEnemies();
+				SpawnSet enemyData = data.enemyData.get((int)(Math.random()*data.enemyData.size));
+				world.getSystem(RenderSystem.class).warning = (enemyData.warning);
+				warning = (enemyData.warning)?2.0f:0;
+				activeEnemies = es.spawnEnemies(enemyData);
 				//warningBeep.play();
 			}
 		}
-		
-		es.processEntities(oldEnemies);
-		es.processEntities(activeEnemies);
+		es.process();
 		
 		if (Engine.player.getComponent(Health.class).hp <= 0)
 		{
@@ -268,12 +280,26 @@ public class Level{
 		
 		//game over banner
 		{
+			Entity gameOverBanner;
+
 			gameOverBanner = world.createEntity();
-			Sprite s = new Sprite(Engine.assets.get(DataDir.Images+"gameover.png", Texture.class));
+			Sprite s = new Sprite(Engine.assets.get(DataDir.Ui+"gameover.png", Texture.class));
 			s.setPosition(0, 80);
 			gameOverBanner.addComponent(new Renderable(s));
 			tm.register("GameOver", gameOverBanner);
 			gameOverBanner.addToWorld();
+		}
+		
+		//warning banner
+		{
+			Entity warningBanner;
+
+			warningBanner = world.createEntity();
+			Sprite s = new Sprite(Engine.assets.get(DataDir.Ui+"enemywarning.png", Texture.class));
+			s.setPosition(0, 80);
+			warningBanner.addComponent(new Renderable(s));
+			tm.register("Warning", warningBanner);
+			warningBanner.addToWorld();
 		}
 		
 		Position p = (Position)Engine.player.getComponent(Position.CType);
@@ -301,7 +327,8 @@ public class Level{
 		Engine.assets.load(DataDir.Ui + "banners.png", Texture.class);
 		
 		Engine.assets.load(DataDir.SFX + "warning.wav", Sound.class);
-		Engine.assets.load(DataDir.Images + "gameover.png", Texture.class);
+		Engine.assets.load(DataDir.Ui + "gameover.png", Texture.class);
+		Engine.assets.load(DataDir.Ui + "enemywarning.png", Texture.class);
 	}
 
 	public void unloadAssets() {

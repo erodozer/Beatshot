@@ -36,7 +36,6 @@ public class EnemySystem extends EntityProcessingSystem {
 	float distance;
 	
 	@Mapper ComponentMapper<Enemy> em;
-	@Mapper ComponentMapper<Animation> am;
 	
 	@Mapper ComponentMapper<Velocity> vm;
 	@Mapper ComponentMapper<Position> pm;
@@ -95,7 +94,8 @@ public class EnemySystem extends EntityProcessingSystem {
 			
 			if (p.location.x < 0 || p.location.x > FOV[2])
 			{
-				e.disable();
+				e.deleteFromWorld();
+				return;
 			}
 		}
 		else
@@ -120,27 +120,19 @@ public class EnemySystem extends EntityProcessingSystem {
 					}
 				}
 			}
-			
-			Animation a = am.getSafe(e);
-			if (a != null)
-			{
-				if (a.done)
-				{
-					e.disable();
-				}
-			}
 		}
 	}
 
-	public Array<Entity> killEnemies(Array<Entity> enemies) {
-		for (int i = 0; i < enemies.size; i++)
+	/**
+	 * Makes all currently visible enemies fly away
+	 */
+	public void killEnemies() {
+		for (int i = 0; i < this.getActives().size(); i++)
 		{
-			Entity e = enemies.get(i);
+			Entity e = this.getActives().get(i);
 			Enemy enemy = em.get(e);
 			enemy.active = false;
 		}
-		
-		return enemies;
 	}
 
 	public Array<Entity> spawnEnemies(SpawnSet spawnSet) {

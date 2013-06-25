@@ -104,126 +104,154 @@ public class RenderSystem extends EntitySystem {
 		//we group the different parts to maximize efficiency
 		
 		batch.setProjectionMatrix(camera);
-		//get and render the field
-		batch.begin();
-		bag = this.world.getManager(GroupManager.class).getEntities("Field");
-		for (int i = 0; i < bag.size(); i++)
 		{
-			e = bag.get(i);
-			r = rmap.get(e);
-			r.sprite.draw(batch);
+			//get and render the field
+			batch.begin();
+			bag = this.world.getManager(GroupManager.class).getEntities("Field");
+			for (int i = 0; i < bag.size(); i++)
+			{
+				e = bag.get(i);
+				r = rmap.get(e);
+				r.sprite.draw(batch);
+			}
 		}
 		batch.end();
 		
 		batch.begin();
-		//draw warning banners
-		//Display banners;
-		Ammo a = (Ammo)Engine.player.getComponent(Ammo.CType);
-		Health h = (Health)Engine.player.getComponent(Health.CType);
-		bag = gm.getEntities("Banner");
-		ImmutableBag<Entity> bannerBag;
-		Bag<Entity> bannerBag2;
-		
-		if (h.isLow())
 		{
-			bannerBag = gm.getEntities("BannerA");
-			bannerBag2 = (Bag<Entity>)gm.getEntities("BannerB");
-		}
-		else if (a.isLow())
-		{
-			bannerBag = gm.getEntities("BannerB");
-			bannerBag2 = (Bag<Entity>)gm.getEntities("BannerA");
-		}
-		else
-		{
-			bannerBag = gm.getEntities("BannerC");
-			bannerBag2 = new Bag<Entity>();
-			bannerBag2.addAll(gm.getEntities("BannerA"));
-			bannerBag2.addAll(gm.getEntities("BannerB"));
-		}
-		
-		for (int i = bag.size()-1; i >= 0; i--)
-		{
-			e = bag.get(i);
-			Position p = pmap.getSafe(e);
-			r = rmap.get(e);
+			//draw warning banners
+			//Display banners;
+			Ammo a = (Ammo)Engine.player.getComponent(Ammo.CType);
+			Health h = (Health)Engine.player.getComponent(Health.CType);
+			bag = gm.getEntities("Banner");
+			ImmutableBag<Entity> bannerBag;
+			Bag<Entity> bannerBag2;
 			
-			if (bannerBag.contains(e))
+			if (h.isLow())
 			{
-				//right side banner
-				if (p.offset.x < 0)
-				{
-					p.location.x = Math.max(190, p.location.x - 32 * world.delta);
-				}
-				else
-				{
-					p.location.x = Math.min(0, p.location.x + 32 * world.delta);
-				}
+				bannerBag = gm.getEntities("BannerA");
+				bannerBag2 = (Bag<Entity>)gm.getEntities("BannerB");
 			}
-			else if (bannerBag2.contains(e))
+			else if (a.isLow())
 			{
-				//right side banner
-				if (p.offset.x < 0)
-				{
-					p.location.x = Math.min(190-p.offset.x, p.location.x + 32 * world.delta);
-				}
-				else
-				{
-					p.location.x = Math.max(-12, p.location.x - 32 * world.delta);
-				}
+				bannerBag = gm.getEntities("BannerB");
+				bannerBag2 = (Bag<Entity>)gm.getEntities("BannerA");
+			}
+			else
+			{
+				bannerBag = gm.getEntities("BannerC");
+				bannerBag2 = new Bag<Entity>();
+				bannerBag2.addAll(gm.getEntities("BannerA"));
+				bannerBag2.addAll(gm.getEntities("BannerB"));
 			}
 			
-			r.sprite.draw(batch);
+			for (int i = bag.size()-1; i >= 0; i--)
+			{
+				e = bag.get(i);
+				Position p = pmap.getSafe(e);
+				r = rmap.get(e);
+				
+				if (bannerBag.contains(e))
+				{
+					//right side banner
+					if (p.offset.x < 0)
+					{
+						p.location.x = Math.max(190, p.location.x - 32 * world.delta);
+					}
+					else
+					{
+						p.location.x = Math.min(0, p.location.x + 32 * world.delta);
+					}
+				}
+				else if (bannerBag2.contains(e))
+				{
+					//right side banner
+					if (p.offset.x < 0)
+					{
+						p.location.x = Math.min(190-p.offset.x, p.location.x + 32 * world.delta);
+					}
+					else
+					{
+						p.location.x = Math.max(-12, p.location.x - 32 * world.delta);
+					}
+				}
+				
+				r.sprite.draw(batch);
+			}
 		}
 		batch.end();
 		
 		//render the player
 		batch.begin();
-		e = tm.getEntity("PlayerShadow");
-		r = rmap.get(e);
-		r.sprite.draw(batch);
-		e = Engine.player;
-		r = rmap.get(e);
-		r.sprite.draw(batch);
+		{
+			e = tm.getEntity("PlayerShadow");
+			r = rmap.get(e);
+			r.sprite.draw(batch);
+			e = Engine.player;
+			r = rmap.get(e);
+			r.sprite.draw(batch);
+		}
 		batch.end();
 
 		bag = gm.getEntities(CEF.Groups.Bullet.TYPE);
 		batch.begin();
-		//render enemy bullets
-		for (int i = 0; i < bag.size(); i++)
 		{
-			e = bag.get(i);
-			Enemy p = enemymap.getSafe(e);
-			if (p != null)
+			//render enemy bullets
+			for (int i = 0; i < bag.size(); i++)
 			{
-				r = (Renderable)e.getComponent(Renderable.CType);
-				r.sprite.draw(batch);
+				e = bag.get(i);
+				Enemy p = enemymap.getSafe(e);
+				if (p != null)
+				{
+					r = (Renderable)e.getComponent(Renderable.CType);
+					r.sprite.draw(batch);
+				}
 			}
 		}
 		batch.end();
 		
 		bag = gm.getEntities(CEF.Groups.Enemy.TYPE);
 		batch.begin();
-		//render enemies
-		for (int i = 0; i < bag.size(); i++)
 		{
-			e = bag.get(i);
-			r = (Renderable)e.getComponent(Renderable.CType);
-			r.sprite.draw(batch);
+			//render enemies
+			for (int i = 0; i < bag.size(); i++)
+			{
+				e = bag.get(i);
+				r = (Renderable)e.getComponent(Renderable.CType);
+				r.sprite.draw(batch);
+			}
 		}
 		batch.end();
 		
 		bag = gm.getEntities(CEF.Groups.Bullet.TYPE);
 		batch.begin();
-		//render player bullets
-		for (int i = 0; i < bag.size(); i++)
 		{
-			e = bag.get(i);
-			Player p = playermap.getSafe(e);
-			if (p != null)
+			//render player bullets
+			for (int i = 0; i < bag.size(); i++)
 			{
+				e = bag.get(i);
+				Player p = playermap.getSafe(e);
+				if (p != null)
+				{
+					r = (Renderable)e.getComponent(Renderable.CType);
+					r.sprite.draw(batch);
+				}
+			}
+		}
+		batch.end();
+		
+		bag = gm.getEntities("Dead");
+		batch.begin();
+		{
+			//render explosions
+			for (int i = 0; i < bag.size(); i++)
+			{
+				e = bag.get(i);
 				r = (Renderable)e.getComponent(Renderable.CType);
 				r.sprite.draw(batch);
+				Animation a = (Animation)e.getComponent(Animation.CType);
+				if (a.done)
+					e.deleteFromWorld();
 			}
 		}
 		batch.end();

@@ -102,18 +102,21 @@ public class BulletEmitter {
 		return e;
 	}
 	
-	public static Entity explode(Entity e)
+	public static Entity explode(Entity orig)
 	{
-		Renderable r = (Renderable)e.getComponent(Renderable.CType);
-		r.sprite = null;
+		Entity e = orig.getWorld().createEntity();
 		
 		Sprite s = new Sprite(explosion.getFrame(0));
-		r.sprite = s;
+		e.addComponent(new Renderable(s));
 		
 		Animation a = new Animation(explosion.getTexture(), explosion.frameCount, .08f, false);
 		e.addComponent(a, Animation.CType);
 		
-		e.changedInWorld();
+		Position p = (Position) orig.getComponent(Position.CType);
+		e.addComponent(new Position(p.location, p.offset));
+		
+		e.addToWorld();
+		orig.deleteFromWorld();
 		
 		return e;
 	}
