@@ -10,7 +10,7 @@ import scenes.Main.ui.ScoreField;
 import scenes.Main.ui.StatBars;
 import util.SpriteSheet;
 
-import EntitySystems.InputSystem;
+import CEF.InputSystem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
