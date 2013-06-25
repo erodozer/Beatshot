@@ -1,13 +1,13 @@
-package EntitySystems;
+package CEF;
 
 import logic.Engine;
 import logic.Bullet.BulletEmitter;
-import EntitySystems.Components.Bound;
-import EntitySystems.Components.Health;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Group.Bullet;
-import EntitySystems.Components.Group.Enemy;
-import EntitySystems.Components.Group.Player;
+import CEF.Components.Bound;
+import CEF.Components.Health;
+import CEF.Components.Position;
+import CEF.Groups.Bullet;
+import CEF.Groups.Enemy;
+import CEF.Groups.Player;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;

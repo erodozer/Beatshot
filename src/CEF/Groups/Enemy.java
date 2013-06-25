@@ -1,6 +1,6 @@
-package EntitySystems.Components.Group;
+package CEF.Groups;
 
-import EntitySystems.Components.Ammo;
+import CEF.Components.Ammo;
 
 import com.artemis.Component;
 import com.artemis.ComponentType;
@@ -12,5 +12,7 @@ public class Enemy extends Component {
 
 	public boolean active;
 	public boolean dead;
+	
+	public String movementPath;
 	
 }

@@ -2,7 +2,7 @@ package logic;
 
 import logic.Bullet.BulletEmitter;
 
-import EntitySystems.Components.*;
+import CEF.Components.*;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -55,7 +55,7 @@ public class Player {
 		
 		e.addComponent(new Renderable(sprite.getFrame(0)), Renderable.CType);
 		e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true), Animation.CType);
-		e.addComponent(new EntitySystems.Components.Group.Player(), EntitySystems.Components.Group.Player.CType);
+		e.addComponent(new CEF.Groups.Player(), CEF.Groups.Player.CType);
 		e.addComponent(new InputHandler(new int[]{Input.Keys.LEFT, Input.Keys.RIGHT}), InputHandler.CType);
 		
 		float x = -5;
@@ -69,7 +69,7 @@ public class Player {
 			Velocity v = (Velocity) laser.getComponent(Velocity.CType);
 			v.setTo(angle, 180f);
 			laser.addComponent(new InputHandler(PlayerInput.values()[i].keys), InputHandler.CType);
-			laser.addComponent(new EntitySystems.Components.Group.Player(), EntitySystems.Components.Group.Player.CType);
+			laser.addComponent(new CEF.Groups.Player(), CEF.Groups.Player.CType);
 			laser.addToWorld();
 		}
 		

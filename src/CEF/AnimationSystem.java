@@ -1,7 +1,7 @@
-package EntitySystems;
+package CEF;
 
-import EntitySystems.Components.Animation;
-import EntitySystems.Components.Renderable;
+import CEF.Components.Animation;
+import CEF.Components.Renderable;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;

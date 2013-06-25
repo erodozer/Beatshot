@@ -6,13 +6,13 @@ import java.util.Map;
 
 import logic.Bullet.BulletEmitter;
 
-import EntitySystems.Components.Bound;
-import EntitySystems.Components.Health;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Renderable;
-import EntitySystems.Components.Velocity;
-import EntitySystems.Components.Group.Emitter;
-import EntitySystems.Components.Group.Enemy;
+import CEF.Components.Bound;
+import CEF.Components.Health;
+import CEF.Components.Position;
+import CEF.Components.Renderable;
+import CEF.Components.Velocity;
+import CEF.Groups.Emitter;
+import CEF.Groups.Enemy;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;

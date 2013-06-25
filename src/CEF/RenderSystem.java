@@ -1,9 +1,9 @@
-package EntitySystems;
+package CEF;
 
 import logic.Engine;
 import static logic.level.Level.FOV;
-import EntitySystems.Components.*;
-import EntitySystems.Components.Group.*;
+import CEF.Components.*;
+import CEF.Groups.*;
 
 
 import com.artemis.Aspect;
@@ -42,6 +42,9 @@ public class RenderSystem extends EntitySystem {
 	//system has its own drawing components
 	Matrix4 camera;
 
+	public boolean warning;
+	
+	
 	@Override
 	protected void initialize()
 	{
@@ -184,7 +187,7 @@ public class RenderSystem extends EntitySystem {
 		r.sprite.draw(batch);
 		batch.end();
 
-		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
+		bag = gm.getEntities(CEF.Groups.Bullet.TYPE);
 		batch.begin();
 		//render enemy bullets
 		for (int i = 0; i < bag.size(); i++)
@@ -199,7 +202,7 @@ public class RenderSystem extends EntitySystem {
 		}
 		batch.end();
 		
-		bag = gm.getEntities(EntitySystems.Components.Group.Enemy.TYPE);
+		bag = gm.getEntities(CEF.Groups.Enemy.TYPE);
 		batch.begin();
 		//render enemies
 		for (int i = 0; i < bag.size(); i++)
@@ -210,7 +213,7 @@ public class RenderSystem extends EntitySystem {
 		}
 		batch.end();
 		
-		bag = gm.getEntities(EntitySystems.Components.Group.Bullet.TYPE);
+		bag = gm.getEntities(CEF.Groups.Bullet.TYPE);
 		batch.begin();
 		//render player bullets
 		for (int i = 0; i < bag.size(); i++)
@@ -230,6 +233,11 @@ public class RenderSystem extends EntitySystem {
 		if (Engine.GameOver)
 		{
 			r = (Renderable)tm.getEntity("GameOver").getComponent(Renderable.CType);
+			r.sprite.draw(batch);
+		}
+		else if (warning)
+		{
+			r = (Renderable)tm.getEntity("Warning").getComponent(Renderable.CType);
 			r.sprite.draw(batch);
 		}
 		batch.end();

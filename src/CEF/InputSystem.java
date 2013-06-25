@@ -1,15 +1,15 @@
-package EntitySystems;
+package CEF;
 
 
-import EntitySystems.Components.Ammo;
-import EntitySystems.Components.Bound;
-import EntitySystems.Components.Health;
-import EntitySystems.Components.InputHandler;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Time;
-import EntitySystems.Components.Velocity;
-import EntitySystems.Components.Group.Emitter;
-import EntitySystems.Components.Group.Player;
+import CEF.Components.Ammo;
+import CEF.Components.Bound;
+import CEF.Components.Health;
+import CEF.Components.InputHandler;
+import CEF.Components.Position;
+import CEF.Components.Time;
+import CEF.Components.Velocity;
+import CEF.Groups.Emitter;
+import CEF.Groups.Player;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;

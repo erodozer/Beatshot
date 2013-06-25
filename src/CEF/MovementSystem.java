@@ -1,9 +1,9 @@
-package EntitySystems;
+package CEF;
 
 import logic.Engine;
-import EntitySystems.Components.*;
-import EntitySystems.Components.Group.Enemy;
-import EntitySystems.Components.Group.Player;
+import CEF.Components.*;
+import CEF.Groups.Enemy;
+import CEF.Groups.Player;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -75,7 +75,6 @@ public class MovementSystem extends EntityProcessingSystem {
 		{
 			t.update(world.delta);
 			Vector2 vec = path.path.getContinuousLocation((path.duration - t.curr)/path.duration);
-			System.out.println(vec);
 			p.offset.x = vec.x;
 			p.offset.y = vec.y;
 		}

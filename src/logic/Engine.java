@@ -1,12 +1,12 @@
 package logic;
 
-import EntitySystems.AnimationSystem;
-import EntitySystems.BulletLifeSystem;
-import EntitySystems.CollisionEntitySystem;
-import EntitySystems.EmitterSystem;
-import EntitySystems.InputSystem;
-import EntitySystems.MovementSystem;
-import EntitySystems.RenderSystem;
+import CEF.AnimationSystem;
+import CEF.BulletLifeSystem;
+import CEF.CollisionEntitySystem;
+import CEF.EmitterSystem;
+import CEF.InputSystem;
+import CEF.MovementSystem;
+import CEF.RenderSystem;
 
 import com.artemis.Entity;
 import com.artemis.World;

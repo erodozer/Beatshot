@@ -9,14 +9,14 @@ import logic.level.LevelData.Background.StaticData;
 import logic.level.LevelData.Spawn;
 import logic.level.LevelData.SpawnSet;
 
-import EntitySystems.*;
-import EntitySystems.Components.Angle;
-import EntitySystems.Components.Health;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Renderable;
-import EntitySystems.Components.Rotation;
-import EntitySystems.Components.Scrollable;
-import EntitySystems.Components.Velocity;
+import CEF.*;
+import CEF.Components.Angle;
+import CEF.Components.Health;
+import CEF.Components.Position;
+import CEF.Components.Renderable;
+import CEF.Components.Rotation;
+import CEF.Components.Scrollable;
+import CEF.Components.Velocity;
 
 import com.artemis.Entity;
 import com.artemis.World;

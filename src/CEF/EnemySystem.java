@@ -1,19 +1,19 @@
-package EntitySystems;
+package CEF;
 
 import static logic.level.Level.FOV;
 import logic.Bullet.BulletEmitter;
 import logic.level.LevelData;
 import logic.level.LevelData.Spawn;
 import logic.level.LevelData.SpawnSet;
-import EntitySystems.Components.Animation;
-import EntitySystems.Components.Bound;
-import EntitySystems.Components.Path;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Renderable;
-import EntitySystems.Components.Time;
-import EntitySystems.Components.Velocity;
-import EntitySystems.Components.Group.Bullet;
-import EntitySystems.Components.Group.Enemy;
+import CEF.Components.Animation;
+import CEF.Components.Bound;
+import CEF.Components.Path;
+import CEF.Components.Position;
+import CEF.Components.Renderable;
+import CEF.Components.Time;
+import CEF.Components.Velocity;
+import CEF.Groups.Bullet;
+import CEF.Groups.Enemy;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;

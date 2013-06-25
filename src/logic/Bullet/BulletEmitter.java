@@ -1,10 +1,10 @@
 package logic.Bullet;
 
-import EntitySystems.Components.*;
-import EntitySystems.Components.Group.Bullet;
-import EntitySystems.Components.Group.Emitter;
-import EntitySystems.Components.Group.Enemy;
-import EntitySystems.Components.Group.Player;
+import CEF.Components.*;
+import CEF.Groups.Bullet;
+import CEF.Groups.Emitter;
+import CEF.Groups.Enemy;
+import CEF.Groups.Player;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;

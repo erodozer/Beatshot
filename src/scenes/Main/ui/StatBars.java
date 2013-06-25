@@ -1,7 +1,7 @@
 package scenes.Main.ui;
 
-import EntitySystems.Components.Ammo;
-import EntitySystems.Components.Health;
+import CEF.Components.Ammo;
+import CEF.Components.Health;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;

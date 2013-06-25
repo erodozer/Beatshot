@@ -1,4 +1,4 @@
-package EntitySystems.Components;
+package CEF.Components;
 
 import com.artemis.Component;
 import com.artemis.ComponentType;

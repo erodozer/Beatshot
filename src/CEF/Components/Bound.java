@@ -1,4 +1,4 @@
-package EntitySystems.Components;
+package CEF.Components;
 
 import com.artemis.Component;
 import com.artemis.ComponentType;
@@ -18,6 +18,5 @@ public class Bound extends Component {
 		this.height = height;
 		this.center = new Vector2(width/2.0f, height/2.0f);
 		this.radius = this.center.dst(Vector2.Zero);
-		System.out.println(this.center + " " + this.radius);
 	}
 }

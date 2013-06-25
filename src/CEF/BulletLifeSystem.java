@@ -1,10 +1,10 @@
-package EntitySystems;
+package CEF;
 
 import logic.Engine;
 import logic.Bullet.BulletEmitter;
 
-import EntitySystems.Components.*;
-import EntitySystems.Components.Group.*;
+import CEF.Components.*;
+import CEF.Groups.*;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -51,8 +51,9 @@ public class BulletLifeSystem extends EntityProcessingSystem {
 	protected void processExpired(Entity e) {
 		//handle normal bullets
 		Bullet b = bmap.get(e);
-		Limiter l = lmap.get(b.emitter);
-		l.current--;
+		Limiter l = lmap.getSafe(b.emitter);
+		if (l != null)
+			l.current--;
 		
 		//remove from world when life has reached the end
 		e.deleteFromWorld();

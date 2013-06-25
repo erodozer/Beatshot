@@ -1,15 +1,15 @@
-package EntitySystems;
+package CEF;
 
 import logic.Engine;
 import logic.Bullet.BulletEmitter;
-import EntitySystems.Components.Ammo;
-import EntitySystems.Components.Limiter;
-import EntitySystems.Components.Position;
-import EntitySystems.Components.Time;
-import EntitySystems.Components.Velocity;
-import EntitySystems.Components.Group.Emitter;
-import EntitySystems.Components.Group.Enemy;
-import EntitySystems.Components.Group.Player;
+import CEF.Components.Ammo;
+import CEF.Components.Limiter;
+import CEF.Components.Position;
+import CEF.Components.Time;
+import CEF.Components.Velocity;
+import CEF.Groups.Emitter;
+import CEF.Groups.Enemy;
+import CEF.Groups.Player;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
