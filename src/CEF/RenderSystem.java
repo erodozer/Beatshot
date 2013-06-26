@@ -104,10 +104,10 @@ public class RenderSystem extends EntitySystem {
 		//we group the different parts to maximize efficiency
 		
 		batch.setProjectionMatrix(camera);
+		bag = this.world.getManager(GroupManager.class).getEntities("Field");
+		batch.begin();
 		{
-			//get and render the field
-			batch.begin();
-			bag = this.world.getManager(GroupManager.class).getEntities("Field");
+			//render the field
 			for (int i = 0; i < bag.size(); i++)
 			{
 				e = bag.get(i);
