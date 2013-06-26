@@ -296,7 +296,7 @@ public class Level{
 
 			warningBanner = world.createEntity();
 			Sprite s = new Sprite(Engine.assets.get(DataDir.Ui+"enemywarning.png", Texture.class));
-			s.setPosition(0, 80);
+			s.setPosition(0, 140);
 			warningBanner.addComponent(new Renderable(s));
 			tm.register("Warning", warningBanner);
 			warningBanner.addToWorld();
