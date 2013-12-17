@@ -1,9 +1,6 @@
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-
-import core.BeatshotGame;
-import static core.BeatshotGame.INTERNAL_RES;
+import com.nhydock.beatshot.core.BeatshotGame;
+import static com.nhydock.beatshot.core.BeatshotGame.INTERNAL_RES;;
 
 /**
  * Main application runner for the game
