@@ -1,9 +1,5 @@
 package com.nhydock.beatshot.logic.Enemy;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.artemis.components.*;
@@ -11,13 +7,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.nhydock.beatshot.CEF.Components.Bound;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Bullet.BulletEmitter;
 
 /**
  * 
@@ -26,53 +23,70 @@ import com.nhydock.beatshot.logic.Bullet.BulletEmitter;
  */
 public class EnemyAtlas{
 
-	private TextureAtlas textureAtlas;
-	private Map<String, EnemyData> enemyAtlas;
-	private Texture atlasImage;
+	private static ObjectMap<String, EnemyAtlas> cache;
+	
+	static
+	{
+		cache = new ObjectMap<String, EnemyAtlas>();
+	}
 	
 	/**
-	 * Create an enemy atlas from an already loaded Element defined inline in some xml file
-	 * @param dataSrc
+	 * Adds an enemy atlas to the cache
+	 * @param fileName
+	 * @return
 	 */
-	public EnemyAtlas(Element dataSrc)
+	public static EnemyAtlas register(String fileName)
 	{
-		enemyAtlas = new HashMap<String, EnemyData>();
-		
-		textureAtlas = new TextureAtlas();
-		atlasImage = new Texture(Gdx.files.internal(DataDir.Enemies + dataSrc.getAttribute("texture", "enemyatlas.png")));
-		for (Element e : dataSrc.getChildrenByName("enemy"))
+		if (!cache.containsKey(fileName))
 		{
-			EnemyData enemy = new EnemyData(e);
-			enemyAtlas.put(enemy.name, enemy);
-			textureAtlas.addRegion(enemy.name, enemy.region);
+			EnemyAtlas e = new EnemyAtlas(fileName);
+			cache.put(fileName, e);
+			return e;
+		}
+		else
+		{
+			return fetch(fileName);
 		}
 	}
+	
+	public static EnemyAtlas fetch(String fileName)
+	{
+		return cache.get(fileName);
+	}
+	
+	public static void clearCache() {
+		cache.clear();
+	}
+	
+	private TextureAtlas textureAtlas;
+	private Array<EnemyData> enemyAtlas;
+	private Texture atlasImage;
+	
+	public String name;
 	
 	/**
 	 * Load a file that is dedicated to being an enemy atlas
 	 * @param fileName
 	 */
-	public EnemyAtlas(String fileName)
+	protected EnemyAtlas(String fileName)
 	{
-		XmlReader xmlParser = new XmlReader();
-		Element xmlFile = null;	
-		try {
-			enemyAtlas = new HashMap<String, EnemyData>();
-			
-			xmlFile = xmlParser.parse(Gdx.files.internal(DataDir.Enemies + fileName));
-			textureAtlas = new TextureAtlas();
-			atlasImage = new Texture(Gdx.files.internal(DataDir.Enemies + xmlFile.getAttribute("texture", "enemyatlas.png")));
-			for (Element e : xmlFile.getChildrenByName("enemy"))
-			{
-				EnemyData enemy = new EnemyData(e);
-				enemyAtlas.put(enemy.name, enemy);
-				textureAtlas.addRegion(enemy.name, enemy.region);
-			}
+		JsonReader reader = new JsonReader();
+		JsonValue json;
+		json = reader.parse(Gdx.files.internal(DataDir.Enemies + fileName + ".json"));
+		
+		enemyAtlas = new Array<EnemyData>();
+		atlasImage = new Texture(Gdx.files.internal(DataDir.Enemies + json.getString("texture", "enemyatlas.png")));
+		textureAtlas = new TextureAtlas();
+		JsonValue enemies = json.get("enemies");
+		for (int i = 0; i < enemies.size; i++)
+		{
+			JsonValue value = enemies.get(i);
+			EnemyData e = new EnemyData(value); 
+			enemyAtlas.add(e);
+			textureAtlas.addRegion(e.name, e.region);
 		}
-		catch (IOException e) {
-			System.err.println("Could not set enemy atlas");
-			e.printStackTrace();
-		}
+		
+		name = fileName;
 	}
 	
 	/**
@@ -81,16 +95,15 @@ public class EnemyAtlas{
 	 * @param e - Entity to modify into an enemy
 	 * @return Entity - the generated enemy
 	 */
-	public Entity createEnemy(String name, Entity e)
+	public Entity createEnemy(int id, Entity e)
 	{
-		EnemyData enemy = enemyAtlas.get(name);
+		EnemyData enemy = enemyAtlas.get(id);
 		if (enemy == null)
 		{
 			return null;
 		}
 		
-		
-		Sprite s = textureAtlas.createSprite(name);
+		Sprite s = textureAtlas.createSprite(enemy.name);
 		
 		e.addComponent(new Renderable(s), Renderable.CType);
 		e.addComponent(new Health(enemy.maxhp), Health.CType);
@@ -98,11 +111,6 @@ public class EnemyAtlas{
 		e.addComponent(new Position(), Position.CType);
 		e.addComponent(new Velocity(), Velocity.CType);
 		e.addComponent(new Enemy(), Enemy.CType);
-		
-		Entity emitter = BulletEmitter.createEmitter(e.getWorld().createEntity(), 5, (float)(Math.random()*2.0f)+.5f, e);
-		Velocity v = (Velocity)emitter.getComponent(Velocity.CType);
-		v.y = -((float)(Math.random()*80f) + 100f);
-		emitter.addToWorld();
 		
 		return e;
 	}
@@ -118,17 +126,19 @@ public class EnemyAtlas{
 		EnemyAtlas atlas;
 		
 		/**
-		 * @param dataSrc - an xml element
+		 * @param dataSrc - a json node
 		 */
-		private EnemyData(Element dataSrc)
+		private EnemyData(JsonValue dataSrc)
 		{
-			name = dataSrc.getAttribute("name");
+			name = dataSrc.name;
+			maxhp = dataSrc.getInt("hp", 10);
+			JsonValue box = dataSrc.get("box");
 			region = new TextureRegion(atlasImage,
-					dataSrc.getIntAttribute("x", 0),
-					dataSrc.getIntAttribute("y", 0),
-					dataSrc.getIntAttribute("width", 1),
-					dataSrc.getIntAttribute("height", 1));
-			maxhp = dataSrc.getIntAttribute("hp", 10);
+					box.getInt(0),
+					box.getInt(1),
+					box.getInt(2),
+					box.getInt(3));
+			
 		}
 	}
 }
