@@ -7,23 +7,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.logic.Enemy.EnemyAtlas;
-import com.nhydock.beatshot.util.SvgPathParser;
+import com.nhydock.beatshot.util.PathParser;
 
 public class LevelData
 {
-	public static HashMap<String, Path<Vector2>> enemyPaths;
-	
 	static
 	{
-		XmlReader xml = new XmlReader();
+		JsonReader reader = new JsonReader();
 		Element e;
 		try {
 			e = xml.parse(Gdx.files.internal(DataDir.Paths + "movement.svg"));
-			enemyPaths = SvgPathParser.getPathsNameMap(e);
+			enemyPaths = PathParser.getPathsNameMap(e);
 			enemyPaths.put("null", null);
 		}
 		catch (IOException e1) {
@@ -66,7 +65,7 @@ public class LevelData
 	/**
 	 * Parses the enemies out of the svg paths
 	 */
-	private void loadEnemies()
+	private void loadFormations()
 	{
 		//spawns = new Array<Array<Vector2>>();
 		
@@ -78,7 +77,7 @@ public class LevelData
 			Element element = spawns.get(i);
 			EnemyAtlas atlas = new EnemyAtlas(element.getAttribute("atlas"));
 			
-			HashMap<Element, Path<Vector2>> spawnPath = SvgPathParser.getPathsMap(element);
+			HashMap<Element, Path<Vector2>> spawnPath = PathParser.getPathsMap(element);
 			
 			for (Element e : spawnPath.keySet())
 			{
@@ -97,6 +96,8 @@ public class LevelData
 		
 		background = new Background(levelFile.getChildByName("field"));
 	}
+	
+	
 	
 	public static class Spawn
 	{
