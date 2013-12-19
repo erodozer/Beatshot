@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.XmlReader.Element;
 
 /**
@@ -26,7 +27,7 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  * 
  * @author Nicholas Hydock
  */
-public class SvgPathParser {
+public class PathParser {
 	
 	/**
 	 * Take an svg path that has already been selected out and parse it
@@ -56,6 +57,29 @@ public class SvgPathParser {
 	}
 	
 	/**
+	 * Take a json path that has already been selected out and parse it
+	 * @param pathElement - the json path to parse
+	 * @return a Path
+	 */
+	public static Path<Vector2> parsePath(JsonValue pathElement)
+	{
+		Bezier<Vector2> p = new Bezier<Vector2>();
+		Array<Vector2> path = new Array<Vector2>();
+		
+		float x = 0, y = 0;
+		for (int i = 0; i < pathElement.size; i++)
+		{
+			JsonValue point = pathElement.get(i);
+			
+			x += point.getFloat(0);
+			y += point.getFloat(1);
+			path.add(new Vector2(x, y));
+		}
+		p.set(path, 0, path.size);
+		return p;
+	}
+	
+	/**
 	 * Get a specific path by its id
 	 * @param svg - an already parsed svg file
 	 * @param id - name of the path
@@ -75,7 +99,7 @@ public class SvgPathParser {
 		}
 		if (selectedPath != null)
 		{
-			return SvgPathParser.parsePath(selectedPath);
+			return PathParser.parsePath(selectedPath);
 		}
 		else
 		{
@@ -96,7 +120,7 @@ public class SvgPathParser {
 		
 		for (Element e : elements)
 		{
-			paths.add(SvgPathParser.parsePath(e));
+			paths.add(PathParser.parsePath(e));
 		}
 		return paths;
 	}
@@ -115,7 +139,7 @@ public class SvgPathParser {
 		
 		for (Element e : elements)
 		{
-			map.put(e, SvgPathParser.parsePath(e));
+			map.put(e, PathParser.parsePath(e));
 		}
 		return map;
 	}
@@ -134,7 +158,7 @@ public class SvgPathParser {
 		
 		for (Element e : elements)
 		{
-			map.put(e.getAttribute("id"), SvgPathParser.parsePath(e));
+			map.put(e.getAttribute("id"), PathParser.parsePath(e));
 		}
 		return map;
 	}
@@ -154,7 +178,7 @@ public class SvgPathParser {
 		{
 			if (e.getAttribute("id").matches(regexId))
 			{
-				paths.add(SvgPathParser.parsePath(e));
+				paths.add(PathParser.parsePath(e));
 			}
 		}
 		return paths;
