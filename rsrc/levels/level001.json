@@ -92,5 +92,20 @@
             "image" : "level001.layer003.png",
             "scroll" : "-.1"
         },
+    },
+    
+    "dialog" : {
+    
+        "start" : {
+            {
+                "character" : "clarkson",
+                "text" : ""
+            }
+        },
+        "boss" : {
+        },
+        "end" : {
+            
+        }
     }
 }
