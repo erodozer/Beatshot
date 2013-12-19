@@ -1,0 +1,96 @@
+{
+    "bgm" : "stage001.mp3",
+    "formations" : {
+        {
+            "atlas" : "level001",
+            "path" : {
+                "end" : "kill"
+                "duration" : 10,
+                "type" : "linear",
+                "points" : {
+                    {}
+                }
+             },
+             "enemies" : {
+                {"type" : 1},
+                {"type" : 1, "delay" : .25},
+                {"type" : 1, "delay" : .5},
+                {"type" : 1, "delay" : .75},
+                {"type" : 1, "delay" : 1},
+             }
+        },
+        {
+            "atlas" : "level001",
+            "path" : {
+                "end" : "repeat 2 6"
+                "duration" : 5,
+                "type" : "bezier"
+                "points" : {
+                    {}
+                }
+             },
+             "enemies" : {
+                {"type" : 1},
+                {"type" : 1, "delay" : .25},
+                {"type" : 1, "delay" : .5},
+                {"type" : 1, "delay" : .75},
+                {"type" : 1, "delay" : 1},
+             }
+        },
+        {
+            "atlas" : "level001",
+            "path" : {
+                "end" : "repeat 2 6"
+                "duration" : 5,
+                "type" : "bezier"
+                "points" : {
+                    {}
+                }
+             },
+             "enemies" : {
+                {"type" : 1},
+                {"type" : 1, "delay" : .25},
+                {"type" : 1, "delay" : .5},
+                {"type" : 1, "delay" : .75},
+                {"type" : 1, "delay" : 1},
+             }
+        },
+    },
+    
+    "spawns" : {
+        "order" : {1, 2, 3, 2, 4, 5},
+        "midboss" : 3
+    },
+    
+    "field" : {
+        {
+            "type" : "layer",
+            "image" : "level001.layer000.png",
+            "scroll" : "0"
+        },
+        {
+            "type" : "static",
+            "image" : "level001.obj001.png",
+            "rot" : "45",
+            "x" : "-.15",
+            "y" : ".35"
+        },
+        {
+            "type" : "static",
+            "image" : "level001.obj001.png",
+            "rot" : "-65",
+            "x" : "-.85",
+            "y" : ".75"
+        },
+        {
+            "type" : "layer",
+            "image" : "level001.layer002.png",
+            "scroll" : "-.15"
+        },
+        {
+            "type" : "layer",
+            "image" : "level001.layer003.png",
+            "scroll" : "-.1"
+        },
+    }
+}
