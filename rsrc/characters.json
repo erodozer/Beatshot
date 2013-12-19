@@ -1,0 +1,22 @@
+{
+    "clarkson" : {
+        "name" : "Col. Clarkson",
+        "portrait" : "clarkson.png",
+        "color" : {1, .65, .65}
+    },
+    "jude" : {
+        "name" : "Cpt. Jude",
+        "portrait" : "clarkson.png",
+        "color" : {.3, .85, 1}
+    },
+    "silvia" : {
+        "name" : "Cadet Silvia",
+        "portrait" : "silvia.png",
+        "color" : {1, .65, 1}
+    },
+    "vilnox" : {
+        "name" : "Vilnox",
+        "portrait" : "vilnox.png",
+        "color" : {.65, 1, .65}
+    },
+}
