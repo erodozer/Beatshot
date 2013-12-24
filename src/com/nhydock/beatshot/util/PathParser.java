@@ -3,8 +3,10 @@ package com.nhydock.beatshot.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.badlogic.gdx.math.BSpline;
 import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.Path;
+import com.badlogic.gdx.math.PolyPath;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
@@ -63,20 +65,32 @@ public class PathParser {
 	 */
 	public static Path<Vector2> parsePath(JsonValue pathElement)
 	{
-		Bezier<Vector2> p = new Bezier<Vector2>();
-		Array<Vector2> path = new Array<Vector2>();
+		Path<Vector2> path;
 		
+		//parse out points from the path
+		Array<Vector2> points = new Array<Vector2>();
+		JsonValue value = pathElement.get("points");
 		float x = 0, y = 0;
-		for (int i = 0; i < pathElement.size; i++)
+		for (int i = 0; i < value.size; i++)
 		{
-			JsonValue point = pathElement.get(i);
-			
-			x += point.getFloat(0);
-			y += point.getFloat(1);
-			path.add(new Vector2(x, y));
+			JsonValue p = value.get(i);
+			x += p.getFloat("x", 0);
+			y += p.getFloat("y", 0);
+			points.add(new Vector2(x, y));
 		}
-		p.set(path, 0, path.size);
-		return p;
+	
+		//load a curved path
+		if (pathElement.getString("type").equals("bezier"))
+		{
+			path = new BSpline<Vector2>((Vector2[])points.toArray(Vector2.class), 2, false);
+		}
+		//load sharp path
+		else
+		{
+			path = new PolyPath<Vector2>(points);
+		}
+		
+		return path;
 	}
 	
 	/**
