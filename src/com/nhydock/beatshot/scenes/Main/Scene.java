@@ -16,10 +16,15 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.CEF.PlayerInputSystem;
 import com.nhydock.beatshot.core.Consts.DataDir;
+import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.logic.level.Level;
 import com.nhydock.beatshot.scenes.Main.ui.KeyDisplay;
 import com.nhydock.beatshot.scenes.Main.ui.ScoreField;
 import com.nhydock.beatshot.scenes.Main.ui.StatBars;
 import com.nhydock.beatshot.util.SpriteSheet;
+
+import static com.nhydock.beatshot.core.BeatshotGame.INTERNAL_RES;
+import static com.nhydock.beatshot.logic.level.Level.FOV;
 
 public class Scene implements Screen {
 
@@ -242,15 +247,18 @@ public class Scene implements Screen {
 		
 		uiReady = true;
 		
-		FileHandle b = bgmPaths.get((int)(Math.random()*bgmPaths.size));
-		FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
-		if (Engine.bgm != null)
-			Engine.bgm.dispose();
-		Engine.bgm = Gdx.audio.newMusic(b);
-		nextBgm = Gdx.audio.newMusic(n);
-		nextBgm.setLooping(false);
-		Engine.bgm.setLooping(false);
-		Engine.bgm.play();
+		if (bgmPaths.size > 0)
+		{
+			FileHandle b = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+			FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
+			if (Engine.bgm != null)
+				Engine.bgm.dispose();
+			Engine.bgm = Gdx.audio.newMusic(b);
+			nextBgm = Gdx.audio.newMusic(n);
+			nextBgm.setLooping(false);
+			Engine.bgm.setLooping(false);
+			Engine.bgm.play();
+		}
 	}
 	
 	/**
