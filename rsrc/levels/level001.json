@@ -1,68 +1,80 @@
 {
     "bgm" : "stage001.mp3",
-    "formations" : {
+    "formations" : [
         {
-            "atlas" : "level001",
+            "atlas" : "type001",
             "path" : {
-                "end" : "kill"
-                "duration" : 10,
+                "end" : "kill",
+                "duration" : "10",
                 "type" : "linear",
-                "points" : {
-                    {}
-                }
+                "points" : [
+                    {"x":  "0", "y":  "0"},
+                    {"x": "50", "y": "25"},
+                    {"x": "10", "y": "50"},
+                    {"x":"-20", "y": "50"},
+                    {"x": "30", "y":"150"}
+                ]
              },
-             "enemies" : {
-                {"type" : 1},
-                {"type" : 1, "delay" : .25},
-                {"type" : 1, "delay" : .5},
-                {"type" : 1, "delay" : .75},
-                {"type" : 1, "delay" : 1},
-             }
+             "enemies" : [
+                {"type" : "1"},
+                {"type" : "1", "delay" : ".25"},
+                {"type" : "1", "delay" : ".5"},
+                {"type" : "1", "delay" : ".75"},
+                {"type" : "1", "delay" : "1"},
+             ]
         },
         {
-            "atlas" : "level001",
+            "atlas" : "type001",
             "path" : {
-                "end" : "repeat 2 6"
-                "duration" : 5,
-                "type" : "bezier"
-                "points" : {
-                    {}
-                }
+                "end" : "repeat",
+                "duration" : "5",
+                "type" : "bezier",
+                "points" : [
+                    {"x":  "0", "y":  "0"},
+                    {"x": "50", "y": "25"},
+                    {"x": "10", "y": "50"},
+                    {"x":"-20", "y": "50"},
+                    {"x": "30", "y":"150"}
+                ]
              },
-             "enemies" : {
-                {"type" : 1},
-                {"type" : 1, "delay" : .25},
-                {"type" : 1, "delay" : .5},
-                {"type" : 1, "delay" : .75},
-                {"type" : 1, "delay" : 1},
-             }
+             "enemies" : [
+                {"type" : "1"},
+                {"type" : "1", "delay" : ".25"},
+                {"type" : "1", "delay" : ".5"},
+                {"type" : "1", "delay" : ".75"},
+                {"type" : "1", "delay" : "1"},
+             ]
         },
         {
-            "atlas" : "level001",
+            "atlas" : "type001",
             "path" : {
-                "end" : "repeat 2 6"
+                "end" : "repeat 2 6",
                 "duration" : 5,
-                "type" : "bezier"
-                "points" : {
-                    {}
-                }
+                "type" : "bezier",
+                "points" : [
+                    {"x":  "0", "y":  "0"},
+                    {"x": "50", "y": "25"},
+                    {"x": "10", "y": "50"},
+                    {"x":"-20", "y": "50"},
+                    {"x": "30", "y":"150"}
+                ]
              },
-             "enemies" : {
-                {"type" : 1},
-                {"type" : 1, "delay" : .25},
-                {"type" : 1, "delay" : .5},
-                {"type" : 1, "delay" : .75},
-                {"type" : 1, "delay" : 1},
-             }
-        },
-    },
+             "enemies" : [
+                {"type" : "1"},
+                {"type" : "1", "delay" : ".25"},
+                {"type" : "1", "delay" : ".5"},
+                {"type" : "1", "delay" : ".75"},
+                {"type" : "1", "delay" : "1"},
+             ]
+        }
+    ],
     
     "spawns" : {
-        "order" : {1, 2, 3, 2, 4, 5},
-        "midboss" : 3
+        "order" : ["1", "2", "3", "2", "4", "5"],
+        "midboss" : "3"
     },
     
-    "field" : {
+    "field" : [
         {
             "type" : "layer",
             "image" : "level001.layer000.png",
@@ -92,20 +104,20 @@
             "image" : "level001.layer003.png",
             "scroll" : "-.1"
         },
-    },
+    ],
     
     "dialog" : {
     
-        "start" : {
+        "start" : [
             {
                 "character" : "clarkson",
                 "text" : ""
             }
-        },
-        "boss" : {
-        },
-        "end" : {
+        ],
+        "boss" : [
+        ],
+        "end" : [
             
-        }
+        ]
     }
 }
