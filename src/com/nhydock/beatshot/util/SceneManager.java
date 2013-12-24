@@ -1,8 +1,7 @@
 package com.nhydock.beatshot.util;
 
-import java.util.HashMap;
-
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Very simple manager for storing all saved scene names.  Much like a route
@@ -12,7 +11,12 @@ import com.badlogic.gdx.Screen;
  */
 public class SceneManager {
 
-	private static HashMap<String, Class<? extends Screen>> map;
+	private static ObjectMap<String, Class<? extends Screen>> map;
+	
+	static
+	{
+		map = new ObjectMap<String, Class<? extends Screen>>();
+	}
 	
 	/**
 	 * Signs a new screen into the manager
