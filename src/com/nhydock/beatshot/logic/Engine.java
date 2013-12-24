@@ -4,10 +4,12 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.utils.JsonReader;
 
 public class Engine {
 
 	public static AssetManager assets;
+	public static JsonReader json;
 	public static String level;
 	public static float score;
 	
@@ -22,5 +24,6 @@ public class Engine {
 		level = "level001";
 		assets = new AssetManager();
 		score = 0;
+		json = new JsonReader();
 	}
 }

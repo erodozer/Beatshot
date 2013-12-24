@@ -36,17 +36,12 @@ public class Level{
 	 * In story mode, enemys spawn where they are laid out in the level and are capable of blocking progression until defeated
 	 * Score bonuses are recieved for beating a level quickly and for defeating all enemies
 	 */
-	private static boolean EnduranceMode = true;
+	private static boolean EnduranceMode = false;
 	
 	/**
 	 * How often spawns should occur in Endurance Mode
 	 */
 	private static float ENDURANCERATE = 100f;
-	
-	private int currentEnemyGroup;
-	
-	//game load data files
-	public LevelData data;
 		
 	public static final float[] FOV = {50, 75, 190, 220};
 
@@ -56,10 +51,18 @@ public class Level{
 	public World world;
 	
 	private float distance;
-	private float totalDistance;
+	
+	public LevelData data;
+	
+	/**
+	 * Necessary for story/level progression in non-endurance mode.
+	 * We need to keep track of the formation and the index in the order
+	 * set.
+	 */
+	private Formation formation;
+	private int wave;
 	
 	private Array<Entity> activeEnemies;
-	private Array<Entity> oldEnemies;
 	
 	RenderSystem rs;
 	EnemySystem es;
@@ -68,6 +71,9 @@ public class Level{
 
 	private float warning;
 	
+	/**
+	 * Length of time that the warning message should be visible
+	 */
 	private static final float WARNING_WAIT = 2.0f;
 
 	/**
@@ -104,7 +110,59 @@ public class Level{
 		Engine.player = player;
 		
 		activeEnemies = new Array<Entity>();
-		oldEnemies = new Array<Entity>();
+	}
+	
+	/**
+	 * Performs updating when running in endurance mode
+	 */
+	private void updateEndurance(float travel)
+	{
+		distance += travel;
+		Engine.score += travel;
+		if (distance > ENDURANCERATE)
+		{
+			distance -= ENDURANCERATE;
+			es.killEnemies();
+			
+			//pick formation
+			int num = (int)(Math.random()*data.enemyData.size);
+			Formation enemyData = data.enemyData.get(num);
+			
+			//if midboss or boss then flash a warning
+			boolean w = (num == data.midboss) || (num == data.enemyData.size-1);
+			world.getSystem(RenderSystem.class).warning = w;
+			warning = w?WARNING_WAIT:0;
+			
+			activeEnemies = es.spawnEnemies(enemyData);
+			//warningBeep.play();
+		}
+	}
+	
+	/**
+	 * Performs updates of the level progression when in story/linear mode
+	 */
+	private void updateStory(float travel)
+	{
+		if (distance > 0)
+		{
+			distance -= travel;
+		}
+		else
+		{
+			if (activeEnemies.size == 0)
+			{
+				//set and spawn the next formation
+				formation = data.enemyData.get(wave);
+				wave++;
+				
+				//if midboss or boss then flash a warning
+				boolean w = (wave == data.midboss) || (wave == data.enemyData.size);
+				world.getSystem(RenderSystem.class).warning = w;
+				warning = w?2.0f:0;
+				
+				activeEnemies = formation.spawn(world);
+			}
+		}
 	}
 	
 	/**
@@ -134,20 +192,13 @@ public class Level{
 		float travel = 10f*delta;
 		if (EnduranceMode)
 		{
-			distance += travel;
-			Engine.score += travel;
-			if (distance > ENDURANCERATE)
-			{
-				totalDistance += distance;
-				distance -= ENDURANCERATE;
-				es.killEnemies();
-				SpawnSet enemyData = data.enemyData.get((int)(Math.random()*data.enemyData.size));
-				world.getSystem(RenderSystem.class).warning = (enemyData.warning);
-				warning = (enemyData.warning)?2.0f:0;
-				activeEnemies = es.spawnEnemies(enemyData);
-				//warningBeep.play();
-			}
+			this.updateEndurance(travel);
 		}
+		else
+		{
+			this.updateStory(travel);
+		}
+		
 		es.process();
 		
 		if (Engine.player.getComponent(Health.class).hp <= 0)
@@ -172,26 +223,6 @@ public class Level{
 	{
 		GroupManager gm = this.world.getManager(GroupManager.class);
 		TagManager tm = this.world.getManager(TagManager.class);
-		
-		// place the enemies in the world
-		for (int i = 0; i < data.enemyData.size; i++)
-		{
-			SpawnSet s = data.enemyData.get(i);
-			for (int j = 0; j < s.spawns.size; j++)
-			{
-				Spawn enemy = s.spawns.get(j);
-				
-				Entity e = this.world.createEntity();
-				e = s.atlas.createEnemy(enemy.name, e);
-				Position p = (Position)e.getComponent(Position.CType);
-				p.location.x = enemy.pos.x;
-				p.location.y = enemy.pos.y;
-				Entity emitter = this.world.createEntity();
-				emitter = BulletEmitter.createEmitter(emitter, 10, 1.0f, e);
-				
-				this.world.addEntity(e);
-			}
-		}
 		
 		//create layered background
 		for (int i = 0; i < data.background.stack.size; i++)
