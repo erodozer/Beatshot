@@ -36,7 +36,7 @@ public class Formation implements Cloneable {
 			value = json.get("path");
 			path = PathParser.parsePath(value);
 			duration = value.getFloat("duration");
-			String loop = value.getString("loop", "norepeat");
+			String loop = value.getString("end", "kill");
 			if (loop.startsWith("repeat"))
 			{
 				looppath = Loop.Repeat;
