@@ -1,6 +1,7 @@
 package com.nhydock.beatshot.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.badlogic.gdx.math.BSpline;
@@ -82,7 +83,8 @@ public class PathParser {
 		//load a curved path
 		if (pathElement.getString("type").equals("bezier"))
 		{
-			path = new BSpline<Vector2>((Vector2[])points.toArray(Vector2.class), 2, false);
+			Vector2[] v = points.toArray(Vector2.class);
+			path = new BSpline<Vector2>(v, 3, true);
 		}
 		//load sharp path
 		else

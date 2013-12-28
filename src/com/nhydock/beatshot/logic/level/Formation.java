@@ -2,9 +2,8 @@ package com.nhydock.beatshot.logic.level;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.badlogic.gdx.math.BSpline;
+import com.badlogic.gdx.artemis.components.Path.Loop;
 import com.badlogic.gdx.math.Path;
-import com.badlogic.gdx.math.PolyPath;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
@@ -19,6 +18,7 @@ import com.nhydock.beatshot.util.PathParser;
 public class Formation implements Cloneable {
 	private Path<Vector2> path;
 	private float duration;
+	private Loop looppath;
 	private EnemyAtlas atlas;
 	private Array<EnemyData> enemies;
 	
@@ -35,6 +35,27 @@ public class Formation implements Cloneable {
 		{
 			value = json.get("path");
 			path = PathParser.parsePath(value);
+			duration = value.getFloat("duration");
+			String loop = value.getString("loop", "norepeat");
+			if (loop.startsWith("repeat"))
+			{
+				looppath = Loop.Repeat;
+			}
+			else if (loop.startsWith("pingpong"))
+			{
+				if (loop.endsWith("repeat"))
+				{
+					looppath = Loop.PingPongLoop;
+				}
+				else
+				{
+					looppath = Loop.PingPong;
+				}
+			}
+			else
+			{
+				looppath = Loop.None;
+			}
 		}
 		
 		//set enemies
@@ -63,7 +84,8 @@ public class Formation implements Cloneable {
 		{
 			Entity e = world.createEntity();
 			atlas.createEnemy(v.type, e);
-			e.addComponent(new com.badlogic.gdx.artemis.components.Path(path, duration, v.delay));
+			com.badlogic.gdx.artemis.components.Path p = new com.badlogic.gdx.artemis.components.Path(path, duration, v.delay, looppath);
+			e.addComponent(p);
 			
 			entities.add(e);
 		}
