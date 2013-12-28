@@ -13,7 +13,7 @@ public class LevelData
 	 * All the spawn sets
 	 */
 	public Array<Formation> enemyData;
-	public IntArray order;
+	public Array<IntArray> order;
 	public int midboss;
 	
 	/**
@@ -63,14 +63,26 @@ public class LevelData
 			midboss = value.getInt("midboss");
 			
 			value = value.get("order");
-			order = new IntArray();
+			order = new Array<IntArray>();
 
 			for (int i = 0; i < value.size; i++)
 			{
-				int n = value.getInt(i);
-				order.add(n);
+				IntArray f = new IntArray();
+				JsonValue n = value.get(i);
+				if (n.size > 0)
+				{
+					for (int k = 0; k < n.size; k++)
+						f.add(n.getInt(k)-1);
+				}
+				else
+				{
+					f.add(n.asInt()-1);
+				}
+				order.add(f);
 			}
 		}
+		
+		System.out.println(order);
 	}
 	
 	private void loadProperties()

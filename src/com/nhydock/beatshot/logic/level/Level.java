@@ -11,19 +11,17 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-
+import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.artemis.components.*;
 import com.badlogic.gdx.artemis.systems.*;
 import com.nhydock.beatshot.CEF.*;
 import com.nhydock.beatshot.CEF.Components.*;
 import com.nhydock.beatshot.logic.level.LevelData.Background.*;
 import com.nhydock.beatshot.logic.level.LevelData.*;
-
 import com.nhydock.beatshot.Factories.PlayerFactory;
 import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.logic.Bullet.BulletEmitter;
-
 import com.nhydock.beatshot.util.SpriteSheet;
 
 public class Level{
@@ -59,7 +57,6 @@ public class Level{
 	 * We need to keep track of the formation and the index in the order
 	 * set.
 	 */
-	private Formation formation;
 	private int wave;
 	
 	private Array<Entity> activeEnemies;
@@ -151,16 +148,25 @@ public class Level{
 		{
 			if (activeEnemies.size == 0)
 			{
+				activeEnemies.clear();
+				
 				//set and spawn the next formation
-				formation = data.enemyData.get(wave);
+				IntArray set = data.order.get(wave);
+				System.out.println(set);
+				for (int i = 0; i < set.size; i++)
+				{
+					int n = set.get(i);
+					Formation f = data.enemyData.get(n);
+					Array<Entity> enemies = es.spawnEnemies(f);
+					activeEnemies.addAll(enemies);
+				}
+				System.out.println(activeEnemies.size);
 				wave++;
 				
 				//if midboss or boss then flash a warning
-				boolean w = (wave == data.midboss) || (wave == data.enemyData.size);
+				boolean w = (wave == data.midboss) || (wave == data.order.size);
 				world.getSystem(RenderSystem.class).warning = w;
 				warning = w?2.0f:0;
-				
-				activeEnemies = es.spawnEnemies(formation);
 			}
 		}
 	}
