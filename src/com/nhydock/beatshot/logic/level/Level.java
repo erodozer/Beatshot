@@ -160,7 +160,7 @@ public class Level{
 				world.getSystem(RenderSystem.class).warning = w;
 				warning = w?2.0f:0;
 				
-				activeEnemies = formation.spawn(world);
+				activeEnemies = es.spawnEnemies(formation);
 			}
 		}
 	}
@@ -199,7 +199,7 @@ public class Level{
 			this.updateStory(travel);
 		}
 		
-		es.process();
+		//es.process();
 		
 		if (Engine.player.getComponent(Health.class).hp <= 0)
 		{
