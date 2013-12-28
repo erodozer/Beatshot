@@ -32,7 +32,6 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 	
 	@Mapper ComponentMapper<Player> playermap;
 	@Mapper ComponentMapper<Enemy> enemymap;
-	@Mapper ComponentMapper<Renderable> rendermap;
 
 	public boolean warning;
 	
@@ -43,7 +42,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 	
 	public void draw(SpriteBatch batch)
 	{
-		this.process();
+		process();
 		
 		//temp variable name holders
 		Renderable r;
@@ -153,7 +152,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			for (int i = 0; i < bag.size(); i++)
 			{
 				e = bag.get(i);
-				r = rendermap.get(e);
+				r = rmap.get(e);
 				r.sprite.draw(batch);
 			}
 		}
@@ -166,7 +165,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			for (int i = 0; i < bag.size(); i++)
 			{
 				e = bag.get(i);
-				r = rendermap.get(e);
+				r = rmap.get(e);
 				r.sprite.draw(batch);
 			}
 		}
@@ -180,7 +179,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			{
 				e = bag.get(i);
 				Player p = playermap.get(e);
-				r = rendermap.get(e);
+				r = rmap.get(e);
 				r.sprite.draw(batch);
 			}
 		}
@@ -193,7 +192,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			for (int i = 0; i < bag.size(); i++)
 			{
 				e = bag.get(i);
-				r = rendermap.get(e);
+				r = rmap.get(e);
 				r.sprite.draw(batch);
 				Animation a = (Animation)e.getComponent(Animation.CType);
 				if (a.done)

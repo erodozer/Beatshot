@@ -32,7 +32,6 @@ public class PlayerInputSystem extends com.badlogic.gdx.artemis.systems.InputSys
     @Mapper ComponentMapper<Health> hm;
     
     @Mapper ComponentMapper<Emitter> em;
-    @Mapper ComponentMapper<InputHandler> im;
     @Mapper ComponentMapper<Time> tm;
     
 	public PlayerInputSystem() {
@@ -78,7 +77,7 @@ public class PlayerInputSystem extends com.badlogic.gdx.artemis.systems.InputSys
 		{
 			for (int i = 0; i < shoot.length; i++)
 			{
-				if (PlayerInput.values()[i].keys == im.get(e).keys)
+				if (PlayerInput.values()[i].keys == inputMap.get(e).keys)
 				{
 					if (shoot[i])
 					{
