@@ -33,54 +33,11 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 	@Mapper ComponentMapper<Bullet> bm;
 	@Mapper ComponentMapper<Health> hm;
 	
-	boolean pass;
-    private ImmutableBag<Entity> enemyEntities;
+	private ImmutableBag<Entity> enemyEntities;
 	
 	@Override
 	protected boolean checkProcessing() {
 		return true;
-	}
-
-	protected void process(Entity e) {
-		if (handleOutOfBounds(e))
-			return;
-
-		Position pos = posm.get(e);
-		Bound bound = physics.getSafe(e);
-		
-		if (pass)
-		{
-			for (int i = 0; i < enemyEntities.size(); i++)
-			{
-				Entity collider = enemyEntities.get(i);
-				Enemy enemy = (Enemy)collider.getComponent(Enemy.CType);
-				if (!enemy.active || enemy.dead)
-					continue;
-				
-				Bound target = (Bound)collider.getComponent(Bound.CType);
-				Position bpos = (Position)collider.getComponent(Position.CType);
-				
-				if (target != null)
-				{
-					if (doesCollide(pos, bound, bpos, target))
-					{
-						handleCollision(e, collider);
-						return;
-					}
-				}
-			}
-		}
-		else
-		{
-			Entity collider = Engine.player;
-			Bound target = physics.get(collider);
-			Position bpos = posm.get(collider);
-			if (doesCollide(pos, bound, bpos, target))
-			{
-				handleCollision(e, collider);
-				return;
-			}
-		}
 	}
 
 	private boolean handleOutOfBounds(Entity e) {
@@ -149,23 +106,57 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		enemyEntities = gm.getExclusiveEntities(Enemy.TYPE);
 		
 		ImmutableBag<Entity> bag;
-		
 		//process player bullets
 		{
 			bag = gm.getEntities(Player.TYPE, Bullet.TYPE);
-			pass = true;
 			for (int i = 0; i < bag.size(); i++)
 			{
-				this.process(bag.get(i));
+				Entity e = bag.get(i);
+				Position pos = posm.get(e);
+				Bound bound = physics.get(e);
+				
+				boolean hit = false;
+				for (int n = 0; n < enemyEntities.size() && !hit; n++)
+				{
+					Entity collider = enemyEntities.get(i);
+					Enemy enemy = em.get(collider);
+					if (!enemy.active || enemy.dead)
+						continue;
+					
+					Bound target = physics.get(collider);
+					Position bpos = posm.get(collider);
+					
+					if (target != null)
+					{
+						if (doesCollide(pos, bound, bpos, target))
+						{
+							handleCollision(e, collider);
+							hit = true;
+						}
+					}
+				}
 			}
 		}
+		
 		//process enemy bullets
 		{
 			bag = gm.getEntities(Enemy.TYPE);
-			pass = false;
-			for (int i = 0; i < bag.size(); i++)
+			
+			Entity collider = Engine.player;
+			Bound target = physics.get(collider);
+			Position bpos = posm.get(collider);
+			boolean hit = false;
+			for (int i = 0; i < bag.size() && !hit; i++)
 			{
-				this.process(bag.get(i));
+				Entity e = bag.get(i);
+				Position pos = posm.get(e);
+				Bound bound = physics.get(e);
+				
+				if (doesCollide(pos, bound, bpos, target))
+				{
+					handleCollision(e, collider);
+					hit = true;
+				}
 			}
 		}
 	}

@@ -14,7 +14,7 @@ import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.logic.level.Formation;
 import com.nhydock.beatshot.logic.level.LevelData;
 
-import static com.nhydock.beatshot.logic.level.Level.FOV;
+import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 public class EnemySystem extends EntityProcessingSystem {
 
@@ -27,8 +27,6 @@ public class EnemySystem extends EntityProcessingSystem {
 	@Mapper ComponentMapper<Enemy> em;
 	@Mapper ComponentMapper<Velocity> vm;
 	@Mapper ComponentMapper<Position> pm;
-	@Mapper ComponentMapper<Path> pathm;
-	
 	
 	public void processEntities(Array<Entity> enemies)
 	{
