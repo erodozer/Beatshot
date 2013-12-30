@@ -1,17 +1,13 @@
 package com.nhydock.beatshot.CEF;
 
-import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.EntitySystem;
 import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.nhydock.beatshot.CEF.Components.Ammo;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
@@ -26,8 +22,8 @@ import com.badlogic.gdx.artemis.components.*;
  */
 public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2D {
 
-	static float[] InternalRes = {240f, 320f};
-	static final float[] FOV = {50, 75, 190, 220};
+	static public float[] InternalRes = {240f, 320f};
+	static public final float[] FOV = {25, 75, 190, 220};
 
 	
 	@Mapper ComponentMapper<Player> playermap;
@@ -178,14 +174,13 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			for (int i = 0; i < bag.size(); i++)
 			{
 				e = bag.get(i);
-				Player p = playermap.get(e);
 				r = rmap.get(e);
 				r.sprite.draw(batch);
 			}
 		}
 		batch.end();
 		
-		bag = gm.getEntities("Dead");
+		bag = gm.getEntities("effects");
 		batch.begin();
 		{
 			//render explosions

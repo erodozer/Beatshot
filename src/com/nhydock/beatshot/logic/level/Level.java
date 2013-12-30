@@ -17,12 +17,12 @@ import com.badlogic.gdx.artemis.systems.*;
 import com.nhydock.beatshot.CEF.*;
 import com.nhydock.beatshot.CEF.Components.*;
 import com.nhydock.beatshot.logic.level.LevelData.Background.*;
-import com.nhydock.beatshot.logic.level.LevelData.*;
 import com.nhydock.beatshot.Factories.PlayerFactory;
 import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.logic.Engine;
-import com.nhydock.beatshot.logic.Bullet.BulletEmitter;
 import com.nhydock.beatshot.util.SpriteSheet;
+
+import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 public class Level{
 	
@@ -40,8 +40,6 @@ public class Level{
 	 * How often spawns should occur in Endurance Mode
 	 */
 	private static float ENDURANCERATE = 100f;
-		
-	public static final float[] FOV = {50, 75, 190, 220};
 
 	/**
 	 * Container of all the entities for this level
@@ -244,7 +242,7 @@ public class Level{
 			{
 				LayerData d = (LayerData)data.background.stack.get(i);
 				t.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-				s.setSize(Math.max(t.getWidth(), FOV[2]), Math.max(t.getHeight(),FOV[3]));
+				s.setSize(Math.max(t.getWidth(), FOV[2]), Math.max(t.getHeight(), FOV[3]));
 				layer.addComponent(new Position(), Position.CType);
 					
 				layer.addComponent(new Scrollable(0, d.rate, Math.max(FOV[2]/(float)t.getWidth(), 1.0f), Math.max(FOV[3]/(float)t.getHeight(), 1.0f)), Scrollable.CType);
