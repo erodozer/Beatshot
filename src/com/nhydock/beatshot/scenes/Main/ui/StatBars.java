@@ -12,6 +12,8 @@ import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.util.SpriteSheet;
 
+import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
+
 public class StatBars extends Sprite{
 	
 	private static Texture frameTex;
@@ -62,7 +64,7 @@ public class StatBars extends Sprite{
 	{
 		super.setPosition(x, y);
 		hpBar.setPosition(x, y);
-		ammoBar.setPosition(x+25, y);
+		ammoBar.setPosition(x+FOV[2]+25, y);
 	}
 	
 	public void draw(SpriteBatch batch, float alpha)

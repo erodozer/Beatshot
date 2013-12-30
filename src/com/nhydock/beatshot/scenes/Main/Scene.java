@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.CEF.PlayerInputSystem;
+import com.nhydock.beatshot.Factories.ExplosionFactory;
 import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.logic.level.Level;
@@ -24,7 +25,7 @@ import com.nhydock.beatshot.scenes.Main.ui.StatBars;
 import com.nhydock.beatshot.util.SpriteSheet;
 
 import static com.nhydock.beatshot.core.BeatshotGame.INTERNAL_RES;
-import static com.nhydock.beatshot.logic.level.Level.FOV;
+import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 public class Scene implements Screen {
 
@@ -235,7 +236,7 @@ public class Scene implements Screen {
 		keydisp = new KeyDisplay();
 		
 		scoreField = new ScoreField();
-		scoreField.setPosition(50, 295);
+		scoreField.setPosition(25, 295);
 		
 		SpriteSheet curtainTex = new SpriteSheet(Gdx.files.internal(DataDir.Ui + "curtain.png"), 2, 1);
 		curtainLeft = new Sprite(curtainTex.getFrame(0));
@@ -269,6 +270,7 @@ public class Scene implements Screen {
 		KeyDisplay.loadAssets();
 		StatBars.loadAssets();
 		ScoreField.loadAssets();
+		ExplosionFactory.loadAssets();
 		uiReady = false;
 		
 		bgmPaths = new Array<FileHandle>(Gdx.files.internal(DataDir.BGM).list());

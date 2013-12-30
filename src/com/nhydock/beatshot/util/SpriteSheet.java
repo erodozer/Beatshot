@@ -46,12 +46,13 @@ public class SpriteSheet
 		rows = new TextureRegion[yFrames][xFrames];
 		columns = new TextureRegion[xFrames][yFrames];
 		frameSize = new int[]{tex.getRegionWidth()/xFrames, tex.getRegionHeight()/yFrames};
+		rows = tex.split(frameSize[0], frameSize[1]);
+				
 		for (int y = 0, yArea = 0; y < yFrames; y++, yArea += frameSize[1])
 		{
 			for (int x = 0, xArea = 0; x < xFrames; x++, xArea += frameSize[0])
 			{
-				TextureRegion r = new TextureRegion(tex, xArea, yArea, frameSize[0], frameSize[1]);
-				rows[y][x] = r;
+				TextureRegion r = rows[y][x];
 				columns[x][y] = r;
 			}
 		}
@@ -69,9 +70,9 @@ public class SpriteSheet
 		this(new Texture(path), xFrames, yFrames);
 	}
 	
-	public Texture getTexture()
+	public TextureRegion getTexture()
 	{
-		return tex.getTexture();
+		return tex;
 	}
 
 	/**
