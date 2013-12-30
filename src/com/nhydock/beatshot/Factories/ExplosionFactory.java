@@ -4,18 +4,13 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.artemis.components.Animation;
-import com.badlogic.gdx.artemis.components.Position;
 import com.badlogic.gdx.artemis.components.Renderable;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.util.SpriteSheet;
 
 /**
@@ -49,9 +44,11 @@ public class ExplosionFactory {
 	{
 		Entity e = w.createEntity();
 		
-		SpriteSheet s = explosions.get(MathUtils.random(0, explosions.size-1));
+		SpriteSheet s = explosions.get((int)(Math.random()*explosions.size));
 		Renderable r = new Renderable(new Sprite(s.getFrame(0)));
-		Vector2 offset = new Vector2(-r.sprite.getWidth()/2, -r.sprite.getHeight()/2);
+		Vector2 offset = new Vector2(
+                            -r.sprite.getWidth()/2 + (float)(Math.random()*20f)-5, 
+                            -r.sprite.getHeight()/2 + (float)(Math.random()*20f)-10);
 		r.sprite.setPosition(location.x + offset.x, location.y + offset.y);
 		Animation a = new Animation(s.getTexture(), s.xFrames, s.yFrames, 1f/(s.xFrames*s.yFrames), false);
 		
