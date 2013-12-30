@@ -1,11 +1,10 @@
 package com.nhydock.beatshot.CEF;
 
-import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
-import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.systems.VoidEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.artemis.components.*;
 import com.badlogic.gdx.math.Vector2;
@@ -14,20 +13,17 @@ import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
+import com.nhydock.beatshot.Factories.ExplosionFactory;
 import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.logic.Bullet.BulletEmitter;
 
-import static com.nhydock.beatshot.logic.level.Level.FOV;
+import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 /**
+ * Handles bullet collision with objects
  * @author nhydock
- *
  */
-public class CollisionEntitySystem extends EntityProcessingSystem {
-
-	public CollisionEntitySystem() {
-		super(Aspect.getAspectForAll(Position.class, Bound.class, Bullet.class));
-	}
+public class CollisionEntitySystem extends VoidEntitySystem {
 
 	@Mapper ComponentMapper<Bound> physics;
 	@Mapper ComponentMapper<Position> posm;
@@ -37,38 +33,27 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 	@Mapper ComponentMapper<Bullet> bm;
 	@Mapper ComponentMapper<Health> hm;
 	
-	
+	boolean pass;
     private ImmutableBag<Entity> enemyEntities;
-
-    @Override
-    public void initialize()
-    {
-    	enemyEntities = world.getManager(GroupManager.class).getEntities("Enemy");
-    }
 	
 	@Override
 	protected boolean checkProcessing() {
 		return true;
 	}
 
-	@Override
 	protected void process(Entity e) {
-		Player player = pm.getSafe(e);
-		Enemy enemy = em.getSafe(e);
+		if (handleOutOfBounds(e))
+			return;
 
 		Position pos = posm.get(e);
 		Bound bound = physics.getSafe(e);
-			
-
-		if (handleOutOfBounds(e))
-			return;
 		
-		if (player != null)
+		if (pass)
 		{
 			for (int i = 0; i < enemyEntities.size(); i++)
 			{
 				Entity collider = enemyEntities.get(i);
-				enemy = (Enemy)collider.getComponent(Enemy.CType);
+				Enemy enemy = (Enemy)collider.getComponent(Enemy.CType);
 				if (!enemy.active || enemy.dead)
 					continue;
 				
@@ -85,7 +70,7 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 				}
 			}
 		}
-		else if (enemy != null)
+		else
 		{
 			Entity collider = Engine.player;
 			Bound target = physics.get(collider);
@@ -96,11 +81,10 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 				return;
 			}
 		}
-		
 	}
 
 	private boolean handleOutOfBounds(Entity e) {
-		Position p = (Position)e.getComponent(Position.CType);
+		Position p = posm.get(e);
 		
 		if (p.location.x < 0 || p.location.x > FOV[2] || p.location.y < 0 || p.location.y > FOV[3])
 		{
@@ -149,6 +133,40 @@ public class CollisionEntitySystem extends EntityProcessingSystem {
 			Entity explosion = BulletEmitter.explode(target);
 			world.getManager(GroupManager.class).add(explosion, "Dead");
 		}
+		
+		Position p = posm.get(bullet);
+		
+		Entity explosion = ExplosionFactory.create(this.world, p.location);
+		explosion.addToWorld();
+		world.getManager(GroupManager.class).add(explosion, "effects");
+		
 		bullet.deleteFromWorld();
+	}
+
+	@Override
+	protected void processSystem() {
+		GroupManager gm = this.world.getManager(GroupManager.class);
+		enemyEntities = gm.getExclusiveEntities(Enemy.TYPE);
+		
+		ImmutableBag<Entity> bag;
+		
+		//process player bullets
+		{
+			bag = gm.getEntities(Player.TYPE, Bullet.TYPE);
+			pass = true;
+			for (int i = 0; i < bag.size(); i++)
+			{
+				this.process(bag.get(i));
+			}
+		}
+		//process enemy bullets
+		{
+			bag = gm.getEntities(Enemy.TYPE);
+			pass = false;
+			for (int i = 0; i < bag.size(); i++)
+			{
+				this.process(bag.get(i));
+			}
+		}
 	}
 }
