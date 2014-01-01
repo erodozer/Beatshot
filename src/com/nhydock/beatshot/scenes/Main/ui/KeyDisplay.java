@@ -35,7 +35,7 @@ public class KeyDisplay extends Group {
 		frame = new Sprite(Engine.assets.get(DataDir.Ui + "frame.png", Texture.class));
 		frame.setSize(240, 75);
 		
-		keys = new Sprite[PlayerInput.Lasers];
+		keys = new Sprite[PlayerInput.Lasers.length];
 		KeyTex = Engine.assets.get(DataDir.Ui + "keys.png", Texture.class);
 
 		for (int i = 0, x = 88, y = 12; i < keys.length; i++, x += KeyTex.getWidth() >> 2)
@@ -103,15 +103,21 @@ public class KeyDisplay extends Group {
 			}
 			else if (input != null)
 			{
-				int i = input.ordinal();
-				Sprite image = this.keys[i];
-				if ((i & 0x0001) == 0x0001) 
+				for (int i = 0; i < PlayerInput.Lasers.length; i++)
 				{
-					image.setU(.75f); image.setU2(1.0f);
-				}
-				else
-				{
-					image.setU(.25f); image.setU2(.5f);	
+					PlayerInput laser = PlayerInput.Lasers[i];
+					if (input == laser)
+					{
+						Sprite image = this.keys[i];
+						if ((i & 0x0001) == 0x0001) 
+						{
+							image.setU(.75f); image.setU2(1.0f);
+						}
+						else
+						{
+							image.setU(.25f); image.setU2(.5f);	
+						}
+					}
 				}
 			}
 			
@@ -122,20 +128,23 @@ public class KeyDisplay extends Group {
 		public boolean keyUp(int keycode)
 		{
 			PlayerInput input = PlayerInput.valueOf(keycode);
-			if (input.valueOf(keycode) == null)
+			if (input == null)
 				return false;
 			
-			if (input.ordinal() < input.Lasers)
+			for (int i = 0; i < PlayerInput.Lasers.length; i++)
 			{
-				int i = input.ordinal();
-				Sprite image = this.keys[i];
-				if ((i & 0x0001) == 0x0001) 
+				PlayerInput laser = PlayerInput.Lasers[i];
+				if (input == laser)
 				{
-					image.setU(.5f); image.setU2(.75f);
-				}
-				else
-				{
-					image.setU(0f); image.setU2(.25f);	
+					Sprite image = this.keys[i];
+					if ((i & 0x0001) == 0x0001) 
+					{
+						image.setU(.5f); image.setU2(.75f);
+					}
+					else
+					{
+						image.setU(0f); image.setU2(.25f);	
+					}
 				}
 			}
 			

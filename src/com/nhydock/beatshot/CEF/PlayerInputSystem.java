@@ -5,14 +5,17 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
+import com.artemis.systems.VoidEntitySystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.artemis.components.*;
 import com.nhydock.beatshot.CEF.Components.Ammo;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Emitter;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.core.Consts.PlayerInput;
+import com.nhydock.beatshot.logic.Engine;
 
-public class PlayerInputSystem extends com.badlogic.gdx.artemis.systems.InputSystem {
+public class PlayerInputSystem extends VoidEntitySystem {
 
 	public static final int LOWAMMOPOINT = 40;
 	public static final int LOWHPPOINT = 30;
@@ -21,140 +24,59 @@ public class PlayerInputSystem extends com.badlogic.gdx.artemis.systems.InputSys
 	private static final float CHARGERATE = 30.0f;
 	private static final float HPCHARGERATE = 1.0f;
 
-	boolean[] shoot;
 	int firing;
 	
-	boolean left, right;
-	
-    @Mapper ComponentMapper<Position> pm;
-    @Mapper ComponentMapper<Velocity> vm;
-    @Mapper ComponentMapper<Ammo> am;
-    @Mapper ComponentMapper<Health> hm;
-    
-    @Mapper ComponentMapper<Emitter> em;
-    @Mapper ComponentMapper<Time> tm;
-    
-	public PlayerInputSystem() {
-		super(Aspect.getAspectForAll(Player.class));
-		
-		shoot = new boolean[PlayerInput.Lasers];	
-	}
-	
 	@Override
-	protected void process(Entity e) {
-		Velocity vel = vm.get(e);
-		Emitter emit = em.getSafe(e);
+	protected void processSystem() {
+		Velocity vel = Engine.player.getComponent(Velocity.class);
+		Emitter emit = Engine.player.getComponent(Emitter.class);
 		
-		if (emit == null)
+		//move left
+		if (PlayerInput.LEFT.isPressed())
 		{
-			if (left)
-			{
-				vel.x = -100.0f;
-			}
-			else if (right)
-			{
-				vel.x = 100.0f;
-			}
-			else
-			{
-				vel.x = 0;
-			}
-			
-			Ammo a = am.getSafe(e);
-			if (firing == 0 || a.recharge)
-			{
-				a.ammo = Math.min(a.ammo+(CHARGERATE*world.delta), a.maxammo);
-				if (a.ammo > a.maxammo/2.0f)
-				{
-					a.recharge = false;
-				}
-			}
-			
-			Health h = hm.get(e);
-			h.hp = Math.min(h.hp+(HPCHARGERATE*world.delta), h.maxhp);
+			vel.x = -100f;
+		}
+		else if (PlayerInput.RIGHT.isPressed())
+		{
+			vel.x = 100f;
 		}
 		else
 		{
-			for (int i = 0; i < shoot.length; i++)
+			vel.x = 0f;
+		}
+		
+		firing = 0;
+		for (int i = 0; i < PlayerInput.Lasers.length; i++)
+		{
+			PlayerInput p = PlayerInput.Lasers[i];
+			if (p.isPressed())
 			{
-				if (PlayerInput.values()[i].keys == inputMap.get(e).keys)
-				{
-					if (shoot[i])
-					{
-						emit.active = true;
-					}
-					else
-					{
-						emit.active = false;
-						Time t = tm.get(e);
-						t.curr = 0;
-					}
-					break;	
-				}
+				emit.enable(i);
+				firing++;
+			}
+			else
+			{
+				emit.disable(i);
 			}
 		}
+			
+		Ammo a = Engine.player.getComponent(Ammo.class);
+		if (firing == 0 || a.recharge)
+		{
+			a.ammo = Math.min(a.ammo+(CHARGERATE*world.delta), a.maxammo);
+			if (a.ammo > a.maxammo/2.0f)
+			{
+				a.recharge = false;
+			}
+		}
+		else
+		{
+			a.ammo = Math.max(a.ammo - (firing * DRAINRATE * world.delta), 0);
+		}
 		
-		Position p = pm.get(e);
-		if (p.location.x < 0)
-		{
-			left = false;
-			p.location.x = 0;
-		}
-		if (p.location.x > 176)
-		{
-			right = false;
-			p.location.x = 176;
-		}
-	}
 
-	@Override
-	public boolean keyDown(int key) {
-		PlayerInput l = PlayerInput.valueOf(key);
-		if (l == null)
-			return false;
-		
-		if (l == PlayerInput.LEFT)
-		{
-			left = true;
-		}
-		
-		if (l == PlayerInput.RIGHT)
-		{
-			right = true;
-		}
-		
-		//laser input
-		if (l.ordinal() < PlayerInput.Lasers)
-		{
-			shoot[l.ordinal()] = true;
-			firing++;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean keyUp(int key) {
-		PlayerInput l = PlayerInput.valueOf(key);
-		if (l == null)
-			return false;
-		
-		if (l == PlayerInput.LEFT)
-		{
-			left = false;
-		}
-		
-		if (l == PlayerInput.RIGHT)
-		{
-			right = false;
-		}
-		
-		//laser input
-		if (l.ordinal() < PlayerInput.Lasers)
-		{
-			shoot[l.ordinal()] = false;
-			firing--;
-		}
-		return true;
+		Health h = Engine.player.getComponent(Health.class);
+		h.hp = Math.min(h.hp+(HPCHARGERATE*world.delta), h.maxhp);
 	}
 
 }

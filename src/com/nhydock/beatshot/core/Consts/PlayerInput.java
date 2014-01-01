@@ -1,5 +1,6 @@
 package com.nhydock.beatshot.core.Consts;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 public enum PlayerInput
@@ -12,7 +13,7 @@ public enum PlayerInput
 	LEFT(Keys.LEFT),
 	RIGHT(Keys.RIGHT);
 	
-	public static final int Lasers = 5;
+	public static final PlayerInput[] Lasers = {ONE, TWO, THREE, FOUR, FIVE};
 	
 	public final int[] keys;
 	
@@ -34,5 +35,15 @@ public enum PlayerInput
 			}
 		}
 		return null;
+	}
+	
+	public boolean isPressed()
+	{
+		for (int key : this.keys)
+		{
+			if (Gdx.input.isKeyPressed(key))
+				return true;
+		}
+		return false;
 	}
 }

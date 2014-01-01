@@ -95,7 +95,6 @@ public class Scene implements Screen {
 				level.start();
 				this.levelReady = true;
 				
-				input.addProcessor(level.world.getSystem(PlayerInputSystem.class));
 				Gdx.input.setInputProcessor(input);
 			}
 		}
@@ -140,7 +139,6 @@ public class Scene implements Screen {
 					{
 						level.unloadAssets();
 						Gdx.input.setInputProcessor(null);
-						input.removeProcessor(level.world.getSystem(PlayerInputSystem.class));
 					}
 					level = new Level(nextLevel);
 					level.loadAssets();
