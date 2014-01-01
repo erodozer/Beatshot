@@ -21,6 +21,7 @@ import com.nhydock.beatshot.util.SpriteSheet;
 public class ExplosionFactory {
 
 	private static Array<SpriteSheet> explosions;
+	private static SpriteSheet bulletExplosion;
 	
 	/**
 	 * Set up the factory's image resources to be managed
@@ -38,13 +39,24 @@ public class ExplosionFactory {
 			
 			explosions.add(s);
 		}
+		
+		bulletExplosion = new SpriteSheet(Gdx.files.internal(DataDir.Images + "bang.png"), 4, 1);
 	}
 	
-	public static Entity create(World w, Vector2 location)
+	public static Entity create(World w, Vector2 location, boolean bulletHit)
 	{
 		Entity e = w.createEntity();
 		
-		SpriteSheet s = explosions.get((int)(Math.random()*explosions.size));
+		SpriteSheet s;
+		if (bulletHit)
+		{
+			s = bulletExplosion;
+		}
+		else
+		{
+			s = explosions.get((int)(Math.random()*explosions.size));	
+		}
+		
 		Renderable r = new Renderable(new Sprite(s.getFrame(0)));
 		Vector2 offset = new Vector2(
                             -r.sprite.getWidth()/2 + (float)(Math.random()*20f)-5, 

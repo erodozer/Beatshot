@@ -141,7 +141,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 		}
 		batch.end();
 
-		bag = gm.getEntities(Enemy.TYPE, Bullet.TYPE);
+		bag = gm.getEntities(Bullet.TYPE);
 		batch.begin();
 		{
 			//render enemy bullets
@@ -154,23 +154,10 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 		}
 		batch.end();
 		
-		bag = gm.getEntities(Enemy.TYPE);
+		bag = gm.getExclusiveEntities(Enemy.TYPE);
 		batch.begin();
 		{
 			//render enemies
-			for (int i = 0; i < bag.size(); i++)
-			{
-				e = bag.get(i);
-				r = rmap.get(e);
-				r.sprite.draw(batch);
-			}
-		}
-		batch.end();
-		
-		bag = gm.getEntities(Player.TYPE, Bullet.TYPE);
-		batch.begin();
-		{
-			//render player bullets
 			for (int i = 0; i < bag.size(); i++)
 			{
 				e = bag.get(i);

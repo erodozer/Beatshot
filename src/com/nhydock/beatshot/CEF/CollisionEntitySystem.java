@@ -15,8 +15,6 @@ import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
 import com.nhydock.beatshot.logic.Engine;
-import com.nhydock.beatshot.logic.Bullet.BulletEmitter;
-
 import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 /**
@@ -30,7 +28,6 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 	
 	@Mapper ComponentMapper<Enemy> em;
 	@Mapper ComponentMapper<Player> pm;
-	@Mapper ComponentMapper<Bullet> bm;
 	@Mapper ComponentMapper<Health> hm;
 	
 	private ImmutableBag<Entity> enemyEntities;
@@ -76,26 +73,24 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 	private void handleCollision(Entity bullet, Entity target)
 	{
 		Health health = hm.get(target);
-		
 		health.hp -= 10;
 		
-		Bullet b = bm.getSafe(bullet);
-		if (b != null)
+		if (this.world.getManager(GroupManager.class).isInGroup(bullet, Bullet.TYPE))
 		{
 			Position p = posm.get(bullet);
-			Entity explosion = ExplosionFactory.create(this.world, p.location);
+			Entity explosion = ExplosionFactory.create(this.world, p.location, true);
 			explosion.addToWorld();
 			world.getManager(GroupManager.class).add(explosion, "effects");
 		
 			bullet.deleteFromWorld();
 		}
-		
-		//check if the bullet is actually an enemy colliding with the player
-		Health h = hm.getSafe(bullet);
-		if (h != null)
+		//if the bullet is actually an enemy colliding with the player
+		else
 		{
+			Health h = hm.get(bullet);
 			h.hp -= 100;  //hit for massive damage on collision
 		}
+		
 	}
 
 	@Override
@@ -138,7 +133,7 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		
 		//process enemy bullets
 		{
-			bag = gm.getEntities(Enemy.TYPE);
+			bag = enemyEntities;
 			
 			Entity collider = Engine.player;
 			Bound target = physics.get(collider);
