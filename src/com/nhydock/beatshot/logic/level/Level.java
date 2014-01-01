@@ -71,6 +71,8 @@ public class Level{
 	 */
 	private static final float WARNING_WAIT = 2.0f;
 
+	Health playerHealth;
+	
 	/**
 	 * Loads and constructs a level
 	 * @param id - name of the level
@@ -104,6 +106,8 @@ public class Level{
 		Engine.world = world;
 		Engine.player = player;
 		
+		playerHealth = (Health)player.getComponent(Health.CType);
+		
 		activeEnemies = new Array<Entity>();
 	}
 	
@@ -117,7 +121,6 @@ public class Level{
 		if (distance > ENDURANCERATE)
 		{
 			distance -= ENDURANCERATE;
-			es.killEnemies();
 			
 			//pick formation
 			int num = (int)(Math.random()*data.enemyData.size);
@@ -190,9 +193,6 @@ public class Level{
 			world.getSystem(RenderSystem.class).warning = false;
 		}
 		
-		world.setDelta(delta);
-		world.process();
-		
 		float travel = 10f*delta;
 		if (EnduranceMode)
 		{
@@ -203,9 +203,11 @@ public class Level{
 			this.updateStory(travel);
 		}
 		
-		//es.process();
+		world.setDelta(delta);
+		world.process();
+		es.processEntities(activeEnemies);
 		
-		if (Engine.player.getComponent(Health.class).hp <= 0)
+		if (playerHealth.hp <= 0)
 		{
 			Engine.GameOver = true;
 		}
@@ -363,7 +365,7 @@ public class Level{
 		}
 		//Engine.assets.load(data.bgm, Music.class);
 		Engine.assets.unload(DataDir.Ui + "banners.png");
+		Engine.assets.unload(DataDir.Ui + "gameover.png");
 		Engine.assets.unload(DataDir.SFX + "warning.wav");
-		Engine.assets.unload(DataDir.Images + "gameover.png");
 	}
 }

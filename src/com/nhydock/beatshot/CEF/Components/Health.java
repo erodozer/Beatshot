@@ -36,4 +36,9 @@ public class Health extends Component {
 	{
 		return this.getPercent() < LOW;
 	}
+	
+	public boolean isDead()
+	{
+		return this.hp <= 0;
+	}
 }

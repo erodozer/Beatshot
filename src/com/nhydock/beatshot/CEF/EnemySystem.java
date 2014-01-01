@@ -9,8 +9,11 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.artemis.components.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
+import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
+import com.nhydock.beatshot.Factories.ExplosionFactory;
+import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.logic.level.Formation;
 import com.nhydock.beatshot.logic.level.LevelData;
 
@@ -21,12 +24,11 @@ public class EnemySystem extends EntityProcessingSystem {
 	public EnemySystem() {
 		super(Aspect.getAspectForAll(Enemy.class).exclude(Bullet.class));
 	}
-
-	float distance;
 	
 	@Mapper ComponentMapper<Enemy> em;
 	@Mapper ComponentMapper<Velocity> vm;
 	@Mapper ComponentMapper<Position> pm;
+	@Mapper ComponentMapper<Health> hm;
 	
 	public void processEntities(Array<Entity> enemies)
 	{
@@ -56,45 +58,20 @@ public class EnemySystem extends EntityProcessingSystem {
 
 	@Override
 	protected void process(Entity e) {
-		Enemy enemy = em.get(e);
 		
-		Velocity v = vm.get(e);
-		Position p = pm.get(e);
-		
-		if (!enemy.active)
+		Health hp = hm.get(e);
+		if (hp.isDead())
 		{
-			if (pathm.getSafe(e) != null)
-			{
-				e.removeComponent(Path.class);
-				e.changedInWorld();
-			}
-			v.y = -10;
-			if (p.location.x < ((int)FOV[2] >> 1))
-			{
-				v.x = -30;
-			}
-			else
-			{
-				v.x = 30;
-			}
+			//award points on kill
+			Engine.score += 50;
 			
-			if (p.location.x < 0 || p.location.x > FOV[2])
-			{
-				e.deleteFromWorld();
-				return;
-			}
-		}
-	}
-
-	/**
-	 * Makes all currently visible enemies fly away
-	 */
-	public void killEnemies() {
-		for (int i = 0; i < this.getActives().size(); i++)
-		{
-			Entity e = this.getActives().get(i);
-			Enemy enemy = em.get(e);
-			enemy.active = false;
+			//show explosion
+			Position p = pm.get(e);
+			Entity explosion = ExplosionFactory.create(this.world, p.location);
+			explosion.addToWorld();
+			world.getManager(GroupManager.class).add(explosion, "effects");
+			
+			e.disable();
 		}
 	}
 

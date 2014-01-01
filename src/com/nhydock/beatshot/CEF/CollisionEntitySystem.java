@@ -79,25 +79,23 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		
 		health.hp -= 10;
 		
-		if (health.hp <= 0)
+		Bullet b = bm.getSafe(bullet);
+		if (b != null)
 		{
-			Enemy e = em.getSafe(target);
-			if (e != null)
-			{
-				e.dead = true;
-				Engine.score += 50;
-			}
-			Entity explosion = BulletEmitter.explode(target);
-			world.getManager(GroupManager.class).add(explosion, "Dead");
+			Position p = posm.get(bullet);
+			Entity explosion = ExplosionFactory.create(this.world, p.location);
+			explosion.addToWorld();
+			world.getManager(GroupManager.class).add(explosion, "effects");
+		
+			bullet.deleteFromWorld();
 		}
 		
-		Position p = posm.get(bullet);
-		
-		Entity explosion = ExplosionFactory.create(this.world, p.location);
-		explosion.addToWorld();
-		world.getManager(GroupManager.class).add(explosion, "effects");
-		
-		bullet.deleteFromWorld();
+		//check if the bullet is actually an enemy colliding with the player
+		Health h = hm.getSafe(bullet);
+		if (h != null)
+		{
+			h.hp -= 100;  //hit for massive damage on collision
+		}
 	}
 
 	@Override
