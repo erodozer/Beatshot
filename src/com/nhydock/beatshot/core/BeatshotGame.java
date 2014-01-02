@@ -1,5 +1,8 @@
 package com.nhydock.beatshot.core;
+import com.artemis.Entity;
+import com.artemis.World;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.audio.Music;
 import com.nhydock.beatshot.scenes.Main.Scene;
 import com.nhydock.beatshot.util.SceneManager;
 
@@ -22,8 +25,19 @@ public class BeatshotGame extends Game {
 		this.setScreen(SceneManager.create("main"));
 	}
 	
-	private float timer;
-	private final float debug_rate = 5.0f;
+	public static World world;
+	public static String level = "level001";
+	public static float score;
+	
+	public static Entity player;
+	public static boolean GameOver;
+	
+	public static Music bgm;
+	
+	//debug vars
+	//private float timer;
+	//private final float debug_rate = 5.0f;
+	
 	
 	public void render()
 	{

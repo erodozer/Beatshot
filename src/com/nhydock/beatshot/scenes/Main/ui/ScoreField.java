@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.util.Tools;
 import com.nhydock.beatshot.util.SpriteSheet;
 
 public class ScoreField extends Sprite {
@@ -21,13 +22,13 @@ public class ScoreField extends Sprite {
 	
 	public static void loadAssets()
 	{
-		Engine.assets.load(DataDir.Ui + "tabbar.png", Texture.class);
-		Engine.assets.load(DataDir.Ui + "tabs.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "tabbar.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "tabs.png", Texture.class);
 	}
 	
 	public ScoreField()
 	{
-		back = new Sprite(Engine.assets.get(DataDir.Ui + "tabbar.png", Texture.class));
+		back = new Sprite(Tools.assets.get(DataDir.Ui + "tabbar.png", Texture.class));
 		back.setSize(25, 190);
 		back.setV2(190);
 		back.rotate(-90);
@@ -35,7 +36,7 @@ public class ScoreField extends Sprite {
 		//scoreFont = Engine.assets.get(DataDir.Fonts + "myfont.fnt", BitmapFont.class);
 		scoreFont = new BitmapFont(Gdx.files.internal(DataDir.Fonts+"score.fnt"), Gdx.files.internal(DataDir.Fonts+"score.png"), false);
 		//scoreFont.setScale(16.0f);
-		SpriteSheet s = new SpriteSheet(Engine.assets.get(DataDir.Ui + "tabs.png", Texture.class), 4, 1);
+		SpriteSheet s = new SpriteSheet(Tools.assets.get(DataDir.Ui + "tabs.png", Texture.class), 4, 1);
 		tab = new Sprite(s.getFrame(2));
 		tab.rotate(-90);
 		tab.setX(190-tab.getHeight());
@@ -52,7 +53,7 @@ public class ScoreField extends Sprite {
 		back.draw(batch);
 		tab.draw(batch);
 		scoreFont.setColor(Color.WHITE);
-		scoreFont.drawMultiLine(batch, String.format(format, (int)Engine.score), 
+		scoreFont.drawMultiLine(batch, String.format(format, (int)BeatshotGame.score), 
 				back.getX()+10, back.getY() + 20, 0, HAlignment.LEFT);
 	}
 }

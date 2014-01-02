@@ -10,8 +10,9 @@ import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.logic.level.Formation;
+import com.nhydock.beatshot.util.Tools;
 
 public class EnemySystem extends VoidEntitySystem {
 
@@ -33,11 +34,11 @@ public class EnemySystem extends VoidEntitySystem {
 		while (i < enemies.size)
 		{
 			Entity e = enemies.get(i);
-			process(e);
 			
 			if (e.isEnabled())
 			{
 				i++;
+				process(e); 
 			}
 			else
 			{
@@ -54,12 +55,14 @@ public class EnemySystem extends VoidEntitySystem {
 
 	protected void process(Entity e) {
 		
-		Health hp = hm.get(e);
+		Health hp = hm.getSafe(e);
+		if (hp == null)
+			return;
+		
 		if (hp.isDead())
 		{
-			System.out.println("blam");
 			//award points on kill
-			Engine.score += 50;
+			BeatshotGame.score += 50;
 			
 			//show explosion
 			Position p = pm.get(e);
@@ -69,6 +72,7 @@ public class EnemySystem extends VoidEntitySystem {
 			
 			e.disable();
 		}
+		
 	}
 	
 	public void clear() {

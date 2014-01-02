@@ -16,12 +16,13 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.CEF.PlayerInputSystem;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Engine;
 import com.nhydock.beatshot.logic.level.Level;
 import com.nhydock.beatshot.scenes.Main.ui.KeyDisplay;
 import com.nhydock.beatshot.scenes.Main.ui.ScoreField;
 import com.nhydock.beatshot.scenes.Main.ui.StatBars;
+import com.nhydock.beatshot.util.Tools;
 import com.nhydock.beatshot.util.SpriteSheet;
 
 import static com.nhydock.beatshot.core.BeatshotGame.INTERNAL_RES;
@@ -83,7 +84,7 @@ public class Scene implements Screen {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		
 		//wait for assets to load
-		if (doneLoading = Engine.assets.update())
+		if (doneLoading = Tools.assets.update())
 		{
 			if (!uiReady)
 			{
@@ -134,7 +135,7 @@ public class Scene implements Screen {
 				
 				if (curtainLeft.getX() >= 0 && curtainRight.getX() <= 0 && nextLevel != null)
 				{
-					Engine.GameOver = false;
+					BeatshotGame.GameOver = false;
 					if (level != null)
 					{
 						level.unloadAssets();
@@ -178,11 +179,11 @@ public class Scene implements Screen {
 			batch.end();
 		}
 		
-		if (Engine.bgm != null && !Engine.bgm.isPlaying())
+		if (BeatshotGame.bgm != null && !BeatshotGame.bgm.isPlaying())
 		{
-			Engine.bgm.dispose();
-			Engine.bgm = nextBgm;
-			Engine.bgm.play();
+			BeatshotGame.bgm.dispose();
+			BeatshotGame.bgm = nextBgm;
+			BeatshotGame.bgm.play();
 			
 			FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
 			nextBgm = Gdx.audio.newMusic(n);
@@ -250,13 +251,13 @@ public class Scene implements Screen {
 		{
 			FileHandle b = bgmPaths.get((int)(Math.random()*bgmPaths.size));
 			FileHandle n = bgmPaths.get((int)(Math.random()*bgmPaths.size));
-			if (Engine.bgm != null)
-				Engine.bgm.dispose();
-			Engine.bgm = Gdx.audio.newMusic(b);
+			if (BeatshotGame.bgm != null)
+				BeatshotGame.bgm.dispose();
+			BeatshotGame.bgm = Gdx.audio.newMusic(b);
 			nextBgm = Gdx.audio.newMusic(n);
 			nextBgm.setLooping(false);
-			Engine.bgm.setLooping(false);
-			Engine.bgm.play();
+			BeatshotGame.bgm.setLooping(false);
+			BeatshotGame.bgm.play();
 		}
 	}
 	
@@ -288,31 +289,10 @@ public class Scene implements Screen {
 		
 		@Override
 		public boolean keyDown(int key) {
-			if (key == Input.Keys.F11)
-			{
-				int width, height;
-				width = Gdx.graphics.getWidth();
-				height = Gdx.graphics.getHeight();
-				
-				DisplayMode desktop = Gdx.graphics.getDesktopDisplayMode();
-				if (width != desktop.width || height != desktop.height)
-				{
-					Gdx.graphics.setDisplayMode(desktop);
-				}
-				else
-				{
-					Gdx.graphics.setDisplayMode((int)INTERNAL_RES[0]*2, (int)INTERNAL_RES[1]*2, false);
-				}
-				return true;
-			}
-			if (key == Input.Keys.F9)
-			{
-				Gdx.app.exit();
-				return true;
-			}
+			
 			if (key == Input.Keys.ENTER)
 			{
-				if (Engine.GameOver)
+				if (BeatshotGame.GameOver)
 				{
 					s.setLevel("level001");
 				}
@@ -320,6 +300,7 @@ public class Scene implements Screen {
 			}
 			if (key == Input.Keys.F1)
 			{
+				Level.switchMode();
 				s.setLevel("level001");
 				return true;
 			}

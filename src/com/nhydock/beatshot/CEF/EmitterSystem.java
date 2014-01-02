@@ -14,8 +14,9 @@ import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.Factories.BulletFactory;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.logic.Bullet.BulletData;
+import com.nhydock.beatshot.util.Tools;
 
 public class EmitterSystem extends EntityProcessingSystem {
 
@@ -38,7 +39,7 @@ public class EmitterSystem extends EntityProcessingSystem {
 		 
 		Array<BulletData> fire = emit.update(world.delta);
 		
-		String group = (e == Engine.player) ? Player.TYPE : Enemy.TYPE; 
+		String group = (e == BeatshotGame.player) ? Player.TYPE : Enemy.TYPE; 
 		
 		for (int i = 0; i < fire.size; i++)
 		{

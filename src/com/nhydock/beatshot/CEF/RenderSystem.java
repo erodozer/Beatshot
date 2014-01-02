@@ -13,7 +13,8 @@ import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.core.BeatshotGame;
+import com.nhydock.beatshot.util.Tools;
 import com.badlogic.gdx.artemis.components.*;
 
 /**
@@ -26,7 +27,6 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 	static public final float[] FOV = {25, 75, 190, 220};
 
 	
-	@Mapper ComponentMapper<Player> playermap;
 	@Mapper ComponentMapper<Enemy> enemymap;
 
 	public boolean warning;
@@ -69,8 +69,8 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 		{
 			//draw warning banners
 			//Display banners;
-			Ammo a = (Ammo)Engine.player.getComponent(Ammo.CType);
-			Health h = (Health)Engine.player.getComponent(Health.CType);
+			Ammo a = (Ammo)BeatshotGame.player.getComponent(Ammo.CType);
+			Health h = (Health)BeatshotGame.player.getComponent(Health.CType);
 			bag = gm.getEntities("Banner");
 			ImmutableBag<Entity> bannerBag;
 			Bag<Entity> bannerBag2;
@@ -135,7 +135,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			e = tm.getEntity("PlayerShadow");
 			r = rmap.get(e);
 			r.sprite.draw(batch);
-			e = Engine.player;
+			e = BeatshotGame.player;
 			r = rmap.get(e);
 			r.sprite.draw(batch);
 		}
@@ -185,7 +185,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 		
 		batch.begin();
 		//draw game over banner
-		if (Engine.GameOver)
+		if (BeatshotGame.GameOver)
 		{
 			r = (Renderable)tm.getEntity("GameOver").getComponent(Renderable.CType);
 			r.sprite.draw(batch);

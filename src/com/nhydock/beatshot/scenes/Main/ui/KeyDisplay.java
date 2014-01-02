@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.core.Consts.PlayerInput;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.util.Tools;
 
 public class KeyDisplay extends Group {
 
@@ -23,20 +23,20 @@ public class KeyDisplay extends Group {
 	
 	public static void loadAssets()
 	{
-		Engine.assets.load(DataDir.Ui + "frame.png", Texture.class);
-		Engine.assets.load(DataDir.Ui + "keys.png", Texture.class);
-		Engine.assets.load(DataDir.Ui + "disc.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "frame.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "keys.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "disc.png", Texture.class);
 	}
 	
 	public KeyDisplay()
 	{
 		super();
 		
-		frame = new Sprite(Engine.assets.get(DataDir.Ui + "frame.png", Texture.class));
+		frame = new Sprite(Tools.assets.get(DataDir.Ui + "frame.png", Texture.class));
 		frame.setSize(240, 75);
 		
 		keys = new Sprite[PlayerInput.Lasers.length];
-		KeyTex = Engine.assets.get(DataDir.Ui + "keys.png", Texture.class);
+		KeyTex = Tools.assets.get(DataDir.Ui + "keys.png", Texture.class);
 
 		for (int i = 0, x = 88, y = 12; i < keys.length; i++, x += KeyTex.getWidth() >> 2)
 		{
@@ -56,7 +56,7 @@ public class KeyDisplay extends Group {
 			}
 			keys[i] = key;
 		}
-		disc = new Sprite(Engine.assets.get(DataDir.Ui + "disc.png", Texture.class));
+		disc = new Sprite(Tools.assets.get(DataDir.Ui + "disc.png", Texture.class));
 		disc.setU(0);
 		disc.setU2(1/3f);
 		disc.setScale(1/3f, 1.0f);

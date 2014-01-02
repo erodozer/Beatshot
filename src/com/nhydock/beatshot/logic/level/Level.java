@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.artemis.components.*;
 import com.badlogic.gdx.artemis.systems.*;
@@ -18,8 +17,9 @@ import com.nhydock.beatshot.CEF.*;
 import com.nhydock.beatshot.CEF.Components.*;
 import com.nhydock.beatshot.logic.level.LevelData.Background.*;
 import com.nhydock.beatshot.Factories.PlayerFactory;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.util.Tools;
 import com.nhydock.beatshot.util.SpriteSheet;
 
 import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
@@ -35,6 +35,10 @@ public class Level{
 	 * Score bonuses are recieved for beating a level quickly and for defeating all enemies
 	 */
 	private static boolean EnduranceMode = false;
+	
+	public static void switchMode(){
+		EnduranceMode = !EnduranceMode;
+	}
 	
 	/**
 	 * How often spawns should occur in Endurance Mode
@@ -56,8 +60,6 @@ public class Level{
 	 * set.
 	 */
 	private int wave;
-	
-	private Array<Entity> activeEnemies;
 	
 	RenderSystem rs;
 	EnemySystem es;
@@ -86,29 +88,22 @@ public class Level{
 		world.setManager(new GroupManager());
 		
 		world.setSystem(new AnimationSystem());
-		world.setSystem(new BulletLifeSystem());
-		world.setSystem(new EmitterSystem());
 		world.setSystem(new CollisionEntitySystem());
 		world.setSystem(new MovementSystem());
-		
 		world.setSystem(new PlayerInputSystem());
+		world.setSystem(new EmitterSystem());
+		es = new EnemySystem();
+		world.setSystem(es);
 		
 		rs = new RenderSystem();
-		es = new EnemySystem();
 		world.setSystem(rs, true);
-		world.setSystem(es, true);
 		
-		Entity player = PlayerFactory.createEntity(world.createEntity());
-		world.getManager(TagManager.class).register("Player", player);
+		Entity player = PlayerFactory.createEntity(world);
 		
-		player.addToWorld();
-		
-		Engine.world = world;
-		Engine.player = player;
+		BeatshotGame.world = world;
+		BeatshotGame.player = player;
 		
 		playerHealth = (Health)player.getComponent(Health.CType);
-		
-		activeEnemies = new Array<Entity>();
 	}
 	
 	/**
@@ -117,7 +112,7 @@ public class Level{
 	private void updateEndurance(float travel)
 	{
 		distance += travel;
-		Engine.score += travel;
+		BeatshotGame.score += travel;
 		if (distance > ENDURANCERATE)
 		{
 			distance -= ENDURANCERATE;
@@ -131,7 +126,7 @@ public class Level{
 			world.getSystem(RenderSystem.class).warning = w;
 			warning = w?WARNING_WAIT:0;
 			
-			activeEnemies = es.spawnEnemies(enemyData);
+			es.spawnEnemies(enemyData);
 			//warningBeep.play();
 		}
 	}
@@ -147,21 +142,17 @@ public class Level{
 		}
 		else
 		{
-			if (activeEnemies.size == 0)
+			if (es.aliveCount() == 0)
 			{
-				activeEnemies.clear();
-				
 				//set and spawn the next formation
 				IntArray set = data.order.get(wave);
-				System.out.println(set);
 				for (int i = 0; i < set.size; i++)
 				{
 					int n = set.get(i);
 					Formation f = data.enemyData.get(n);
-					Array<Entity> enemies = es.spawnEnemies(f);
-					activeEnemies.addAll(enemies);
+					es.spawnEnemies(f);
+					System.out.println();
 				}
-				System.out.println(activeEnemies.size);
 				wave++;
 				
 				//if midboss or boss then flash a warning
@@ -178,7 +169,7 @@ public class Level{
 	 */
 	public void advance(float delta)
 	{
-		if (Engine.GameOver)
+		if (BeatshotGame.GameOver)
 		{
 			world.setDelta(0);
 			return;
@@ -205,11 +196,10 @@ public class Level{
 		
 		world.setDelta(delta);
 		world.process();
-		es.processEntities(activeEnemies);
 		
 		if (playerHealth.hp <= 0)
 		{
-			Engine.GameOver = true;
+			BeatshotGame.GameOver = true;
 		}
 	}
 	
@@ -237,7 +227,7 @@ public class Level{
 			Entity layer = this.world.createEntity();
 			
 			FieldData f = data.background.stack.get(i);
-			Texture t = Engine.assets.get(f.image, Texture.class);
+			Texture t = Tools.assets.get(f.image, Texture.class);
 			Sprite s = new Sprite(t);
 			
 			if (f instanceof LayerData)
@@ -265,7 +255,7 @@ public class Level{
 		
 		//load banners
 		{
-			Texture t = Engine.assets.get(DataDir.Ui+"banners.png", Texture.class);
+			Texture t = Tools.assets.get(DataDir.Ui+"banners.png", Texture.class);
 			t.setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
 			SpriteSheet bannerTex = new SpriteSheet(t, 1, 3);
 			for (int i = 0; i < 3; i++)
@@ -309,7 +299,7 @@ public class Level{
 			Entity gameOverBanner;
 
 			gameOverBanner = world.createEntity();
-			Sprite s = new Sprite(Engine.assets.get(DataDir.Ui+"gameover.png", Texture.class));
+			Sprite s = new Sprite(Tools.assets.get(DataDir.Ui+"gameover.png", Texture.class));
 			s.setPosition(0, 80);
 			gameOverBanner.addComponent(new Renderable(s));
 			tm.register("GameOver", gameOverBanner);
@@ -321,22 +311,22 @@ public class Level{
 			Entity warningBanner;
 
 			warningBanner = world.createEntity();
-			Sprite s = new Sprite(Engine.assets.get(DataDir.Ui+"enemywarning.png", Texture.class));
+			Sprite s = new Sprite(Tools.assets.get(DataDir.Ui+"enemywarning.png", Texture.class));
 			s.setPosition(0, 140);
 			warningBanner.addComponent(new Renderable(s));
 			tm.register("Warning", warningBanner);
 			warningBanner.addToWorld();
 		}
 		
-		Position p = (Position)Engine.player.getComponent(Position.CType);
+		Position p = (Position)BeatshotGame.player.getComponent(Position.CType);
 		p.location.x = FOV[2]/2.0f;
 		
 		this.world.initialize();
 		
-		Engine.score = 0f;
-		Engine.GameOver = false;
+		BeatshotGame.score = 0f;
+		BeatshotGame.GameOver = false;
 		
-		warningBeep = Engine.assets.get(DataDir.SFX + "warning.wav", Sound.class);
+		warningBeep = Tools.assets.get(DataDir.SFX + "warning.wav", Sound.class);
 		
 	}
 
@@ -347,25 +337,25 @@ public class Level{
 		for (int i = 0; i < data.background.stack.size; i++)
 		{
 			FieldData f = data.background.stack.get(i);
-			Engine.assets.load(f.image, Texture.class);
+			Tools.assets.load(f.image, Texture.class);
 		}
 		//Engine.assets.load(data.bgm, Music.class);
-		Engine.assets.load(DataDir.Ui + "banners.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "banners.png", Texture.class);
 		
-		Engine.assets.load(DataDir.SFX + "warning.wav", Sound.class);
-		Engine.assets.load(DataDir.Ui + "gameover.png", Texture.class);
-		Engine.assets.load(DataDir.Ui + "enemywarning.png", Texture.class);
+		Tools.assets.load(DataDir.SFX + "warning.wav", Sound.class);
+		Tools.assets.load(DataDir.Ui + "gameover.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "enemywarning.png", Texture.class);
 	}
 
 	public void unloadAssets() {
 		for (int i = 0; i < data.background.stack.size; i++)
 		{
 			FieldData f = data.background.stack.get(i);
-			Engine.assets.unload(f.image);
+			Tools.assets.unload(f.image);
 		}
 		//Engine.assets.load(data.bgm, Music.class);
-		Engine.assets.unload(DataDir.Ui + "banners.png");
-		Engine.assets.unload(DataDir.Ui + "gameover.png");
-		Engine.assets.unload(DataDir.SFX + "warning.wav");
+		Tools.assets.unload(DataDir.Ui + "banners.png");
+		Tools.assets.unload(DataDir.Ui + "gameover.png");
+		Tools.assets.unload(DataDir.SFX + "warning.wav");
 	}
 }

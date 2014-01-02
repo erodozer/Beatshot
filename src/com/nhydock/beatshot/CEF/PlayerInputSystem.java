@@ -12,8 +12,9 @@ import com.nhydock.beatshot.CEF.Components.Ammo;
 import com.nhydock.beatshot.CEF.Components.Emitter;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Player;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.PlayerInput;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.util.Tools;
 
 public class PlayerInputSystem extends VoidEntitySystem {
 
@@ -28,8 +29,8 @@ public class PlayerInputSystem extends VoidEntitySystem {
 	
 	@Override
 	protected void processSystem() {
-		Velocity vel = Engine.player.getComponent(Velocity.class);
-		Emitter emit = Engine.player.getComponent(Emitter.class);
+		Velocity vel = BeatshotGame.player.getComponent(Velocity.class);
+		Emitter emit = BeatshotGame.player.getComponent(Emitter.class);
 		
 		//move left
 		if (PlayerInput.LEFT.isPressed())
@@ -60,7 +61,7 @@ public class PlayerInputSystem extends VoidEntitySystem {
 			}
 		}
 			
-		Ammo a = Engine.player.getComponent(Ammo.class);
+		Ammo a = BeatshotGame.player.getComponent(Ammo.class);
 		if (firing == 0 || a.recharge)
 		{
 			a.ammo = Math.min(a.ammo+(CHARGERATE*world.delta), a.maxammo);
@@ -75,7 +76,7 @@ public class PlayerInputSystem extends VoidEntitySystem {
 		}
 		
 
-		Health h = Engine.player.getComponent(Health.class);
+		Health h = BeatshotGame.player.getComponent(Health.class);
 		h.hp = Math.min(h.hp+(HPCHARGERATE*world.delta), h.maxhp);
 	}
 

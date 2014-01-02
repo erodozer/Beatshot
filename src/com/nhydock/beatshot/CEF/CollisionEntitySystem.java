@@ -15,7 +15,9 @@ import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.core.BeatshotGame;
+import com.nhydock.beatshot.util.Tools;
+
 import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 /**
@@ -144,7 +146,7 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		{
 			bag = enemyEntities;
 			
-			Entity collider = Engine.player;
+			Entity collider = BeatshotGame.player;
 			Bound target = physics.get(collider);
 			Position bpos = posm.get(collider);
 			boolean hit = false;

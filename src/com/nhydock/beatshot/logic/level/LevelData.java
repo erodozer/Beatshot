@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.JsonValue;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.util.Tools;
 
 public class LevelData
 {	
@@ -31,7 +31,7 @@ public class LevelData
 	
 	public LevelData(String name)
 	{
-		levelFile = Engine.json.parse(Gdx.files.internal(DataDir.Levels + (name+".json")));
+		levelFile = Tools.json.parse(Gdx.files.internal(DataDir.Levels + (name+".json")));
 		this.name = name;
 		loadProperties();
 		loadFormations();

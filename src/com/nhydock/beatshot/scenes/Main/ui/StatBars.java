@@ -8,8 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.nhydock.beatshot.CEF.Components.Ammo;
 import com.nhydock.beatshot.CEF.Components.Health;
+import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.DataDir;
-import com.nhydock.beatshot.logic.Engine;
+import com.nhydock.beatshot.util.Tools;
 import com.nhydock.beatshot.util.SpriteSheet;
 
 import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
@@ -26,9 +27,9 @@ public class StatBars extends Sprite{
 	 */
 	public static void loadAssets()
 	{
-		Engine.assets.load(DataDir.Ui + "barframe.png", Texture.class);
-		Engine.assets.load(DataDir.Ui + "tabs.png", Texture.class);
-		Engine.assets.load(DataDir.Ui + "statbar.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "barframe.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "tabs.png", Texture.class);
+		Tools.assets.load(DataDir.Ui + "statbar.png", Texture.class);
 	}
 	
 	private Bar hpBar;
@@ -37,10 +38,10 @@ public class StatBars extends Sprite{
 	public StatBars()
 	{
 		super();
-		frameTex = Engine.assets.get(DataDir.Ui + "barframe.png", Texture.class);
+		frameTex = Tools.assets.get(DataDir.Ui + "barframe.png", Texture.class);
 		frameTex.setWrap(TextureWrap.ClampToEdge, TextureWrap.Repeat);
-		tabsTex = new SpriteSheet(Engine.assets.get(DataDir.Ui + "tabs.png", Texture.class), 4, 1);
-		Texture t = Engine.assets.get(DataDir.Ui + "statbar.png", Texture.class);
+		tabsTex = new SpriteSheet(Tools.assets.get(DataDir.Ui + "tabs.png", Texture.class), 4, 1);
+		Texture t = Tools.assets.get(DataDir.Ui + "statbar.png", Texture.class);
 		t.setWrap(TextureWrap.ClampToEdge, TextureWrap.Repeat);
 		barsTex = new SpriteSheet(t, 3, 1);
 		hpBar = new Bar(0);
@@ -53,11 +54,11 @@ public class StatBars extends Sprite{
 		frameTex = null;
 		tabsTex = null;
 		
-		Engine.assets.unload(DataDir.Ui + "barframe.png");
-		Engine.assets.unload(DataDir.Ui + "tabs.png");
-		Engine.assets.unload(DataDir.Ui + "bars/ammo.png");
-		Engine.assets.unload(DataDir.Ui + "bars/hp.png");
-		Engine.assets.unload(DataDir.Ui + "bars/empty.png");
+		Tools.assets.unload(DataDir.Ui + "barframe.png");
+		Tools.assets.unload(DataDir.Ui + "tabs.png");
+		Tools.assets.unload(DataDir.Ui + "bars/ammo.png");
+		Tools.assets.unload(DataDir.Ui + "bars/hp.png");
+		Tools.assets.unload(DataDir.Ui + "bars/empty.png");
 	}
 	
 	public void setPosition(float x, float y)
@@ -69,11 +70,11 @@ public class StatBars extends Sprite{
 	
 	public void draw(SpriteBatch batch, float alpha)
 	{
-		Health h = Engine.player.getComponent(Health.class);
+		Health h = BeatshotGame.player.getComponent(Health.class);
 		hpBar.setFill(h.getPercent());
 		hpBar.draw(batch, alpha);
 		
-		Ammo a = Engine.player.getComponent(Ammo.class);
+		Ammo a = BeatshotGame.player.getComponent(Ammo.class);
 		ammoBar.setFill(a.getPercent());
 		ammoBar.draw(batch, alpha);
 	}
