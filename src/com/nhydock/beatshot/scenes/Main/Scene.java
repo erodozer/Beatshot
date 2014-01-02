@@ -12,7 +12,10 @@ import com.badlogic.gdx.graphics.GLCommon;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Scaling;
+import com.nhydock.beatshot.CEF.PlayerInputSystem;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
 import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.DataDir;
@@ -137,11 +140,12 @@ public class Scene implements Screen {
 					if (level != null)
 					{
 						level.unloadAssets();
-						Gdx.input.setInputProcessor(null);
+						input.removeProcessor(level.world.getSystem(PlayerInputSystem.class));
 					}
 					level = new Level(nextLevel);
 					level.loadAssets();
 					nextLevel = null;
+					input.addProcessor(level.world.getSystem(PlayerInputSystem.class));
 				}
 			}
 			else
@@ -191,18 +195,12 @@ public class Scene implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		/*
-		normalProjection.setToOrtho2D(0f, 0f, width, height);
-		
-		int sW = (int)(width/INTERNAL_RES[0]);
-		int sH = (int)(height/INTERNAL_RES[1]);
-		
-		int scale = Math.min(sW, sH);
-		
-		normalProjection.scale(scale, scale, 1.0f);
-		
-		normalProjection.translate((width - scale*INTERNAL_RES[0]) / 2f, (height - scale*INTERNAL_RES[1]) / 2f, 0);
-		*/
+		Vector2 size = Scaling.fit.apply(INTERNAL_RES[0], INTERNAL_RES[1], width, height);
+        int viewportX = (int)(width - size.x) / 2;
+        int viewportY = (int)(height - size.y) / 2;
+        int viewportWidth = (int)size.x;
+        int viewportHeight = (int)size.y;
+        Gdx.gl.glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
 	}
 
 	@Override
@@ -242,6 +240,7 @@ public class Scene implements Screen {
 		input = new InputMultiplexer();
 		input.addProcessor(this.keydisp.inputListener);
 		input.addProcessor(new SystemKeys(this));
+		input.addProcessor(Tools.utils);
 		
 		uiReady = true;
 		

@@ -25,20 +25,7 @@ public class Tools {
 			public boolean keyDown(int key) {
 				if (key == Input.Keys.F11)
 				{
-					int width, height;
-					width = Gdx.graphics.getWidth();
-					height = Gdx.graphics.getHeight();
-					
-					DisplayMode desktop = Gdx.graphics.getDesktopDisplayMode();
-					if (width != desktop.width || height != desktop.height)
-					{
-						Gdx.graphics.setDisplayMode(desktop);
-					}
-					else
-					{
-						Gdx.graphics.setDisplayMode((int)INTERNAL_RES[0]*2, (int)INTERNAL_RES[1]*2, false);
-					}
-					return true;
+					switchFullscreen();
 				}
 				if (key == Input.Keys.F9)
 				{
@@ -56,5 +43,21 @@ public class Tools {
 			public boolean touchDragged(int arg0, int arg1, int arg2) {	return false; }
 			public boolean touchUp(int arg0, int arg1, int arg2, int arg3) { return false; }
 		};
+	}
+	
+	public static void switchFullscreen(){
+		int width, height;
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
+		
+		DisplayMode desktop = Gdx.graphics.getDesktopDisplayMode();
+		if (width != desktop.width || height != desktop.height)
+		{
+			Gdx.graphics.setDisplayMode(desktop);
+		}
+		else
+		{
+			Gdx.graphics.setDisplayMode((int)INTERNAL_RES[0]*2, (int)INTERNAL_RES[1]*2, false);
+		}
 	}
 }

@@ -1,5 +1,8 @@
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.core.BeatshotGame;
+import com.nhydock.beatshot.util.Tools;
+
 import static com.nhydock.beatshot.core.BeatshotGame.INTERNAL_RES;;
 
 /**
@@ -12,7 +15,7 @@ public class runner  {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] a) {
         // define the window's title
         final String title = "BeatShot";
  
@@ -25,5 +28,10 @@ public class runner  {
  
         // create the game using Lwjgl starter class
         LwjglApplication app = new LwjglApplication(new BeatshotGame(), title, width, height, useOpenGLES2 );
+        
+        Array<String> args = new Array<String>(a);
+        if (args.contains("-fullscreen", false))
+        	Tools.switchFullscreen();
+        	
 	}
 }
