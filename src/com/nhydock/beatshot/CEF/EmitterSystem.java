@@ -7,9 +7,10 @@ import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.artemis.components.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.nhydock.beatshot.CEF.Components.Emitter;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
-import com.nhydock.beatshot.CEF.Groups.Emitter;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.Factories.BulletFactory;
@@ -28,6 +29,8 @@ public class EmitterSystem extends EntityProcessingSystem {
 	@Mapper ComponentMapper<Emitter> emap;
 	@Mapper ComponentMapper<Position> pmap;
 
+	private Vector2 emitV = new Vector2();
+	
 	@Override
 	protected void process(Entity e) {
 		Emitter emit = emap.get(e);
@@ -39,12 +42,8 @@ public class EmitterSystem extends EntityProcessingSystem {
 		
 		for (int i = 0; i < fire.size; i++)
 		{
-			Entity bullet = BulletFactory.createBullet(pos.location, fire.get(i), world);
-
-			world.getManager(GroupManager.class).add(bullet, Bullet.TYPE);
-			world.getManager(GroupManager.class).add(bullet, group);
-			
-			bullet.addToWorld();
+			emitV.set(pos.location);
+			BulletFactory.createBullet(world, emitV, fire.get(i), group);
 		}
 	}
 }

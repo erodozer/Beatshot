@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.nhydock.beatshot.CEF.Components.Bound;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.core.Consts.DataDir;
@@ -110,7 +109,6 @@ public class EnemyAtlas{
 		e.addComponent(new Bound(s.getWidth(), s.getHeight()), Bound.CType);
 		e.addComponent(new Position(), Position.CType);
 		e.addComponent(new Velocity(), Velocity.CType);
-		e.addComponent(new Enemy(), Enemy.CType);
 		
 		return e;
 	}

@@ -1,14 +1,15 @@
 package com.nhydock.beatshot.CEF;
 
+import com.artemis.Component;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.systems.VoidEntitySystem;
+import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.artemis.components.*;
 import com.badlogic.gdx.math.Vector2;
-import com.nhydock.beatshot.CEF.Components.Bound;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
@@ -25,9 +26,6 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 
 	@Mapper ComponentMapper<Bound> physics;
 	@Mapper ComponentMapper<Position> posm;
-	
-	@Mapper ComponentMapper<Enemy> em;
-	@Mapper ComponentMapper<Player> pm;
 	@Mapper ComponentMapper<Health> hm;
 	
 	private ImmutableBag<Entity> enemyEntities;
@@ -53,11 +51,13 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 	private static Vector2 targetLoc = new Vector2();
 	
 	private boolean doesCollide(Position apos, Bound bullet, Position bpos, Bound target) {
-		bulletLoc.x = apos.location.x + apos.offset.x + bullet.center.x;
-		bulletLoc.y = apos.location.y + apos.offset.y + bullet.center.y;
+		bulletLoc.set(apos.location);
+		bulletLoc.add(apos.offset);
+		bulletLoc.add(bullet.center);
 		
-		targetLoc.x = bpos.location.x + bpos.offset.x + target.center.x;
-		targetLoc.y = bpos.location.y + bpos.offset.y + target.center.y;
+		targetLoc.set(bpos.location);
+		targetLoc.add(bpos.offset);
+		targetLoc.add(target.center);
 		
 		float dst = Math.abs(bulletLoc.dst(targetLoc));
 		float radius = bullet.radius;
@@ -101,23 +101,32 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		ImmutableBag<Entity> bag;
 		//process player bullets
 		{
-			bag = gm.getEntities(Player.TYPE, Bullet.TYPE);
+			bag = gm.getEntities(Bullet.TYPE, Player.TYPE);
 			for (int i = 0; i < bag.size(); i++)
 			{
 				Entity e = bag.get(i);
+				
+				if (handleOutOfBounds(e))
+				{
+					continue;
+				}
+				
+				Bag<Component> b = new Bag<Component>();
+				e.getComponents(b);
+				
+				Bound bound = physics.get(e);   
 				Position pos = posm.get(e);
-				Bound bound = physics.get(e);
 				
 				boolean hit = false;
 				for (int n = 0; n < enemyEntities.size() && !hit; n++)
 				{
 					Entity collider = enemyEntities.get(i);
-					Enemy enemy = em.get(collider);
-					if (!enemy.active || enemy.dead)
-						continue;
 					
-					Bound target = physics.get(collider);
-					Position bpos = posm.get(collider);
+					if (collider == null)
+						continue;
+					            
+					Bound target = physics.getSafe(collider);
+					Position bpos = posm.getSafe(collider);
 					
 					if (target != null)
 					{
@@ -142,11 +151,11 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 			for (int i = 0; i < bag.size() && !hit; i++)
 			{
 				Entity e = bag.get(i);
+				
 				Position pos = posm.get(e);
 				Bound bound = physics.get(e);
 				
-				if (doesCollide(pos, bound, bpos, target))
-				{
+				if (doesCollide(pos, bound, bpos, target)){
 					handleCollision(e, collider);
 					hit = true;
 				}
