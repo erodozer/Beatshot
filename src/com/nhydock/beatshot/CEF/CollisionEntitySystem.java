@@ -53,16 +53,12 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 	private boolean doesCollide(Position apos, Bound bullet, Position bpos, Bound target) {
 		bulletLoc.set(apos.location);
 		bulletLoc.add(apos.offset);
-		bulletLoc.add(bullet.center);
 		
 		targetLoc.set(bpos.location);
 		targetLoc.add(bpos.offset);
-		targetLoc.add(target.center);
 		
 		float dst = Math.abs(bulletLoc.dst(targetLoc));
-		float radius = Math.max(target.radius, bullet.radius);
-		
-		return dst < radius;
+		return dst < target.radius + bullet.radius;
 	}
 
 	/**
