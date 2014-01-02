@@ -1,20 +1,13 @@
 package com.nhydock.beatshot.CEF;
 
 
-import com.artemis.Aspect;
-import com.artemis.ComponentMapper;
-import com.artemis.Entity;
-import com.artemis.annotations.Mapper;
 import com.artemis.systems.VoidEntitySystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.artemis.components.*;
 import com.nhydock.beatshot.CEF.Components.Ammo;
 import com.nhydock.beatshot.CEF.Components.Emitter;
 import com.nhydock.beatshot.CEF.Components.Health;
-import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.PlayerInput;
-import com.nhydock.beatshot.util.Tools;
 
 public class PlayerInputSystem extends VoidEntitySystem {
 

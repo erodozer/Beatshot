@@ -12,7 +12,6 @@ import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
 import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.logic.level.Formation;
-import com.nhydock.beatshot.util.Tools;
 
 public class EnemySystem extends VoidEntitySystem {
 
@@ -27,6 +26,7 @@ public class EnemySystem extends VoidEntitySystem {
 		return enemies.size;
 	}
 	
+	@Override
 	public void processSystem()
 	{
 		int i = 0;

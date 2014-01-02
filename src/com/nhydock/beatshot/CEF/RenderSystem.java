@@ -11,10 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.nhydock.beatshot.CEF.Components.Ammo;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
-import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.core.BeatshotGame;
-import com.nhydock.beatshot.util.Tools;
 import com.badlogic.gdx.artemis.components.*;
 
 /**
@@ -36,6 +34,7 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 		return true;
 	}
 	
+	@Override
 	public void draw(SpriteBatch batch)
 	{
 		process();
@@ -89,8 +88,8 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 			{
 				bannerBag = gm.getEntities("BannerC");
 				bannerBag2 = new Bag<Entity>();
-				bannerBag2.addAll( (Bag<Entity>)gm.getEntities("BannerA") );
-				bannerBag2.addAll( (Bag<Entity>)gm.getEntities("BannerB") );
+				bannerBag2.addAll( gm.getEntities("BannerA") );
+				bannerBag2.addAll( gm.getEntities("BannerB") );
 			}
 			
 			for (int i = bag.size()-1; i >= 0; i--)

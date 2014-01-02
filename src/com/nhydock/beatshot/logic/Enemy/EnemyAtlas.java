@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.nhydock.beatshot.CEF.Components.Health;
-import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.core.Consts.DataDir;
 
 /**

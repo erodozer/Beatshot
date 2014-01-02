@@ -4,7 +4,6 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.artemis.components.Angle;
 import com.badlogic.gdx.artemis.components.Bound;
 import com.badlogic.gdx.artemis.components.Path;
 import com.badlogic.gdx.artemis.components.Position;

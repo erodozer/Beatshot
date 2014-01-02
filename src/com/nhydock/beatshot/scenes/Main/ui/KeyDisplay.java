@@ -65,6 +65,7 @@ public class KeyDisplay extends Group {
 		inputListener = new KeyListener(keys, disc);
 	}
 	
+	@Override
 	public void draw(SpriteBatch batch, float alpha)
 	{
 		frame.draw(batch);

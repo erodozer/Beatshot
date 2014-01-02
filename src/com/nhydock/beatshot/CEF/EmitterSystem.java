@@ -4,19 +4,16 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
-import com.artemis.managers.GroupManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.artemis.components.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.nhydock.beatshot.CEF.Components.Emitter;
-import com.nhydock.beatshot.CEF.Groups.Bullet;
 import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.Factories.BulletFactory;
 import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.logic.Bullet.BulletData;
-import com.nhydock.beatshot.util.Tools;
 
 public class EmitterSystem extends EntityProcessingSystem {
 

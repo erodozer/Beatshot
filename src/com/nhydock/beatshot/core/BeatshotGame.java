@@ -3,7 +3,6 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.audio.Music;
-import com.nhydock.beatshot.scenes.Main.Scene;
 import com.nhydock.beatshot.util.SceneManager;
 
 /**
@@ -39,6 +38,7 @@ public class BeatshotGame extends Game {
 	//private final float debug_rate = 5.0f;
 	
 	
+	@Override
 	public void render()
 	{
 		super.render();

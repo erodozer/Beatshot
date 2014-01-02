@@ -1,7 +1,5 @@
 package com.nhydock.beatshot.logic.Bullet;
 
-import com.artemis.Entity;
-import com.artemis.World;
 import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.math.Vector2;
 

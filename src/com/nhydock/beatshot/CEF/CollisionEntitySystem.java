@@ -16,8 +16,6 @@ import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.Factories.ExplosionFactory;
 import com.nhydock.beatshot.core.BeatshotGame;
-import com.nhydock.beatshot.util.Tools;
-
 import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 /**
@@ -62,9 +60,9 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		targetLoc.add(target.center);
 		
 		float dst = Math.abs(bulletLoc.dst(targetLoc));
-		float radius = bullet.radius;
+		float radius = Math.max(target.radius, bullet.radius);
 		
-		return dst-radius < target.radius;
+		return dst < radius;
 	}
 
 	/**

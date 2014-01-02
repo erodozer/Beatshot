@@ -237,7 +237,7 @@ public class Level{
 				s.setSize(Math.max(t.getWidth(), FOV[2]), Math.max(t.getHeight(), FOV[3]));
 				layer.addComponent(new Position(), Position.CType);
 					
-				layer.addComponent(new Scrollable(0, d.rate, Math.max(FOV[2]/(float)t.getWidth(), 1.0f), Math.max(FOV[3]/(float)t.getHeight(), 1.0f)), Scrollable.CType);
+				layer.addComponent(new Scrollable(0, d.rate, Math.max(FOV[2]/t.getWidth(), 1.0f), Math.max(FOV[3]/t.getHeight(), 1.0f)), Scrollable.CType);
 			}
 			else if (f instanceof StaticData)
 			{

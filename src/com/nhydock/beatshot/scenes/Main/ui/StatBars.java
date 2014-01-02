@@ -61,6 +61,7 @@ public class StatBars extends Sprite{
 		Tools.assets.unload(DataDir.Ui + "bars/empty.png");
 	}
 	
+	@Override
 	public void setPosition(float x, float y)
 	{
 		super.setPosition(x, y);
@@ -68,6 +69,7 @@ public class StatBars extends Sprite{
 		ammoBar.setPosition(x+FOV[2]+25, y);
 	}
 	
+	@Override
 	public void draw(SpriteBatch batch, float alpha)
 	{
 		Health h = BeatshotGame.player.getComponent(Health.class);
@@ -79,6 +81,7 @@ public class StatBars extends Sprite{
 		ammoBar.draw(batch, alpha);
 	}
 	
+	@Override
 	public void draw(SpriteBatch batch)
 	{
 		this.draw(batch, 1.0f);
@@ -112,6 +115,7 @@ public class StatBars extends Sprite{
 			fill = 1.0f;
 		}
 		
+		@Override
 		public void draw(SpriteBatch batch, float alpha)
 		{
 			batch.draw(typetab, this.getX(), this.getY()+222);
@@ -119,7 +123,7 @@ public class StatBars extends Sprite{
 			batch.draw(decotab, this.getX(), this.getY()+224-decotab.getRegionHeight());
 			batch.draw(back, this.getX() + 6, this.getY() + 5, 12, BARHEIGHT);
 			bar.setV2((int)(REPEAT*fill));
-			batch.draw(bar, this.getX() + 6, this.getY() + 5, 12, (float)((int)(REPEAT*fill) << 1));
+			batch.draw(bar, this.getX() + 6, this.getY() + 5, 12, (int)(REPEAT*fill) << 1);
 		}
 		public void setFill(float amount)
 		{

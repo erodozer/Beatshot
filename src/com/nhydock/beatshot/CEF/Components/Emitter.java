@@ -3,7 +3,6 @@ package com.nhydock.beatshot.CEF.Components;
 import com.artemis.Component;
 import com.artemis.ComponentType;
 import com.artemis.Entity;
-import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BooleanArray;
 import com.badlogic.gdx.utils.FloatArray;

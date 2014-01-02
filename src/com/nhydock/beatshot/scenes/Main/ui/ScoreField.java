@@ -42,12 +42,14 @@ public class ScoreField extends Sprite {
 		tab.setX(190-tab.getHeight());
 	}
 	
+	@Override
 	public void setPosition(float x, float y)
 	{
 		back.setPosition(x-5, y);
 		tab.setPosition(x+back.getHeight()-tab.getHeight(), y);
 	}
 	
+	@Override
 	public void draw(SpriteBatch batch)
 	{
 		back.draw(batch);

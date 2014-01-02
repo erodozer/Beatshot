@@ -25,7 +25,7 @@ public class Health extends Component {
 		if (this.hp != this.tempHp)
 		{
 			this.tempHp = this.hp;
-			this.perc = this.tempHp/(float)this.maxhp;
+			this.perc = this.tempHp/this.maxhp;
 		}
 		return this.perc;
 	}
