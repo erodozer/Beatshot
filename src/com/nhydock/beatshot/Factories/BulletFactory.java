@@ -6,6 +6,7 @@ import com.artemis.managers.GroupManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.artemis.components.Angle;
 import com.badlogic.gdx.artemis.components.Bound;
+import com.badlogic.gdx.artemis.components.Path;
 import com.badlogic.gdx.artemis.components.Position;
 import com.badlogic.gdx.artemis.components.Renderable;
 import com.badlogic.gdx.artemis.components.Velocity;
@@ -43,25 +44,35 @@ public class BulletFactory {
 	 * @param p
 	 * @param speed
 	 * @param t
-	 * @param w
+	 * @param world
 	 */
-	public static Entity createBullet(Vector2 pos, BulletData bulletData, World w, String group)
+	public static Entity createBullet(World world, Vector2 pos, BulletData bulletData, String group)
 	{
-		Entity e = w.createEntity();	
+		Entity e = world.createEntity();	
+		Bound b = new Bound(3.0f, 3.0f);
+		e.addComponent(b, Bound.CType);
 		
 		if (bulletData instanceof PathBullet)
-			return createBullet(pos, (PathBullet)bulletData, w);
+		{
+			PathBullet data = (PathBullet)bulletData;
+			e.addComponent(new Path(data.path, data.duration, 0f, Path.Loop.None));
+			e.addComponent(new Bound(1.0f, 1.0f), Bound.CType);
+			Sprite s;
+			if (group == Player.TYPE)
+			{
+				s = new Sprite(bulletSprites.getFrame(1, 0));
+			}
+			else
+			{
+				s = new Sprite(bulletSprites.getFrame(0, 0));
+			}
+			e.addComponent(new Renderable(s), Renderable.CType);
+		}
 		else if (bulletData instanceof VelocityBullet)
 		{	
 			VelocityBullet data = (VelocityBullet)bulletData;
-			Velocity v = new Velocity(data.velocity.angle(), 10f);
-			Position p = new Position(pos.x, pos.y);
-			Angle a = new Angle(data.velocity.angle());
-			
+			Velocity v = new Velocity((int)data.velocity.angle(), 200f);
 			e.addComponent(v, Velocity.CType);
-			e.addComponent(p, Position.CType);
-			e.addComponent(a, Angle.CType);
-			e.addComponent(new Bound(1.0f, 1.0f), Bound.CType);
 			
 			Sprite s;
 			if (group == Player.TYPE)
@@ -72,16 +83,19 @@ public class BulletFactory {
 			{
 				s = new Sprite(bulletSprites.getFrame(0, 0));
 			}
+			Position p = new Position(pos.x, pos.y, -s.getWidth()/2f, -s.getHeight()/2f);
+			e.addComponent(p, Position.CType);
+			
 			s.setPosition(p.location.x+p.offset.x, p.location.y+p.offset.y);
 			e.addComponent(new Renderable(s), Renderable.CType);
-			
-			return e;
 		}
-	}
-	
-	public static Entity createBullet(Vector2 pos, PathBullet bulletData, World w)
-	{
-		Entity e = w.createEntity();
+		
+		world.getManager(GroupManager.class).add(e, Bullet.TYPE);
+		world.getManager(GroupManager.class).add(e, group);
+		
+		e.addToWorld();
+		
 		return e;
+		
 	}
 }
