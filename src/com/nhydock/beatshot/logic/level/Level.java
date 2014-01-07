@@ -191,6 +191,12 @@ public class Level{
 			world.getSystem(RenderSystem.class).warning = false;
 		}
 		
+		//allow processing slowdown for more technical movement
+		if (world.getSystem(PlayerInputSystem.class).slowdown)
+		{
+			delta *= .25f;
+		}
+		
 		float travel = 10f*delta;
 		if (EnduranceMode)
 		{

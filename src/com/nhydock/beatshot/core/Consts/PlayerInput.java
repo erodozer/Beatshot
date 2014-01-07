@@ -11,7 +11,8 @@ public enum PlayerInput
 	FOUR(Keys.D), 
 	FIVE(Keys.F),
 	LEFT(Keys.LEFT),
-	RIGHT(Keys.RIGHT);
+	RIGHT(Keys.RIGHT), 
+	SLOW(Keys.SHIFT_LEFT);
 	
 	public static final PlayerInput[] Lasers = {ONE, TWO, THREE, FOUR, FIVE};
 	

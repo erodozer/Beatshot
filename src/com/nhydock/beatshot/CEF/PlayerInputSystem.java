@@ -25,6 +25,8 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 	
 	private int move;
 	
+	public boolean slowdown;
+	
 	@Override
 	protected void processSystem() {
 		Emitter emit = BeatshotGame.player.getComponent(Emitter.class);
@@ -100,6 +102,11 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 			move = 1;
 		}
 		
+		if (PlayerInput.valueOf(key) == PlayerInput.SLOW)
+		{
+			slowdown = true;
+		}
+		
 		Ammo a = BeatshotGame.player.getComponent(Ammo.class);
 		
 		Emitter emit = BeatshotGame.player.getComponent(Emitter.class);
@@ -139,6 +146,11 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 			{
 				move = 0;
 			}
+		}
+		
+		if (PlayerInput.valueOf(key) == PlayerInput.SLOW)
+		{
+			slowdown = false;
 		}
 		
 		Emitter emit = BeatshotGame.player.getComponent(Emitter.class);
