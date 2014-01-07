@@ -30,28 +30,34 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 	@Override
 	protected void processSystem() {
 		Emitter emit = BeatshotGame.player.getComponent(Emitter.class);
-		Velocity vel = BeatshotGame.player.getComponent(Velocity.class);
+		Movement vel = BeatshotGame.player.getComponent(Movement.class);
 		
 		//move left
 		if (move == -1)
 		{
 			Position pos = BeatshotGame.player.getComponent(Position.class);
 			if (pos.location.x + pos.offset.x > 0)
-				vel.x = -100f;
-			else
+				vel.acceleration.x = -200f;
+			else {
+				vel.acceleration.x = 0f;
+				vel.velocity.x = 0f;
 				move = 0;
+			}
 		}
 		else if (move == 1)
 		{
 			Position pos = BeatshotGame.player.getComponent(Position.class);
 			if (pos.location.x - pos.offset.x < FOV[2])
-				vel.x = 100f;
-			else
+				vel.acceleration.x = 200f;
+			else {
+				vel.acceleration.x = 0f;
+				vel.velocity.x = 0f;
 				move = 0;
+			}
 		}
 		else
 		{
-			vel.x = 0f;
+			vel.acceleration.x = 0f;
 		}
 		
 		Ammo a = BeatshotGame.player.getComponent(Ammo.class);

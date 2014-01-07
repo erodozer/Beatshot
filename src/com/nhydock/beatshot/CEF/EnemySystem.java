@@ -15,7 +15,7 @@ import com.nhydock.beatshot.logic.level.Formation;
 
 public class EnemySystem extends VoidEntitySystem {
 
-	@Mapper ComponentMapper<Velocity> vm;
+	@Mapper ComponentMapper<Movement> vm;
 	@Mapper ComponentMapper<Position> pm;
 	@Mapper ComponentMapper<Health> hm;
 	

@@ -112,7 +112,7 @@ public class EnemyAtlas{
 		e.addComponent(new Health(enemy.maxhp), Health.CType);
 		e.addComponent(new Bound(s.getWidth(), s.getHeight()), Bound.CType);
 		e.addComponent(new Position(), Position.CType);
-		e.addComponent(new Velocity(), Velocity.CType);
+		e.addComponent(new Movement(), Movement.CType);
 		
 		Emitter fire = new Emitter();
 		VelocityBullet b = new VelocityBullet(FireVelocity, MathUtils.random(.5f, 1.5f));

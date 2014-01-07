@@ -8,7 +8,7 @@ import com.badlogic.gdx.artemis.components.Bound;
 import com.badlogic.gdx.artemis.components.Path;
 import com.badlogic.gdx.artemis.components.Position;
 import com.badlogic.gdx.artemis.components.Renderable;
-import com.badlogic.gdx.artemis.components.Velocity;
+import com.badlogic.gdx.artemis.components.Movement;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
@@ -68,8 +68,8 @@ public class BulletFactory {
 		else if (bulletData instanceof VelocityBullet)
 		{	
 			VelocityBullet data = (VelocityBullet)bulletData;
-			Velocity v = new Velocity((int)data.velocity.angle(), 200f);
-			e.addComponent(v, Velocity.CType);
+			Movement v = new Movement((int)data.velocity.angle(), 200f);
+			e.addComponent(v, Movement.CType);
 			
 			Sprite s;
 			if (group == Player.TYPE)

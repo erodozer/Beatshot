@@ -65,7 +65,10 @@ public class PlayerFactory {
 			e.addComponent(new Ammo(MAXAMMO), Ammo.CType);
 			
 			e.addComponent(new Position(0, sprite.getFrameHeight()/2f, -sprite.getFrameWidth()/2f, -sprite.getFrameHeight()/2f), Position.CType);
-			e.addComponent(new Velocity(0, 0), Velocity.CType);
+			Movement m = new Movement(0, 0);
+			m.setMaxSpeed(100f);
+			m.setFriction(1f);
+			e.addComponent(m, Movement.CType);
 			
 			e.addComponent(new Bound(10f, 10f), Bound.CType);
 			
