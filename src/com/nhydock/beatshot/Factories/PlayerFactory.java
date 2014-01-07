@@ -44,43 +44,51 @@ public class PlayerFactory {
 	 * @return a formatted player entity
 	 */
 	public static Entity createEntity(World w) {
-		Entity e = w.createEntity();
+		Entity e;
 		
-		e.addComponent(new Health(MAXHP), Health.CType);
-		e.addComponent(new Ammo(MAXAMMO), Ammo.CType);
-		
-		e.addComponent(new Position(0, sprite.getFrameHeight()/2f, -sprite.getFrameWidth()/2f, -sprite.getFrameHeight()/2f), Position.CType);
-		e.addComponent(new Velocity(0, 0), Velocity.CType);
-		
-		e.addComponent(new Bound(10f, 10f), Bound.CType);
-		
-		e.addComponent(new Renderable(sprite.getFrame(0)), Renderable.CType);
-		e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true), Animation.CType);
-		
-		w.getManager(TagManager.class).register("Player", e);
-		w.getManager(GroupManager.class).add(e, Player.TYPE);
-		
-		Emitter emitter = new Emitter();
-		for (int i = 0, angle = 140; i < PlayerInput.Lasers.length; i++, angle -= 25)
+		//create shadow of the player
 		{
-			Vector2 v = new Vector2(1, 1);
-			v.setAngle(angle);
-			
-			BulletData laser = new VelocityBullet(v, .25f);
-			emitter.register(laser);
-			emitter.disable(i);
+			e = w.createEntity();
+			e.addComponent(new Position(0,0,0,-2), Position.CType);
+			e.addComponent(new Anchor(e), Anchor.CType);
+			e.addComponent(new Renderable(new Sprite(shadow_sprite)), Renderable.CType);
+			w.getManager(TagManager.class).register("PlayerShadow", e);
+			w.getManager(GroupManager.class).add(e, Player.TYPE);
+			e.addToWorld();
 		}
-		e.addComponent(emitter);
 		
-		e.addToWorld();
+		//create a player entity
+		{
+			e = w.createEntity();
 		
-		Entity shadow = e.getWorld().createEntity();
-		shadow.addComponent(new Position(0,0,0,-2), Position.CType);
-		shadow.addComponent(new Anchor(e), Anchor.CType);
-		shadow.addComponent(new Renderable(new Sprite(shadow_sprite)), Renderable.CType);
-		e.getWorld().getManager(TagManager.class).register("PlayerShadow", shadow);
-		w.getManager(GroupManager.class).add(e, Player.TYPE);
-		shadow.addToWorld();
+			e.addComponent(new Health(MAXHP), Health.CType);
+			e.addComponent(new Ammo(MAXAMMO), Ammo.CType);
+			
+			e.addComponent(new Position(0, sprite.getFrameHeight()/2f, -sprite.getFrameWidth()/2f, -sprite.getFrameHeight()/2f), Position.CType);
+			e.addComponent(new Velocity(0, 0), Velocity.CType);
+			
+			e.addComponent(new Bound(10f, 10f), Bound.CType);
+			
+			e.addComponent(new Renderable(sprite.getFrame(0)), Renderable.CType);
+			e.addComponent(new Animation(sprite.getTexture(), sprite.frameCount, .1667f, true), Animation.CType);
+			
+			w.getManager(TagManager.class).register("Player", e);
+			w.getManager(GroupManager.class).add(e, Player.TYPE);
+			
+			Emitter emitter = new Emitter();
+			for (int i = 0, angle = 140; i < PlayerInput.Lasers.length; i++, angle -= 25)
+			{
+				Vector2 v = new Vector2(1, 1);
+				v.setAngle(angle);
+				
+				BulletData laser = new VelocityBullet(v, .25f);
+				emitter.register(laser);
+				emitter.disable(i);
+			}
+			e.addComponent(emitter);
+			
+			e.addToWorld();	
+		}
 		
 		return e;
 	}

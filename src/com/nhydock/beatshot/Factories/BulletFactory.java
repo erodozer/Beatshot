@@ -26,10 +26,10 @@ import com.nhydock.beatshot.util.SpriteSheet;
 public class BulletFactory {
 	private static SpriteSheet bulletSprites;
 	private static float bulletWidth, bulletHeight;
+	
 	/*
 	 * bullet data
 	 */
-	
 	static
 	{
 		bulletSprites = new SpriteSheet(Gdx.files.internal(DataDir.Images + "bullets.png"), 2, 2);
@@ -47,8 +47,7 @@ public class BulletFactory {
 	public static Entity createBullet(World world, Vector2 pos, BulletData bulletData, String group)
 	{
 		Entity e = world.createEntity();	
-		Bound b = new Bound(bulletWidth, bulletHeight);
-		e.addComponent(b, Bound.CType);
+		e.addComponent(new Bound(bulletWidth, bulletHeight), Bound.CType);
 		
 		if (bulletData instanceof PathBullet)
 		{
@@ -92,9 +91,8 @@ public class BulletFactory {
 			e.addComponent(new Renderable(s), Renderable.CType);
 		}
 		
-		GroupManager gm = world.getManager(GroupManager.class);
-		gm.add(e, Bullet.TYPE);
-		gm.add(e, group);
+		world.getManager(GroupManager.class).add(e, Bullet.TYPE);
+		world.getManager(GroupManager.class).add(e, group);
 		
 		e.addToWorld();
 		

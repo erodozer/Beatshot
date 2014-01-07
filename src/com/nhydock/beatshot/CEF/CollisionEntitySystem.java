@@ -135,7 +135,7 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		
 		//process enemy bullets
 		{
-			bag = gm.getEntities(Bullet.TYPE);
+			bag = gm.getEntities(Bullet.TYPE, Enemy.TYPE);
 			Entity collider = BeatshotGame.player;
 			Bound target = physics.get(collider);
 			Position bpos = posm.get(collider);
@@ -164,7 +164,7 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		
 		//process enemy bodies
 		{
-			bag = gm.getEntities(Enemy.TYPE);
+			bag = gm.getExclusiveEntities(Enemy.TYPE);
 			Entity collider = BeatshotGame.player;
 			Bound target = physics.get(collider);
 			Position bpos = posm.get(collider);
