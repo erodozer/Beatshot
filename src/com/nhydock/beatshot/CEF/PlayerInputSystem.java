@@ -9,6 +9,7 @@ import com.nhydock.beatshot.CEF.Components.Emitter;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.core.BeatshotGame;
 import com.nhydock.beatshot.core.Consts.PlayerInput;
+import static com.nhydock.beatshot.CEF.RenderSystem.FOV;
 
 public class PlayerInputSystem extends VoidEntitySystem implements InputProcessor{
 
@@ -19,9 +20,10 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 	private static final float CHARGERATE = 30.0f;
 	private static final float HPCHARGERATE = 1.0f;
 
-	int firing;
+	private int firing;
+	private boolean[] lasers = new boolean[PlayerInput.Lasers.length];
 	
-	int move;
+	private int move;
 	
 	@Override
 	protected void processSystem() {
@@ -31,11 +33,19 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 		//move left
 		if (move == -1)
 		{
-			vel.x = -100f;
+			Position pos = BeatshotGame.player.getComponent(Position.class);
+			if (pos.location.x + pos.offset.x > 0)
+				vel.x = -100f;
+			else
+				move = 0;
 		}
 		else if (move == 1)
 		{
-			vel.x = 100f;
+			Position pos = BeatshotGame.player.getComponent(Position.class);
+			if (pos.location.x - pos.offset.x < FOV[2])
+				vel.x = 100f;
+			else
+				move = 0;
 		}
 		else
 		{
@@ -43,12 +53,7 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 		}
 		
 		Ammo a = BeatshotGame.player.getComponent(Ammo.class);
-		if (a.recharge){
-			for (int i = 0; i < PlayerInput.Lasers.length; i++)
-			{
-				emit.disable(i);
-			}
-		}
+		
 			
 		if (firing == 0 || a.recharge)
 		{
@@ -56,6 +61,13 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 			if (a.ammo > a.maxammo/2.0f)
 			{
 				a.recharge = false;
+				for (int i = 0; i < PlayerInput.Lasers.length; i++)
+				{
+					if (lasers[i]){
+						emit.enable(i);
+						firing++;
+					}
+				}
 			}
 		}
 		else
@@ -64,6 +76,11 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 			if (a.ammo <= 0)
 			{
 				a.recharge = true;
+				for (int i = 0; i < PlayerInput.Lasers.length; i++)
+				{
+					emit.disable(i);
+					firing = 0;
+				}
 			}
 		}
 		
@@ -83,16 +100,28 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 			move = 1;
 		}
 		
+		Ammo a = BeatshotGame.player.getComponent(Ammo.class);
+		
 		Emitter emit = BeatshotGame.player.getComponent(Emitter.class);
 		for (int i = 0; i < PlayerInput.Lasers.length; i++)
 		{
 			PlayerInput p = PlayerInput.Lasers[i];
 			if (PlayerInput.valueOf(key) == p)
 			{
-				emit.enable(i);
-				firing++;
+				lasers[i] = true;
+				if (!a.recharge){
+					emit.enable(i);
+					a.ammo -= DRAINRATE;
+					firing++;
+				}
+				break;
 			}
 		}
+		if (a.ammo <= 0) {
+			a.recharge = true;
+			firing = 0;
+		}
+		
 		return false;
 	}
 
@@ -119,7 +148,8 @@ public class PlayerInputSystem extends VoidEntitySystem implements InputProcesso
 			if (PlayerInput.valueOf(key) == p)
 			{
 				emit.disable(i);
-				firing--;
+				lasers[i] = false;
+				firing = Math.max(0, firing - 1);
 			}
 		}
 		

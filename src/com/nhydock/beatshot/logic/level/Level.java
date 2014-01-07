@@ -117,16 +117,19 @@ public class Level{
 		{
 			distance -= ENDURANCERATE;
 			
-			//pick formation
-			int num = (int)(Math.random()*data.enemyData.size);
-			Formation enemyData = data.enemyData.get(num);
-			
-			//if midboss or boss then flash a warning
-			boolean w = (num == data.midboss) || (num == data.enemyData.size-1);
-			world.getSystem(RenderSystem.class).warning = w;
-			warning = w?WARNING_WAIT:0;
-			
-			es.spawnEnemies(enemyData);
+			if (es.aliveCount() <= 0)
+			{
+				//pick formation
+				int num = (int)(Math.random()*data.enemyData.size);
+				Formation enemyData = data.enemyData.get(num);
+				
+				//if midboss or boss then flash a warning
+				boolean w = (num == data.midboss) || (num == data.enemyData.size-1);
+				world.getSystem(RenderSystem.class).warning = w;
+				warning = w?WARNING_WAIT:0;
+				
+				es.spawnEnemies(enemyData);
+			}
 			//warningBeep.play();
 		}
 	}
@@ -144,6 +147,11 @@ public class Level{
 		{
 			if (es.aliveCount() == 0)
 			{
+				if (wave >= data.order.size)
+				{
+					wave = 0;
+				}
+				
 				//set and spawn the next formation
 				IntArray set = data.order.get(wave);
 				for (int i = 0; i < set.size; i++)
@@ -151,7 +159,6 @@ public class Level{
 					int n = set.get(i);
 					Formation f = data.enemyData.get(n);
 					es.spawnEnemies(f);
-					System.out.println();
 				}
 				wave++;
 				

@@ -52,10 +52,7 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 	
 	private boolean doesCollide(Position apos, Bound bullet, Position bpos, Bound target) {
 		bulletLoc.set(apos.location);
-		bulletLoc.add(apos.offset);
-		
 		targetLoc.set(bpos.location);
-		targetLoc.add(bpos.offset);
 		
 		float dst = Math.abs(bulletLoc.dst(targetLoc));
 		return dst < target.radius + bullet.radius;
@@ -116,7 +113,7 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 				boolean hit = false;
 				for (int n = 0; n < enemyEntities.size() && !hit; n++)
 				{
-					Entity collider = enemyEntities.get(i);
+					Entity collider = enemyEntities.get(n);
 					
 					if (collider == null)
 						continue;
@@ -138,8 +135,36 @@ public class CollisionEntitySystem extends VoidEntitySystem {
 		
 		//process enemy bullets
 		{
-			bag = enemyEntities;
-			
+			bag = gm.getEntities(Bullet.TYPE);
+			Entity collider = BeatshotGame.player;
+			Bound target = physics.get(collider);
+			Position bpos = posm.get(collider);
+			boolean hit = false;
+			for (int i = 0; i < bag.size() && !hit; i++)
+			{
+				Entity e = bag.get(i);
+				
+				if (handleOutOfBounds(e))
+				{
+					continue;
+				}
+				
+				if (gm.isInGroup(e, Enemy.TYPE))
+				{
+					Position pos = posm.get(e);
+					Bound bound = physics.get(e);
+					
+					if (doesCollide(pos, bound, bpos, target)){
+						handleCollision(e, collider);
+						hit = true;
+					}
+				}
+			}
+		}
+		
+		//process enemy bodies
+		{
+			bag = gm.getEntities(Enemy.TYPE);
 			Entity collider = BeatshotGame.player;
 			Bound target = physics.get(collider);
 			Position bpos = posm.get(collider);

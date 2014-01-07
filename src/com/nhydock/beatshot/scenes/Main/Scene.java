@@ -140,12 +140,11 @@ public class Scene implements Screen {
 					if (level != null)
 					{
 						level.unloadAssets();
-						input.removeProcessor(level.world.getSystem(PlayerInputSystem.class));
 					}
 					level = new Level(nextLevel);
 					level.loadAssets();
+					refreshInput();
 					nextLevel = null;
-					input.addProcessor(level.world.getSystem(PlayerInputSystem.class));
 				}
 			}
 			else
@@ -193,6 +192,15 @@ public class Scene implements Screen {
 		}
 	}
 
+	private void refreshInput() {
+		input = new InputMultiplexer();
+		input.addProcessor(Tools.utils);
+		input.addProcessor(new SystemKeys(this));
+		input.addProcessor(this.keydisp.inputListener);
+		input.addProcessor(level.world.getSystem(PlayerInputSystem.class));
+		Gdx.input.setInputProcessor(input);
+	}
+
 	@Override
 	public void resize(int width, int height) {
 		Vector2 size = Scaling.fit.apply(INTERNAL_RES[0], INTERNAL_RES[1], width, height);
@@ -236,12 +244,7 @@ public class Scene implements Screen {
 		SpriteSheet curtainTex = new SpriteSheet(Gdx.files.internal(DataDir.Ui + "curtain.png"), 2, 1);
 		curtainLeft = new Sprite(curtainTex.getFrame(0));
 		curtainRight = new Sprite(curtainTex.getFrame(1));
-		
-		input = new InputMultiplexer();
-		input.addProcessor(this.keydisp.inputListener);
-		input.addProcessor(new SystemKeys(this));
-		input.addProcessor(Tools.utils);
-		
+
 		uiReady = true;
 		
 		if (bgmPaths.size > 0)

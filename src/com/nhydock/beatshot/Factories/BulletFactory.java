@@ -11,8 +11,8 @@ import com.badlogic.gdx.artemis.components.Renderable;
 import com.badlogic.gdx.artemis.components.Velocity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nhydock.beatshot.CEF.Groups.Bullet;
+import com.nhydock.beatshot.CEF.Groups.Enemy;
 import com.nhydock.beatshot.CEF.Groups.Player;
 import com.nhydock.beatshot.core.Consts.DataDir;
 import com.nhydock.beatshot.logic.Bullet.*;
@@ -25,17 +25,16 @@ import com.nhydock.beatshot.util.SpriteSheet;
  */
 public class BulletFactory {
 	private static SpriteSheet bulletSprites;
+	private static float bulletWidth, bulletHeight;
 	/*
 	 * bullet data
 	 */
 	
-	private static final PolygonShape shape;
-	
 	static
 	{
 		bulletSprites = new SpriteSheet(Gdx.files.internal(DataDir.Images + "bullets.png"), 2, 2);
-		shape = new PolygonShape();
-		shape.setAsBox(1.0f, 1.0f);
+		bulletWidth = bulletSprites.getFrameWidth();
+		bulletHeight = bulletSprites.getFrameHeight();
 	}
 	
 	/**
@@ -48,7 +47,7 @@ public class BulletFactory {
 	public static Entity createBullet(World world, Vector2 pos, BulletData bulletData, String group)
 	{
 		Entity e = world.createEntity();	
-		Bound b = new Bound(3.0f, 3.0f);
+		Bound b = new Bound(bulletWidth, bulletHeight);
 		e.addComponent(b, Bound.CType);
 		
 		if (bulletData instanceof PathBullet)
@@ -78,9 +77,13 @@ public class BulletFactory {
 			{
 				s = new Sprite(bulletSprites.getFrame(1, 0));
 			}
-			else
+			else if (group == Enemy.TYPE)
 			{
 				s = new Sprite(bulletSprites.getFrame(0, 0));
+			}
+			else
+			{
+				s = new Sprite(bulletSprites.getFrame(0, 1));	
 			}
 			Position p = new Position(pos.x, pos.y, -s.getWidth()/2f, -s.getHeight()/2f);
 			e.addComponent(p, Position.CType);
@@ -89,8 +92,9 @@ public class BulletFactory {
 			e.addComponent(new Renderable(s), Renderable.CType);
 		}
 		
-		world.getManager(GroupManager.class).add(e, Bullet.TYPE);
-		world.getManager(GroupManager.class).add(e, group);
+		GroupManager gm = world.getManager(GroupManager.class);
+		gm.add(e, Bullet.TYPE);
+		gm.add(e, group);
 		
 		e.addToWorld();
 		

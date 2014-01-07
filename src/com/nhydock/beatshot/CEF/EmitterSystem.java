@@ -41,7 +41,7 @@ public class EmitterSystem extends EntityProcessingSystem {
 		for (int i = 0; i < fire.size; i++)
 		{
 			emitV.set(pos.location);
-			BulletFactory.createBullet(world, emitV, fire.get(i), group);
+			Entity b = BulletFactory.createBullet(world, emitV, fire.get(i), group);
 		}
 	}
 }

@@ -51,7 +51,7 @@ public class Tools {
 		height = Gdx.graphics.getHeight();
 		
 		DisplayMode desktop = Gdx.graphics.getDesktopDisplayMode();
-		if (width != desktop.width || height != desktop.height)
+		if (width != desktop.width && height != desktop.height)
 		{
 			Gdx.graphics.setDisplayMode(desktop);
 		}

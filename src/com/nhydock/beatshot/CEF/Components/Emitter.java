@@ -44,7 +44,7 @@ public class Emitter extends Component {
 	public void register(BulletData d)
 	{
 		emitterData.add(d);
-		active.add(false);
+		active.add(true);
 		timers.add(0f);
 	}
 	
@@ -57,6 +57,7 @@ public class Emitter extends Component {
 	public void enable(int i)
 	{
 		active.set(i, true);
+		timers.set(i, emitterData.get(i).getSpawnRate());
 	}
 
 	public Array<BulletData> update(float delta) {

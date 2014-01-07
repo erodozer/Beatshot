@@ -68,8 +68,9 @@ public class PlayerFactory {
 			
 			BulletData laser = new VelocityBullet(v, .25f);
 			emitter.register(laser);
-			e.addComponent(emitter);
+			emitter.disable(i);
 		}
+		e.addComponent(emitter);
 		
 		e.addToWorld();
 		

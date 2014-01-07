@@ -15,7 +15,6 @@ import com.nhydock.beatshot.logic.level.Formation;
 
 public class EnemySystem extends VoidEntitySystem {
 
-	@Mapper ComponentMapper<Enemy> em;
 	@Mapper ComponentMapper<Velocity> vm;
 	@Mapper ComponentMapper<Position> pm;
 	@Mapper ComponentMapper<Health> hm;
@@ -92,8 +91,6 @@ public class EnemySystem extends VoidEntitySystem {
 		}
 		
 		enemies.addAll(spawned);
-		System.out.println(enemies);
-		
 	}
 	
 }

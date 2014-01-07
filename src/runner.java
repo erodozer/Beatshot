@@ -30,7 +30,7 @@ public class runner  {
         LwjglApplication app = new LwjglApplication(new BeatshotGame(), title, width, height, useOpenGLES2 );
         
         Array<String> args = new Array<String>(a);
-        if (args.contains("-fullscreen", false))
+        if (args.contains("fullscreen", false))
         	Tools.switchFullscreen();
         	
 	}

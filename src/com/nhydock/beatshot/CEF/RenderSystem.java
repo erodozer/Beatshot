@@ -1,8 +1,6 @@
 package com.nhydock.beatshot.CEF;
 
-import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.Bag;
@@ -23,9 +21,6 @@ public class RenderSystem extends com.badlogic.gdx.artemis.systems.RenderSystem2
 
 	static public float[] InternalRes = {240f, 320f};
 	static public final float[] FOV = {25, 75, 190, 220};
-
-	
-	@Mapper ComponentMapper<Enemy> enemymap;
 
 	public boolean warning;
 	

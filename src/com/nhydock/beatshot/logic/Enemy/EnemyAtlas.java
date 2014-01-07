@@ -7,12 +7,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.nhydock.beatshot.CEF.Components.Emitter;
 import com.nhydock.beatshot.CEF.Components.Health;
 import com.nhydock.beatshot.core.Consts.DataDir;
+import com.nhydock.beatshot.logic.Bullet.VelocityBullet;
 
 /**
  * 
@@ -22,6 +26,7 @@ import com.nhydock.beatshot.core.Consts.DataDir;
 public class EnemyAtlas{
 
 	private static ObjectMap<String, EnemyAtlas> cache;
+	private static Vector2 FireVelocity = new Vector2(0f, -60f);
 	
 	static
 	{
@@ -108,6 +113,12 @@ public class EnemyAtlas{
 		e.addComponent(new Bound(s.getWidth(), s.getHeight()), Bound.CType);
 		e.addComponent(new Position(), Position.CType);
 		e.addComponent(new Velocity(), Velocity.CType);
+		
+		Emitter fire = new Emitter();
+		VelocityBullet b = new VelocityBullet(FireVelocity, MathUtils.random(.5f, 1.5f));
+		fire.register(b);
+		
+		e.addComponent(fire);
 		
 		return e;
 	}
